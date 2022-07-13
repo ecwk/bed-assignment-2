@@ -1,15 +1,13 @@
 {
-  "name": "bed-assignment",
+  "name": "api",
   "version": "1.0.0",
-  "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start:dev": "nodemon src",
-    "start": "node src"
+    "start": "node src",
+    "dev": "nodemon src"
   },
-  "author": "",
-  "license": "MIT",
   "dependencies": {
+    "prettier-config": "*",
     "@types/file-type": "10.9.1",
     "argon2": "0.28.5",
     "chalk": "4.1.2",

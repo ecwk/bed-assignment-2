@@ -18,7 +18,7 @@ const {
   uploadController
 } = require('./controllers');
 
-const server = async () => {
+const startServer = async () => {
   const app = express();
   const database = await databaseConfig.getConnection();
 
@@ -56,7 +56,8 @@ const server = async () => {
   app.use(errorHandler);
 
   // Start Server
-  app.listen(PORT, listenCallback);
+  const server = app.listen(PORT, listenCallback);
+  return server;
 };
 
-module.exports = server;
+module.exports = startServer;
