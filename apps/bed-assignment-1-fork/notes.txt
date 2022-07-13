@@ -1,0 +1,11 @@
+- file upload, check file headers instead of file extensions
+- add further verification (logical verification e.g. ensure date booking > current date)
+- add promotion system
+- add crud for images
+- add images upload for profile picture
+- add frontend website
+
+multer to upload express file upload to read and validate file
+
+create custom 400 error that gets handled by error handler, instead of constantly writing a 5 line
+error
