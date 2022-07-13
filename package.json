@@ -10,20 +10,25 @@
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
+    "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "cm": "custom-commit"
+    "cm": "custom-commit",
+    "prepare": "husky install"
   },
+  "dependencies": {},
   "devDependencies": {
     "eslint-config-custom": "*",
+    "prettier-config": "*",
+    "scripts": "*",
     "prettier": "latest",
     "turbo": "latest",
-    "prettier-config": "*",
-    "scripts": "*"
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "husky": "^8.0.0"
   },
   "engines": {
     "npm": ">=7.0.0",
     "node": ">=14.0.0"
   },
-  "dependencies": {},
   "packageManager": "npm@8.11.0"
 }
