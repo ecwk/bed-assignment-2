@@ -7,7 +7,7 @@ const { UserModel } = require('../models');
 const constants = require('../constants');
 
 const localStrategyOptions = {
-  usernameField: 'username',
+  usernameField: 'email',
   passwordField: 'password',
   session: false
 };
@@ -26,9 +26,9 @@ const configurePassport = (database) => {
       localStrategyOptions,
       async (username, password, done) => {
         try {
-          const user = await userModel.findOne('username', username);
+          const user = await userModel.findOne('email', username);
           if (!user) {
-            return done(null, false, { message: 'Incorrect username' });
+            return done(null, false, { message: 'Incorrect email' });
           } else if (!(await argon2.verify(user.password, password))) {
             return done(null, false, { message: 'Incorrect password' });
           } else {

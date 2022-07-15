@@ -1,35 +1,29 @@
 const express = require('express');
 const passport = require('passport');
+const createError = require('http-errors');
 
+const { protectedRoute } = require('../middleware');
 const jwt = require('../configs/jwt');
 
 module.exports = () => {
   const router = express.Router();
 
-  router.post('/login', (req, res, next) => {
-    passport.authenticate(
-      'local',
-      {
-        session: false
-      },
-      (err, user) => {
-        if (err) {
-          return next(err);
-        }
-        if (!user) {
-          return res.status(401).json({
-            statusCode: 401,
-            message: 'Unauthorized',
-            error: 'Incorrect username or password'
-          });
-        }
-        return res.json({
-          statusCode: 200,
-          message: 'Success',
+  router.post('/auth/login', (req, res, next) => {
+    passport.authenticate('local', { sesion: false }, (err, user) => {
+      if (err) {
+        next(createError(500, err));
+      } else if (!user) {
+        return next(createError(401, 'Incorrect username or password'));
+      } else
+        res.json({
+          user: user,
           token: jwt.signUser(user)
         });
-      }
-    )(req, res, next);
+    })(req, res, next);
+  });
+
+  router.get('/auth/whoami', protectedRoute, (req, res) => {
+    res.json(req.user);
   });
 
   return router;

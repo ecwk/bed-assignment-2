@@ -1,4 +1,5 @@
 const passport = require('passport');
+const createError = require('http-errors');
 
 const protectedRoute = (req, res, next) => {
   if (req.metadata?.isPublic) {
@@ -6,14 +7,11 @@ const protectedRoute = (req, res, next) => {
   } else {
     passport.authenticate('jwt', { session: false }, (err, user) => {
       if (err) {
-        return next(err);
-      }
-      if (!user) {
-        return res.status(401).json({
-          statusCode: 401,
-          message: 'Unauthorized',
-          error: 'You must be logged in to access this resource'
-        });
+        next(createError(500, err));
+      } else if (!user) {
+        return next(
+          createError(401, 'You must be logged in to access this resource')
+        );
       }
       req.user = user;
       next();

@@ -33,7 +33,7 @@ const startServer = async () => {
   // Endpoints
   app.use('/public', express.static('./public'));
   app.use('/users', usersController(database));
-  app.use('/auth', authController(database));
+  app.use(authController(database));
   app.use('/airport', airportController(database));
   app.use(flightController(database));
   app.use('/booking', bookingController(database));
