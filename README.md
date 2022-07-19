@@ -1,77 +1,71 @@
-# Turborepo starter with npm
+# BED Assignment 2
 
-This is an official starter turborepo.
+This is a submission for my school's backend web development (BED) assignment.
 
 ## What's inside?
 
-This turborepo uses [npm](https://www.npmjs.com/) as a package manager. It includes the following packages/apps:
+### Tech Stack
 
-### Apps and Packages
+**Frontend**
 
-- `docs`: a [Next.js](https://nextjs.org) app
-- `web`: another [Next.js](https://nextjs.org) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+- [Next.js](https://nextjs.org/), a react-based framework
+- [Chakra UI](https://chakra-ui.com/), a component library
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+**Backend**
+
+- [Express.js](https://expressjs.com/), a backend web framework
+- [MySQL](https://www.mysql.com/), a SQL database
+
+### Folder Structure
+
+- `apps/api`: API powered by express
+- `apps/web`: web app powered by next.js
+- `packages/eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier` used by `apps/web`)
+- `packages/scripts`: scripts used throughout the monorepo (includes `custom-commit` for formatting git commits)
 
 ### Utilities
 
-This turborepo has some additional tools already setup for you:
-
+- [Turborepo](https://turborepo.org/) for building monorepos
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [Jest](https://jestjs.io/) for running tests
+- [Supertest](https://www.npmjs.com/package/supertest) for testing APIs
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
-## Setup
+## How to Setup?
 
-This repository is used in the `npx create-turbo@latest` command, and selected when choosing which package manager you wish to use with your monorepo (npm).
+### Prerequisites
 
-### Build
+- [npm](https://www.npmjs.com/): ^8.0.0
+- [node](https://nodejs.org/): ^16.0.0
+- [MySQL Server](https://www.mysql.com/)
 
-To build all apps and packages, run the following command:
+### Configuration
 
-```
-cd my-turborepo
-npm run build
-```
+Refer to `.env.example` in both `apps/api` and `apps/web` directories and create a `.env` file in each.
 
-### Develop
+### Start the App
+
+### For Development
 
 To develop all apps and packages, run the following command:
 
-```
-cd my-turborepo
+```bash
+# Ensure that NODE_ENV=development
+cd bed-assignment-2
+
 npm run dev
 ```
 
-### Remote Caching
+#### For Production
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+To start the app for production, run the following commands:
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+```bash
+# Ensure that NODE_ENV=production
+cd bed-assignment-2
 
+npm run build
+
+npm run start
 ```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Pipelines](https://turborepo.org/docs/core-concepts/pipelines)
-- [Caching](https://turborepo.org/docs/core-concepts/caching)
-- [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching)
-- [Scoped Tasks](https://turborepo.org/docs/core-concepts/scopes)
-- [Configuration Options](https://turborepo.org/docs/reference/configuration)
-- [CLI Usage](https://turborepo.org/docs/reference/command-line-reference)
