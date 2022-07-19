@@ -8,6 +8,10 @@ const jwt = require('../configs/jwt');
 module.exports = () => {
   const router = express.Router();
 
+  router.get('/auth/whoami', protectedRoute, (req, res) => {
+    res.json(req.user);
+  });
+
   router.post('/auth/login', (req, res, next) => {
     passport.authenticate('local', { sesion: false }, (err, user) => {
       if (err) {
@@ -20,10 +24,6 @@ module.exports = () => {
           token: jwt.signUser(user)
         });
     })(req, res, next);
-  });
-
-  router.get('/auth/whoami', protectedRoute, (req, res) => {
-    res.json(req.user);
   });
 
   return router;
