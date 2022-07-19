@@ -2,6 +2,9 @@
   "name": "bed-assignment-2",
   "version": "0.0.0",
   "private": true,
+  "description": "Submission for school's backend web development (BED) assignment",
+  "homepage": "https://github.com/cNoside/bed-assignment-2",
+  "license": "MIT",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -11,11 +14,11 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "start": "turbo run start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "cm": "custom-commit",
     "prepare": "husky install"
   },
-  "dependencies": {},
   "devDependencies": {
     "eslint-config-custom": "*",
     "prettier-config": "*",
@@ -27,8 +30,8 @@
     "husky": "^8.0.0"
   },
   "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=14.0.0"
+    "npm": ">=8.0.0",
+    "node": ">=16.0.0"
   },
   "packageManager": "npm@8.11.0"
 }
