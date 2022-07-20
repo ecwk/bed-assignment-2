@@ -1,12 +1,14 @@
 const express = require('express');
 
 const { UserValidationSchema } = require('./user.validation');
-const { validateBody } = require('../../common/middleware');
+const { validateBody, protectedRoute } = require('../../common/middleware');
 const { UserModel } = require('./user.model');
 
 module.exports = (database) => {
   const router = express.Router();
   const userModel = UserModel(database);
+
+  router.use(protectedRoute);
 
   router.get('/', async (req, res, next) => {
     try {

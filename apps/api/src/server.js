@@ -29,7 +29,7 @@ const startServer = async () => {
 
   // Endpoints
   app.use('/public', express.static('./public'));
-  app.use('/users', protectedRoute, usersController(database));
+  app.use('/users', usersController(database));
   app.use('/auth', authController(database));
   app.use('/airports', airportsController(database));
   app.use('/flights', flightsController(database));
