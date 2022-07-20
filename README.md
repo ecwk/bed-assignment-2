@@ -46,7 +46,7 @@ Refer to `.env.example` in both `apps/api` and `apps/web` directories and create
 
 ### Start the App
 
-### For Development
+#### For Development
 
 To develop all apps and packages, run the following command:
 
