@@ -1,9 +1,11 @@
+const ms = require('ms');
 const express = require('express');
 const passport = require('passport');
 const createError = require('http-errors');
 
 const { validateBody, protectedRoute } = require('../../common/middleware');
 const { SignupValidationSchema } = require('./auth.validation');
+const { env } = require('../../config');
 const { UserModel } = require('../users');
 const jwt = require('../../config/jwt');
 
@@ -21,10 +23,14 @@ module.exports = (database) => {
         next(createError(500, err));
       } else if (!user) {
         return next(createError(401, 'Incorrect username or password'));
-      } else
+      } else {
+        const expiresIn = new Date(
+          Date.now() + ms(env.JWT_EXPIRATION)
+        ).getTime();
         res.json({
-          token: jwt.signUser(user)
+          token: { encoded: jwt.signUser(user), expiresIn: expiresIn }
         });
+      }
     })(req, res, next);
   });
 
