@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require('cors');
 const morgan = require('morgan');
 const express = require('express');
 const passport = require('passport');
@@ -26,6 +27,7 @@ const startServer = async () => {
   app.use(passport.initialize());
   app.use(morgan('dev'));
   app.use(fileUpload());
+  app.use(cors());
 
   // Endpoints
   app.use('/public', express.static('./public'));
