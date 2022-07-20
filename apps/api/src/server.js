@@ -21,7 +21,6 @@ const startServer = async () => {
   const database = await databaseConfig.getConnection();
 
   // Middleware
-  app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   configurePassport(database);
   app.use(passport.initialize());
