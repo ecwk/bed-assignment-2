@@ -1,3 +1,7 @@
-const server = require('./server');
+const { startServer } = require('./server');
 
-server();
+const bootstrap = async () => {
+  const server = await startServer();
+};
+
+bootstrap();

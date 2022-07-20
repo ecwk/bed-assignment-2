@@ -4,19 +4,17 @@ const express = require('express');
 const passport = require('passport');
 const fileUpload = require('express-fileupload');
 
-const configurePassport = require('./configs/configure-passport');
-const { errorHandler, listenCallback } = require('./utilities');
-const databaseConfig = require('./configs/database');
-const { protectedRoute } = require('./middleware');
-const { PORT } = require('./constants');
-const {
-  authController,
-  usersController,
-  airportController,
-  flightController,
-  bookingController,
-  uploadController
-} = require('./controllers');
+const { configurePassport } = require('./config/configure-passport');
+const { errorHandler, listenCallback } = require('./common/utils');
+const { airportsController } = require('./modules/airports');
+const { bookingsController } = require('./modules/bookings');
+const { uploadsController } = require('./modules/uploads');
+const { flightsController } = require('./modules/flights');
+const { protectedRoute } = require('./common/middleware');
+const { usersController } = require('./modules/users');
+const { authController } = require('./modules/auth');
+const databaseConfig = require('./config/database');
+const { env } = require('./config');
 
 const startServer = async () => {
   const app = express();
@@ -32,18 +30,12 @@ const startServer = async () => {
 
   // Endpoints
   app.use('/public', express.static('./public'));
-  app.use('/users', usersController(database));
-  app.use(authController(database));
-  app.use('/airport', airportController(database));
-  app.use(flightController(database));
-  app.use('/booking', bookingController(database));
-  app.use('/protected', protectedRoute, (req, res) =>
-    res.send('Authenticated ' + req.user.username)
-  );
-  app.use('/protected/*', protectedRoute, (req, res) =>
-    res.send('Authenticated ' + req.user.username)
-  );
-  app.use('/upload', uploadController(database));
+  app.use('/users', protectedRoute, usersController(database));
+  app.use('/auth', authController(database));
+  app.use('/airports', airportsController(database));
+  app.use('/flights', flightsController(database));
+  app.use('/bookings', bookingsController(database));
+  app.use('/uploads', uploadsController(database));
   app.use('*', (req, res) => {
     res.status(404).json({
       statusCode: 404,
@@ -56,8 +48,8 @@ const startServer = async () => {
   app.use(errorHandler);
 
   // Start Server
-  const server = app.listen(PORT, listenCallback);
+  const server = app.listen(env.PORT, listenCallback);
   return server;
 };
 
-module.exports = startServer;
+module.exports = { startServer };
