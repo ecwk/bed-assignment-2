@@ -20,7 +20,7 @@ VALUES (
     '00000002',
     '$argon2i$v=19$m=4096,t=3,p=1$8Kth7Gm1une2xqSCSP/0BA$YVFWvZtdOcwipYMdfJlztGDPM6DsXXqlSGqS4UsITM8',
     'Customer',
-    ''
+    null
   ),
   (
     'Admin1',
@@ -28,7 +28,7 @@ VALUES (
     '00000003',
     '$argon2i$v=19$m=4096,t=3,p=1$eYlrfJGwavG5SOMEKNljhg$w30zpVsb3E2Q+TI/ds+tRx6inQ9nkYdjBx3fJdApvBQ',
     'Admin',
-    ''
+    null
   ),
   (
     'Admin2',
