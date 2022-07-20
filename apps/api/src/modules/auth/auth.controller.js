@@ -12,7 +12,7 @@ module.exports = (database) => {
   const userModel = UserModel(database);
 
   router.get('/whoami', protectedRoute, (req, res) => {
-    res.json(req.user);
+    res.json({ user: req.user });
   });
 
   router.post('/login', (req, res, next) => {
@@ -23,7 +23,6 @@ module.exports = (database) => {
         return next(createError(401, 'Incorrect username or password'));
       } else
         res.json({
-          user: user,
           token: jwt.signUser(user)
         });
     })(req, res, next);
@@ -36,7 +35,7 @@ module.exports = (database) => {
       try {
         const user = req.body;
         const userid = await userModel.create({ ...user, role: 'Customer' });
-        res.status(201).json({ userid });
+        res.status(201).json({ user: { userid } });
       } catch (err) {
         next(err);
       }
