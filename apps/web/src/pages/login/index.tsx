@@ -19,10 +19,6 @@ import { NAVBAR_HEIGHT } from '@common/constants';
 const Login: NextPage = () => {
   const { user, login, logout } = useAuth();
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   return (
     <Flex minH={`calc(100vh - ${NAVBAR_HEIGHT})`}>
       <Box
@@ -47,7 +43,10 @@ const Login: NextPage = () => {
         minH="100%"
         objectFit="cover"
       >
-        <source src="/background-spair.mp4" type="video/mp4" />
+        <source
+          src="https://cdn.cnoside.dev/bed-assignment-2.deploy.cnoside.dev/background-spair.mp4"
+          type="video/mp4"
+        />
       </Box>
       <Flex color="brandText" flexDir="column" mt="200px" ml="200px">
         <Heading size="md" color="brand">
