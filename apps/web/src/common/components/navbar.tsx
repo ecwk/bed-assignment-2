@@ -12,25 +12,36 @@ import {
   IconButton,
   Avatar,
   HStack,
-  Link
+  Link,
+  useColorMode,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { VscBell } from 'react-icons/vsc';
 import { BiSupport } from 'react-icons/bi';
 import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
+import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 
 import { Logo } from './';
 import { NAVBAR_HEIGHT } from '@common/constants';
 import { useAuth } from '@modules/auth';
 import NextLink from 'next/link';
+import { darken } from 'polished';
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <Flex py={4} px={10} height={NAVBAR_HEIGHT} alignItems="center" gap={6}>
       <Logo />
       <Spacer />
       <HStack spacing={4}>
+        <IconButton
+          variant="outline"
+          icon={colorMode === 'light' ? <IoMdMoon /> : <IoMdSunny />}
+          aria-label="Toggle dark mode"
+          onClick={toggleColorMode}
+        />
         <Button colorScheme="brand">Book A Flight</Button>
         <IconButton
           icon={<BiSupport />}
@@ -45,6 +56,9 @@ export const Navbar = () => {
           variant="ghost"
           size="md"
           ml={4}
+          onClick={() => {
+            Notification.requestPermission();
+          }}
         />
       </HStack>
       <Divider orientation="vertical" />

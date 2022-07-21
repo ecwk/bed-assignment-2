@@ -11,7 +11,8 @@ import {
   FormLabel,
   FormErrorMessage,
   FormHelperText,
-  Select
+  Select,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
@@ -187,7 +188,12 @@ export const SignupForm = (props: FlexProps) => {
         <FormControl isInvalid={!!errors.contact}>
           <FormHelperText mt={0}>Contact</FormHelperText>
           <InputGroup>
-            <InputLeftAddon maxW="100px">{country.mobileCode}</InputLeftAddon>
+            <InputLeftAddon
+              maxW="100px"
+              color={useColorModeValue('gray.700', 'brandText')}
+            >
+              {country.mobileCode}
+            </InputLeftAddon>
             <Input
               {...register('contact')}
               type="text"
