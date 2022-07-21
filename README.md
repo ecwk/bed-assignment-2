@@ -1,5 +1,7 @@
 # BED Assignment 2
 
+![image](https://user-images.githubusercontent.com/82776299/180184337-70a57078-15ac-4ca9-9a1a-97e19bc11fcf.png)
+
 This is a submission for my school's backend web development (BED) assignment.
 
 ## What's inside?
@@ -46,7 +48,7 @@ Refer to `.env.example` in both `apps/api` and `apps/web` directories and create
 
 ### Start the App
 
-### For Development
+#### For Development
 
 To develop all apps and packages, run the following command:
 
