@@ -9,6 +9,7 @@ import jwt, { Jwt } from 'jsonwebtoken';
 import { client } from '@config/axios';
 
 import { useCookie } from 'src/common/hooks';
+import { SignupDto } from '../dto';
 
 enum Role {
   CUSTOMER = 'Customer',
@@ -35,6 +36,7 @@ interface AuthContextInterface {
   token: Token | null | undefined;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  signup: (signupDto: SignupDto) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextInterface>(
@@ -103,7 +105,16 @@ const useAuthProvider = (): AuthContextInterface => {
     setCookieToken(null);
   };
 
-  return { user, token, login, logout };
+  type SignupResponse = {
+    user: {
+      userid: number;
+    };
+  };
+  const signup = async (signupDto: SignupDto) => {
+    await client.post<SignupResponse>('/auth/signup', signupDto);
+  };
+
+  return { user, token, login, logout, signup };
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

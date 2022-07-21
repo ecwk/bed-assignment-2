@@ -12,7 +12,12 @@ export const Redirects = () => {
 
   useEffect(() => {
     const path = router.pathname;
-    console.log(path);
+
+    // temp
+    if (path === '/') {
+      router.push('/dashboard');
+    }
+
     if (user !== undefined) {
       if (!user && protectedRoutes.includes(path)) {
         router.push('/login');
