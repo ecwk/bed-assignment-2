@@ -15,15 +15,14 @@ const HTTP_ERROR_CODES = {
 const errorHandler = (err, req, res, next) => {
   if (err instanceof HttpError) {
     if (err.expose) {
-      res.json({
+      res.status(err.statusCode).json({
         statusCode: err.statusCode,
         error: HTTP_ERROR_CODES[err.statusCode || 400]
       });
     } else {
       res.json({
         statusCode: 500,
-        error: HTTP_ERROR_CODES[500],
-        foo: 'bar'
+        error: HTTP_ERROR_CODES[500]
       });
       console.error(err);
     }
