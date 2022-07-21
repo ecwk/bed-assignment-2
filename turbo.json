@@ -11,7 +11,7 @@
     },
     "start": {
       "dependsOn": [
-        "^build"
+        "build"
       ],
       "outputs": [
         "dist/**",
