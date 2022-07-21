@@ -11,7 +11,8 @@ import {
   Button,
   IconButton,
   Avatar,
-  HStack
+  HStack,
+  Link
 } from '@chakra-ui/react';
 import { VscBell } from 'react-icons/vsc';
 import { BiSupport } from 'react-icons/bi';
@@ -97,10 +98,16 @@ export const Navbar = () => {
         </>
       ) : (
         <HStack gap={3}>
-          <Button variant="outline" colorScheme="gray">
-            Login
-          </Button>
-          <Button colorScheme="gray">Sign Up</Button>
+          <NextLink href="/login" passHref>
+            <Button as={Link} variant="outline" colorScheme="gray">
+              Login
+            </Button>
+          </NextLink>
+          <NextLink href="/signup" passHref>
+            <Button as={Link} href="/signup" colorScheme="gray">
+              Sign Up
+            </Button>
+          </NextLink>
         </HStack>
       )}
     </Flex>
