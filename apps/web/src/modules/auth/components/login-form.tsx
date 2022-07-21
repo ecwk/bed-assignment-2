@@ -14,6 +14,10 @@ import {
 import { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { BsLockFill } from 'react-icons/bs';
+import { MdOutlineAlternateEmail } from 'react-icons/md';
+import { AiOutlineCheck } from 'react-icons/ai';
+import { sleep } from '@common/utils';
 
 import { useAuth } from '@modules/auth';
 
@@ -41,7 +45,7 @@ export const LoginForm = (props: LoginFormProps) => {
           let title: string, description: string;
 
           if (status === 401) {
-            title = 'Invalid credentials';
+            title = 'Invalid Credentials';
             description = 'Please check your email and password';
           } else {
             title = data.error || data.message;
@@ -55,34 +59,45 @@ export const LoginForm = (props: LoginFormProps) => {
             isClosable: true,
             position: 'top'
           });
+        } else {
+          // log to server
+          // ...
+          console.error(err);
+          toast({
+            title: 'An Error Occurred',
+            description: `This error has been reported. Try again later.`,
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+            position: 'top'
+          });
         }
       }
     }
   );
   const onSubmit = handleSubmit((loginFormData) => {
-    console.log(loginFormData);
     loginMutation.mutate(loginFormData);
   });
 
   return (
     <Flex as="form" flexDir="column" gap={5} onSubmit={onSubmit} {...props}>
       <FormControl isInvalid={loginMutation.isError}>
-        <InputGroup>
-          <Input
-            {...register('email')}
-            type="email"
-            placeholder="Email"
-            size="lg"
-          />
+        <InputGroup size="lg">
+          <InputLeftElement>
+            <MdOutlineAlternateEmail />
+          </InputLeftElement>
+          <Input {...register('email')} type="email" placeholder="Email" />
         </InputGroup>
       </FormControl>
       <FormControl isInvalid={loginMutation.isError}>
-        <InputGroup>
+        <InputGroup size="lg">
+          <InputLeftElement>
+            <BsLockFill />
+          </InputLeftElement>
           <Input
             {...register('password')}
             type="password"
             placeholder="Password"
-            size="lg"
           />
         </InputGroup>
       </FormControl>
@@ -91,8 +106,11 @@ export const LoginForm = (props: LoginFormProps) => {
         colorScheme="brand"
         size="lg"
         isLoading={loginMutation.isLoading}
+        {...(loginMutation.isSuccess && {
+          colorScheme: 'green'
+        })}
       >
-        Login
+        {loginMutation.isSuccess ? <AiOutlineCheck /> : 'Login'}
       </Button>
     </Flex>
   );

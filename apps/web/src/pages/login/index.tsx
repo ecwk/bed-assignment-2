@@ -48,7 +48,13 @@ const Login: NextPage = () => {
           type="video/mp4"
         />
       </Box>
-      <Flex color="brandText" flexDir="column" mt="200px" ml="200px">
+      <Flex
+        color="brandText"
+        flexDir="column"
+        mt="200px"
+        ml="200px"
+        width="100%"
+      >
         <Heading size="md" color="brand">
           LOGIN
         </Heading>
@@ -58,14 +64,16 @@ const Login: NextPage = () => {
             .
           </Text>
         </Heading>
-        <LoginForm mt={6} />
-        <Text mt={6} textAlign="center">
-          Don't have an account yet?{' '}
-          <NextLink href="/signup" passHref>
-            <Link color="red.300">Sign Up</Link>
-          </NextLink>
-          .
-        </Text>
+        <Box maxW="400px">
+          <LoginForm mt={6} />
+          <Text mt={6} textAlign="center">
+            Don't have an account yet?{' '}
+            <NextLink href="/signup" passHref>
+              <Link color="red.300">Sign Up</Link>
+            </NextLink>
+            .
+          </Text>
+        </Box>
       </Flex>
     </Flex>
   );
