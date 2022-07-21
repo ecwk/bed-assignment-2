@@ -6,7 +6,7 @@ import {
   useEffect
 } from 'react';
 import jwt, { Jwt } from 'jsonwebtoken';
-import { client } from 'src/common/config';
+import { client } from '@config/axios';
 
 import { useCookie } from 'src/common/hooks';
 

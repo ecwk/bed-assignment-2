@@ -14,16 +14,22 @@ export const server = axios.create({
 });
 
 // Mock delays for development
-client.interceptors.response.use(async (response) => {
-  if (env.NODE_ENV === 'development') {
-    await sleep(env.delay);
-  }
-  return response;
-});
+if (env.NODE_ENV === 'development') {
+  client.interceptors.response.use(
+    async (response) => {
+      await sleep(env.delay);
+      return response;
+    },
+    async (error) => {
+      await sleep(env.delay);
+      throw error;
+    }
+  );
 
-server.interceptors.response.use(async (response) => {
-  if (env.NODE_ENV === 'development') {
-    await sleep(env.delay);
-  }
-  return response;
-});
+  server.interceptors.response.use(async (response) => {
+    if (env.NODE_ENV === 'development') {
+      await sleep(env.delay);
+    }
+    return response;
+  });
+}

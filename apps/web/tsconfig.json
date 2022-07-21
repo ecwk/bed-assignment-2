@@ -16,8 +16,9 @@
     "incremental": true,
     "baseUrl": "./",
     "paths": {
-      "@config/*": ["config/*"],
-      "@modules/*": ["modules/*"]
+      "@config/*": ["src/common/config/*"],
+      "@common/*": ["src/common/*"],
+      "@modules/*": ["src/modules/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
