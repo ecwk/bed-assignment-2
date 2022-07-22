@@ -8,6 +8,7 @@ const { SignupValidationSchema } = require('./auth.validation');
 const { env } = require('../../config');
 const { UserModel } = require('../users');
 const jwt = require('../../config/jwt');
+const { ROLES } = require('../../common/constants');
 
 module.exports = (database) => {
   const router = express.Router();
@@ -40,7 +41,7 @@ module.exports = (database) => {
     async (req, res, next) => {
       try {
         const user = req.body;
-        const userid = await userModel.create({ ...user, role: 'Customer' });
+        const userid = await userModel.create({ ...user, role: ROLES.USER });
         res.status(201).json({ user: { userid } });
       } catch (err) {
         next(err);
