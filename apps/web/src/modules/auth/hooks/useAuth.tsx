@@ -53,8 +53,6 @@ const useAuthProvider = (): AuthContextInterface => {
       if (cookieToken) {
         const decodedToken = jwt.decode(cookieToken, { complete: true });
         return decodedToken ? { encoded: cookieToken, ...decodedToken } : null;
-      } else {
-        return null;
       }
     });
   }, [cookieToken]);
@@ -78,7 +76,7 @@ const useAuthProvider = (): AuthContextInterface => {
         const user = res.data.user;
         setUser(user);
       });
-    } else {
+    } else if (token === null) {
       setUser(null);
     }
   }, [token]);
