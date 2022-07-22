@@ -43,14 +43,12 @@ const configurePassport = (database) => {
   passport.use(
     new JwtStrategy(jwtStrategyOptions, async (jwt_payload, done) => {
       try {
-        const { password: undefined, ...user } = await userModel.findOne(
-          'userid',
-          jwt_payload.sub
-        );
+        const user = await userModel.findOne('user_id', jwt_payload.sub);
         if (!user) {
           return done(null, false);
         } else {
-          return done(null, user);
+          const { password: undefined, ...rest } = user;
+          return done(null, rest);
         }
       } catch (err) {
         return done(err, null);
