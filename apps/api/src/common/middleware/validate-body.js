@@ -2,9 +2,11 @@ const { ValidationError } = require('yup');
 
 const validateBody = (validationSchema) => async (req, res, next) => {
   try {
-    await validationSchema.validate(req.body, {
-      abortEarly: false
+    const res = await validationSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true
     });
+    req.body = res;
     next();
   } catch (err) {
     if (err instanceof ValidationError) {
