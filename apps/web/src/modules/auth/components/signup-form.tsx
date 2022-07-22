@@ -94,7 +94,9 @@ export const SignupForm = (props: FlexProps) => {
         }
       },
       onSuccess: () => {
-        router.push('/login');
+        setTimeout(() => {
+          router.push('/login');
+        }, 1000);
       }
     }
   );
