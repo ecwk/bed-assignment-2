@@ -11,7 +11,7 @@ module.exports = {
       },
       env.JWT_SECRET,
       {
-        subject: String(user.userid),
+        subject: String(user.userId),
         expiresIn: env.JWT_EXPIRATION
       }
     )
