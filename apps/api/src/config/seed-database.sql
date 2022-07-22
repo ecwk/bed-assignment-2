@@ -7,123 +7,135 @@ INSERT INTO users (
     `profile_pic_url`
   )
 VALUES (
-    'Customer1',
-    'customer1@mail.com',
-    '00000001',
+    'Winston Clint',
+    'winstonclint51@mail.com',
+    '+65 98130912',
     '$argon2i$v=19$m=4096,t=3,p=1$++QY6O6Za7eQW7QRspdfng$OkxlTbsLR4BvMCUYWj+WSOLsEHy4sI7hx83nOFSjnuE',
-    'Customer',
-    'https://i.pravatar.cc/320'
+    'user',
+    null
   ),
   (
-    'Customer2',
-    'customer2@mail.com',
-    '00000002',
+    'Tan Wei Ming',
+    'tanweiming26@mail.com',
+    '+86 139-1099-8888',
     '$argon2i$v=19$m=4096,t=3,p=1$8Kth7Gm1une2xqSCSP/0BA$YVFWvZtdOcwipYMdfJlztGDPM6DsXXqlSGqS4UsITM8',
-    'Customer',
+    'user',
     null
   ),
   (
-    'Admin1',
-    'admin1@mail.com',
-    '00000003',
+    'Lily Collins',
+    'lilycollins19@mail.com',
+    '+65 83455041',
     '$argon2i$v=19$m=4096,t=3,p=1$eYlrfJGwavG5SOMEKNljhg$w30zpVsb3E2Q+TI/ds+tRx6inQ9nkYdjBx3fJdApvBQ',
-    'Admin',
+    'admin',
     null
   ),
   (
-    'Admin2',
-    'admin2@mail.com',
-    '00000004',
+    'Timothy Tan',
+    'timothyganter04@mail.com',
+    '+61 (02) 123-4567',
     '$argon2i$v=19$m=4096,t=3,p=1$yaW2TcEv1ttwlonBOZOTrQ$dAfskXLOMSPDUi9ECvoSXnU+RXX4zTmJyUjrT0uq+mU',
-    'Admin',
-    'https://i.pravatar.cc/320'
+    'admin',
+    null
+  ),
+  (
+    'Joecey Garcia',
+    'joceygarcia76@mail.com',
+    '+33 678-908-878',
+    '$argon2i$v=19$m=4096,t=3,p=1$yaW2TcEv1ttwlonBOZOTrQ$dAfskXLOMSPDUi9ECvoSXnU+RXX4zTmJyUjrT0uq+mU',
+    'user',
+    null
   );
 INSERT INTO airport (`name`, `country`, `description`)
-VALUES ('Airport1', 'Country1', 'Description1'),
-  (
-    'Airport2',
-    'Country2',
-    'Description2'
+VALUES (
+    'Changi Airport',
+    'Singapore',
+    "Changi is one of the world's most technologically-advanced airports. It is Asia’s first purpose-built airport, and was voted by Skytrax as the World's Best Airport in 2016"
   ),
   (
-    'Airport3',
-    'Country3',
-    'Description3'
+    'Kuala Lumpur International Airport',
+    'Malaysia',
+    'Kuala Lumpur International Airport (KLIA) is the seventh busiest airport in the world and second busiest in Asia. It handles approximately 70 international airlines & hundreds of domestic flights each day'
   ),
   (
-    'Airport4',
-    'Country4',
-    'Description4'
+    'Taoyuan International Airport',
+    'Taiwan',
+    'Taiwan Taoyuan International Airport is the main international airport of Taiwan. It is used by over 30 million passengers to travel'
   ),
   (
-    'Airport5',
-    'Country5',
-    'Description5'
+    'Osaka International Airport',
+    'Japan',
+    'Osaka International Airport (ITM) is an airport serving Osaka and Kansai region in Japan. The airport is also known as Itami Airport, and handles flights both domestically and internationally'
+  ),
+  (
+    'Beijing Capital International Airport',
+    'China',
+    "The Beijing Capital International Airport is the primary international airport serving Beijing, capital of the People' s Republic of China"
   );
 INSERT INTO flight (
-    `flightCode`,
-    `aircraft`,
-    `originAirport`,
-    `destinationAirport`,
-    `embarkDate`,
-    `travelTime`,
+    `flight_code`,
+    `aircraft_name`,
+    `origin_airport_id`,
+    `destination_airport_id`,
+    `embark_date`,
+    `travel_time`,
     `price`
   )
 VALUES (
-    'SP001',
-    'Aircraft1',
+    'SP9120',
+    'Boeing 777',
     1,
-    2,
-    '2022/08/01 08:20',
-    '1 hours 50 mins',
-    100.00
-  ),
-  (
-    'SP002',
-    'Aircraft2',
-    2,
-    3,
-    '2022/08/01 08:20',
-    '1 hours 50 mins',
-    200.00
-  ),
-  (
-    'SP003',
-    'Aircraft3',
-    3,
-    4,
-    '2022/08/01 08:20',
-    '1 hours 50 mins',
-    300.00
-  ),
-  (
-    'SP004',
-    'Aircraft4',
-    4,
     5,
-    '2022/08/01 08:20',
-    '1 hours 50 mins',
-    400.00
+    '2022/08/24 10:45',
+    '6 hours 20 mins',
+    600.00
   ),
   (
-    'SP005',
-    'Aircraft5',
-    5,
+    'SP6334',
+    'Boeing 747',
+    2,
+    4,
+    '2022/08/29 08:30',
+    '8 hours 50 mins',
+    900.00
+  ),
+  (
+    'SP297',
+    'Boeing 747',
+    3,
+    2,
+    '2022/08/30 12:00 ',
+    '4 hours 10 mins ',
+    380.00
+  ),
+  (
+    'SP3420',
+    'Boeing 727',
+    4,
     1,
-    '2022/08/01 08:20',
-    '1 hours 50 mins',
-    500.00
+    '2022/08/24 08:30',
+    '12 hours 50 mins',
+    1440.00
+  ),
+  (
+    'SP1843',
+    'Boeing 747',
+    5,
+    2,
+    '2022/08/19 12:00 ',
+    '6 hours 50 mins ',
+    540.00
   );
 INSERT INTO booking (
     `name`,
     `passport`,
     `nationality`,
     `age`,
-    `userid`,
-    `flightid`
+    `user_id`,
+    `flight_id`
   )
 VALUES (
-    'John Smith',
+    'Winston Clint',
     'S1234555Z',
     'Singaporean',
     20,
@@ -131,26 +143,34 @@ VALUES (
     1
   ),
   (
-    'John Cold',
-    'C1234555Z',
-    'China',
+    'Tan Wei Ming',
+    'P81478148912O',
+    'Chinese',
     23,
     2,
+    2
+  ),
+  (
+    'Lily Collins',
+    'A941923012N',
+    'Australian',
+    27,
+    3,
     3
   ),
   (
-    'John Brown',
-    'A1234555Z',
-    'American',
-    27,
-    3,
-    5
-  ),
-  (
-    'John Wick',
+    'Timothy Tan',
     'M1234555Z',
     'Malaysian',
     61,
     4,
-    1
+    4
+  ),
+  (
+    'Jocey Garcia',
+    'P912938021Y',
+    'French',
+    20,
+    5,
+    5
   );
