@@ -9,6 +9,7 @@ const HTTP_ERROR_CODES = {
   406: 'Not Acceptable',
   408: 'Request Timeout',
   409: 'Conflict',
+  422: 'Unprocessable Entity',
   500: 'Internal Server Error'
 };
 
@@ -17,9 +18,13 @@ const errorHandler = (err, req, res, next) => {
     if (err.expose) {
       res.status(err.statusCode).json({
         statusCode: err.statusCode,
-        error: HTTP_ERROR_CODES[err.statusCode || 400]
+        error: HTTP_ERROR_CODES[err.statusCode || 400],
+        message: err.message
       });
     } else {
+      // Should log non-expose errors
+      // system log...
+
       res.json({
         statusCode: 500,
         error: HTTP_ERROR_CODES[500]
