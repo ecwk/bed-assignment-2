@@ -6,6 +6,29 @@ const FlightModel = (database) => ({
     );
     return flights[0];
   },
+  findAll: async () => {
+    const [flights] = await database.query(
+      `
+        SELECT 
+          f.flight_id flightId,
+          f.flight_code flightCode,
+          f.aircraft_name aircraftName, 
+          o.name originAirportName,
+          o.airport_id  originAirportId,
+          d.name  destinationAirportName,
+          d.airport_id  destinationAirportId,
+          f.embark_date embarkDate,
+          f.travel_time travelTime,
+          f.price price,
+          f.created_on createdOn,
+          f.last_modified_on as lastModifiedOn
+        FROM flight AS f
+          INNER JOIN airport o ON f.origin_airport_id = o.airport_id
+          INNER JOIN airport d ON f.destination_airport_id = d.airport_id
+      `
+    );
+    return flights;
+  },
   findAllByDirection: async (originAirportId, destinationAirportId) => {
     const [flights] = await database.query(
       `
