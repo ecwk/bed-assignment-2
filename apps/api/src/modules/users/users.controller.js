@@ -1,7 +1,8 @@
 const express = require('express');
+const createError = require('http-errors');
 
-const { UserValidationSchema } = require('./user.validation');
 const { validateBody, protectedRoute } = require('../../common/middleware');
+const { UserValidationSchema } = require('./user.validation');
 const { UserModel } = require('./user.model');
 
 module.exports = (database) => {
@@ -12,32 +13,23 @@ module.exports = (database) => {
 
   router.get('/', async (req, res, next) => {
     try {
-      const users = await userModel.findAll();
-      res.status(200).json(
-        users.map((user) => ({
-          ...user,
-          password: undefined
-        }))
+      const users = (await userModel.findAll()).map(
+        ({ password, ...rest }) => rest
       );
+      res.json({ users });
     } catch (err) {
       next(err);
     }
   });
 
-  router.get('/:userid', async (req, res, next) => {
+  router.get('/:userId', async (req, res, next) => {
     try {
-      const user = await userModel.findOne('userid', req.params.userid);
+      const user = await userModel.findOne('user_id', req.params.userId);
       if (!user) {
-        res.status(404).json({
-          statusCode: 404,
-          message: 'Not Found',
-          error: 'User not found'
-        });
+        return next(createError(404, 'User not found'));
       } else {
-        res.status(200).json({
-          ...user,
-          password: undefined
-        });
+        const { password, ...rest } = user;
+        res.status(200).json({ user: rest });
       }
     } catch (err) {
       next(err);
@@ -59,32 +51,19 @@ module.exports = (database) => {
   );
 
   router.put(
-    '/:userid',
-    validateBody(UserValidationSchema(database).update),
+    '/:userId',
+    (req, res, next) =>
+      validateBody(UserValidationSchema(database, req.params.userId).update)(
+        req,
+        res,
+        next
+      ),
     async (req, res, next) => {
       try {
         const user = req.body;
-        let isDuplicate = false;
-        for (const field of ['username', 'email', 'contact']) {
-          const duplicate = await userModel.findOne(field, user[field]);
-          if (duplicate && String(duplicate.userid) !== req.params.userid) {
-            isDuplicate = true;
-            break;
-          }
-        }
-        if (!isDuplicate) {
-          // Put is idempotent, i.e. put requests to the same resource should return same response
-          await userModel.updateOrCreateByUserid(req.params.userid, user);
-          res.status(204).send();
-        } else {
-          // However, if a field value is already used by another resource, it should return a 422 response
-          res.status(422).json({
-            statusCode: 422,
-            message: 'Unprocessable Entity',
-            error:
-              'Username, email or contact, is already taken by another user'
-          });
-        }
+        // Put is idempotent, i.e. put requests to the same resource should return same response
+        await userModel.updateOrCreateByUserid(req.params.userId, user);
+        res.status(204).send();
       } catch (err) {
         next(err);
       }

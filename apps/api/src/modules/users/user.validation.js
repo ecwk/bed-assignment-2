@@ -1,8 +1,10 @@
 const yup = require('yup');
+const { isValidNumberForRegion } = require('libphonenumber-js');
 
+const { COUNTRIES, ROLES } = require('../../common/constants');
 const { UserModel } = require('./user.model');
 
-const UserValidationSchema = (database) => {
+const UserValidationSchema = (database, userId) => {
   const userModel = UserModel(database);
 
   const create = yup.object({
@@ -10,65 +12,203 @@ const UserValidationSchema = (database) => {
       .string()
       .test(
         'username-is-unique',
-        '${value} is already taken',
+        'Username is already taken',
         async (value) => {
           const user = await userModel.findOne('username', value);
           return !user;
         }
       )
-      .required(),
+      .required('Username must be defined'),
     email: yup
       .string()
-      .email()
-      .test(
-        'email-is-unique',
-        '${value} has already been registered',
-        async (value) => {
-          const user = await userModel.findOne('email', value);
-          return !user;
-        }
-      )
-      .required(),
+      .email('Email must be a valid email')
+      .test('email-is-unique', 'Email is already taken', async (value) => {
+        const user = await userModel.findOne('email', value);
+        return !user;
+      })
+      .required('Email must be defined'),
     contact: yup
       .string()
-      .matches(/^\d{7,15}$/, 'contact must be a valid phone number')
+      .test('contact-is-unique', 'Contact is already taken', async (value) => {
+        const user = await userModel.findOne('contact', value);
+        return !user;
+      })
       .test(
-        'contact-is-unique',
-        '${value} has already been registered',
-        async (value) => {
-          const user = await userModel.findOne('contact', value);
-          return !user;
+        'isValidContactFormat',
+        'Contact must follow the format: +[code] [number]',
+        (value) => {
+          const mobileCode = value?.match(/^\+.+(?=\s)/)?.[0];
+          const phoneNumber = value?.replace(mobileCode, '').trim();
+          if (!(mobileCode && phoneNumber)) {
+            return false;
+          }
+          return true;
         }
       )
-      .required(),
+      .test(
+        'isValidContact',
+        'Contact must be a valid number',
+        async (value) => {
+          const mobileCode = value?.match(/^\+.+(?=\s)/)?.[0];
+          const phoneNumber = value?.replace(mobileCode, '').trim();
+          const country = COUNTRIES.find(
+            (country) => mobileCode === country.mobileCode
+          );
+          if (!country) {
+            return false;
+          }
+          return isValidNumberForRegion(phoneNumber, country.code);
+        }
+      )
+      .required('Contact must be defined'),
     password: yup
       .string()
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/,
-        'password must contain at least 1 uppercase, lowercase, number and special character (!@#$%^&*)'
+      .matches(/(?=.*[a-z]).*/, {
+        message: 'Password must contain at least 1 lowercase letter'
+      })
+      .matches(/(?=.*[A-Z]).*/, {
+        message: 'Password must contain at least 1 uppercase letter'
+      })
+      .matches(/(?=.*[0-9]).*/, {
+        message: 'Password must contain at least 1 number'
+      })
+      .matches(/(?=.*[!@#$%^&*]).*/, {
+        message: 'Password must contain at least 1 special character (!@#$%^&*)'
+      })
+      .test(
+        'minimumLength',
+        'Password must contain at least 8 characters',
+        (value) => {
+          if (value) {
+            return value.length >= 8;
+          } else {
+            return true;
+          }
+        }
       )
-      .required(),
-    role: yup.string().oneOf(['Customer', 'Admin']).required(),
-    profile_pic_url: yup.string().url().notRequired()
+      .required('Password must be defined'),
+    role: yup
+      .string('Role must be a string')
+      .oneOf(
+        Object.values(ROLES),
+        `Role must be [${Object.values(ROLES).join(', ')}]`
+      )
+      .required('Role must be defined'),
+    profilePicUrl: yup
+      .string()
+      .url('profilePicUrl must be a valid URL')
+      .notRequired()
   });
 
-  const update = yup.object({
-    username: yup.string().required(),
-    email: yup.string().email().required(),
-    contact: yup
-      .string()
-      .matches(/^\d{7,15}$/, 'contact must be a valid phone number')
-      .required(),
-    password: yup
-      .string()
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/,
-        'password must contain at least 1 uppercase, lowercase, number and special character (!@#$%^&*)'
-      )
-      .required(),
-    role: yup.string().oneOf(['Customer', 'Admin']).required(),
-    profile_pic_url: yup.string().url().required()
-  });
+  const update = yup
+    .object({
+      username: yup
+        .string()
+        .test(
+          'username-is-unique',
+          'Username is already taken',
+          async (value) => {
+            const user = await userModel.findOne('username', value);
+            if (user && user.userId !== Number(userId)) {
+              return false;
+            }
+            return true;
+          }
+        )
+        .required('Username must be defined'),
+      email: yup
+        .string()
+        .email('Email must be a valid email')
+        .test('email-is-unique', 'Email is already taken', async (value) => {
+          const user = await userModel.findOne('email', value);
+          if (user && user.userId !== Number(userId)) {
+            return false;
+          }
+          return true;
+        })
+        .required('Email must be defined'),
+      contact: yup
+        .string()
+        .test(
+          'contact-is-unique',
+          'Contact is already taken',
+          async (value) => {
+            const user = await userModel.findOne('contact', value);
+            if (user && user.userId !== Number(userId)) {
+              return false;
+            }
+            return true;
+          }
+        )
+        .test(
+          'isValidContactFormat',
+          'Contact must follow the format: +[code] [number]',
+          (value) => {
+            const mobileCode = value?.match(/^\+.+(?=\s)/)?.[0];
+            const phoneNumber = value?.replace(mobileCode, '').trim();
+            if (!(mobileCode && phoneNumber)) {
+              return false;
+            }
+            return true;
+          }
+        )
+        .test(
+          'isValidContact',
+          'Contact must be a valid number',
+          async (value) => {
+            const mobileCode = value?.match(/^\+.+(?=\s)/)?.[0];
+            const phoneNumber = value?.replace(mobileCode, '').trim();
+            const country = COUNTRIES.find(
+              (country) => mobileCode === country.mobileCode
+            );
+            if (!country) {
+              return false;
+            }
+            return isValidNumberForRegion(phoneNumber, country.code);
+          }
+        )
+        .required('Contact must be defined'),
+      password: yup
+        .string()
+        .matches(/(?=.*[a-z]).*/, {
+          message: 'Password must contain at least 1 lowercase letter'
+        })
+        .matches(/(?=.*[A-Z]).*/, {
+          message: 'Password must contain at least 1 uppercase letter'
+        })
+        .matches(/(?=.*[0-9]).*/, {
+          message: 'Password must contain at least 1 number'
+        })
+        .matches(/(?=.*[!@#$%^&*]).*/, {
+          message:
+            'Password must contain at least 1 special character (!@#$%^&*)'
+        })
+        .test(
+          'minimumLength',
+          'Password must contain at least 8 characters',
+          (value) => {
+            if (value) {
+              return value.length >= 8;
+            } else {
+              return true;
+            }
+          }
+        )
+        .required('Password must be defined'),
+      role: yup
+        .string()
+        .oneOf(
+          Object.values(ROLES),
+          `Role must be [${Object.values(ROLES).join(', ')}]`
+        )
+        .required('Role must be defined'),
+      profilePicUrl: yup
+        .string()
+        .url('profilePicUrl must be a valid URL')
+        .notRequired()
+    })
+    .strict(true)
+    .noUnknown(true, 'No unknown fields are allowed');
 
   return {
     create,
