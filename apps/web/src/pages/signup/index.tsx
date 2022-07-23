@@ -18,6 +18,14 @@ const Signup: NextPage = () => {
 
   const textAccent = useColorModeValue('blue.200', 'brandGold.300');
 
+  const onLoadStartVideo = () => {
+    setIsLoading(true);
+  };
+
+  const onLoadedDataVideo = () => {
+    setIsLoading(false);
+  };
+
   return (
     <Flex>
       <Box
@@ -48,6 +56,8 @@ const Signup: NextPage = () => {
           minW="100%"
           minH="100%"
           objectFit="cover"
+          onLoadStart={onLoadStartVideo}
+          onLoadedData={onLoadedDataVideo}
         >
           <source
             src="https://cdn.cnoside.dev/bed-assignment-2.deploy.cnoside.dev/background-dark.mp4"
@@ -69,6 +79,8 @@ const Signup: NextPage = () => {
           minW="100%"
           minH="100%"
           objectFit="cover"
+          onLoadStart={onLoadStartVideo}
+          onLoadedData={onLoadedDataVideo}
         >
           <source
             src="https://cdn.cnoside.dev/bed-assignment-2.deploy.cnoside.dev/background-light.mp4"
