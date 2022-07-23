@@ -12,9 +12,11 @@ import { NextPage } from 'next';
 
 import { useAuth, SignupForm } from '@modules/auth';
 import { NAVBAR_HEIGHT } from '@common/constants';
+import { useLoadpage } from '@common/hooks';
 
 const Signup: NextPage = () => {
   const { colorMode } = useColorMode();
+  const { setIsLoading } = useLoadpage();
 
   const textAccent = useColorModeValue('blue.200', 'brandGold.300');
 
