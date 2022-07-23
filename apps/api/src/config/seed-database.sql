@@ -45,31 +45,44 @@ VALUES (
     '$argon2i$v=19$m=4096,t=3,p=1$yaW2TcEv1ttwlonBOZOTrQ$dAfskXLOMSPDUi9ECvoSXnU+RXX4zTmJyUjrT0uq+mU',
     'user',
     null
-  );
-INSERT INTO airport (`name`, `country`, `description`)
+  ),
+  (
+	'Wade Clint',
+    'wadeclint51@mail.com',
+    '+65 98009252',
+    '$argon2i$v=19$m=4096,t=3,p=1$yaW2TcEv1ttwlonBOZOTrQ$dAfskXLOMSPDUi9ECvoSXnU+RXX4zTmJyUjrT0uq+mU',
+    'admin',
+    null
+);
+INSERT INTO airport (`name`, `country`, `city`, `description`)
 VALUES (
     'Changi Airport',
+    'Singapore',
     'Singapore',
     "Changi is one of the world's most technologically-advanced airports. It is Asia’s first purpose-built airport, and was voted by Skytrax as the World's Best Airport in 2016"
   ),
   (
     'Kuala Lumpur International Airport',
     'Malaysia',
+    'Kuala Lumpur',
     'Kuala Lumpur International Airport (KLIA) is the seventh busiest airport in the world and second busiest in Asia. It handles approximately 70 international airlines & hundreds of domestic flights each day'
   ),
   (
     'Taoyuan International Airport',
     'Taiwan',
+    'Taipei',
     'Taiwan Taoyuan International Airport is the main international airport of Taiwan. It is used by over 30 million passengers to travel'
   ),
   (
     'Osaka International Airport',
     'Japan',
+    'Osaka',
     'Osaka International Airport (ITM) is an airport serving Osaka and Kansai region in Japan. The airport is also known as Itami Airport, and handles flights both domestically and internationally'
   ),
   (
     'Beijing Capital International Airport',
     'China',
+    'Beijing',
     "The Beijing Capital International Airport is the primary international airport serving Beijing, capital of the People' s Republic of China"
   );
 INSERT INTO flight (
@@ -87,6 +100,33 @@ VALUES (
     1,
     5,
     '2022/08/24 10:45',
+    '6 hours 20 mins',
+    750.00
+  ),
+  (
+    'SP0950',
+    'Boeing 737',
+    1,
+    4,
+    '2022/08/19 11:45',
+    '10 hours 20 mins',
+    1200.00
+  ),
+  (
+    'SP6541',
+    'Boeing 727',
+    1,
+    3,
+    '2022/08/18 12:00',
+    '6 hours 20 mins',
+    600.00
+  ),
+  (
+    'SP7345',
+    'Boeing 727',
+    1,
+    3,
+    '2022/08/30 8:45',
     '6 hours 20 mins',
     600.00
   ),
