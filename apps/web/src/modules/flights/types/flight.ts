@@ -1,0 +1,20 @@
+export type Flight = {
+  flightId: number;
+  flightCode: string;
+  aircraft: string;
+  originAirportId: number;
+  originAirportName: string;
+  originAirportCountry: string;
+  originAirportCity: string;
+  originAirportDescription: string;
+  destinationAirportId: number;
+  destinationAirportName: string;
+  destinationAirportCountry: string;
+  destinationAirportCity: string;
+  destinationAirportDescription: string;
+  embarkDate: string;
+  travelTime: string;
+  price: string;
+  createdOn: string;
+  lastModifiedOn: string;
+};
