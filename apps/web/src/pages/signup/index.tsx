@@ -1,4 +1,12 @@
-import { Flex, Box, Heading, Text, Link, useColorMode } from '@chakra-ui/react';
+import {
+  Flex,
+  Box,
+  Heading,
+  Text,
+  Link,
+  useColorMode,
+  useColorModeValue
+} from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { NextPage } from 'next';
 
@@ -7,6 +15,8 @@ import { NAVBAR_HEIGHT } from '@common/constants';
 
 const Signup: NextPage = () => {
   const { colorMode } = useColorMode();
+
+  const textAccent = useColorModeValue('blue.200', 'brandGold.300');
 
   return (
     <Flex>
@@ -72,7 +82,7 @@ const Signup: NextPage = () => {
         </Heading>
         <Heading my={4} size="3xl">
           Create Your Account
-          <Text as="span" color="brand.300">
+          <Text as="span" color={textAccent}>
             .
           </Text>
         </Heading>
@@ -81,7 +91,7 @@ const Signup: NextPage = () => {
           <Text mt={6} textAlign="center">
             Already created an account?{' '}
             <NextLink href="/login" passHref>
-              <Link color="red.300">Login</Link>
+              <Link color={textAccent}>Login</Link>
             </NextLink>
             .
           </Text>

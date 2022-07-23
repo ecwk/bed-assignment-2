@@ -9,7 +9,8 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  FormHelperText
+  FormHelperText,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
@@ -79,6 +80,11 @@ export const LoginForm = (props: LoginFormProps) => {
     loginMutation.mutate(loginFormData);
   });
 
+  const colorModeButton = useColorModeValue(
+    'lightModeButton',
+    'darkModeButton'
+  );
+
   return (
     <Flex as="form" flexDir="column" gap={5} onSubmit={onSubmit} {...props}>
       <FormControl isInvalid={loginMutation.isError}>
@@ -103,10 +109,11 @@ export const LoginForm = (props: LoginFormProps) => {
       </FormControl>
       <Button
         type="submit"
-        colorScheme="brand"
+        layerStyle={colorModeButton}
         size="lg"
         isLoading={loginMutation.isLoading}
         {...(loginMutation.isSuccess && {
+          layerStyle: undefined,
           colorScheme: 'green'
         })}
       >

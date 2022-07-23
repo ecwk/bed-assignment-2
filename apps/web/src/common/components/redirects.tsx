@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '@modules/auth';
 
-const protectedRoutes = ['/dashboard'];
+const protectedRoutes = ['/dashboard', '/flights'];
 const loginSignupRoutes = ['/login', '/signup'];
 
 export const Redirects = () => {
@@ -14,6 +14,7 @@ export const Redirects = () => {
     const path = router.pathname;
 
     // temp
+    // TODO: Add home page
     if (path === '/') {
       router.push('/dashboard');
     }

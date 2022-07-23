@@ -22,6 +22,8 @@ const Login: NextPage = () => {
   const { user, login, logout } = useAuth();
   const { colorMode } = useColorMode();
 
+  const textAccent = useColorModeValue('blue.200', 'brandGold.300');
+
   return (
     <Flex minH={`calc(100vh - ${NAVBAR_HEIGHT})`}>
       <Box
@@ -87,12 +89,10 @@ const Login: NextPage = () => {
         ml="200px"
         width="100%"
       >
-        <Heading size="md" color="brand">
-          LOGIN
-        </Heading>
+        <Heading size="md">LOGIN</Heading>
         <Heading my={4} size="3xl">
           Welcome back
-          <Text as="span" color="brand.300">
+          <Text as="span" color={textAccent}>
             .
           </Text>
         </Heading>
@@ -101,7 +101,7 @@ const Login: NextPage = () => {
           <Text mt={6} textAlign="center">
             Don't have an account yet?{' '}
             <NextLink href="/signup" passHref>
-              <Link color="brand.200">Sign Up</Link>
+              <Link color={textAccent}>Sign Up</Link>
             </NextLink>
             .
           </Text>

@@ -104,6 +104,11 @@ export const SignupForm = (props: FlexProps) => {
     signupMutation.mutate(signupFormData)
   );
 
+  const colorModeButton = useColorModeValue(
+    'lightModeButton',
+    'darkModeButton'
+  );
+
   return (
     <Flex as="form" flexDir="column" gap={5} onSubmit={onSubmit} {...props}>
       <FormControl isInvalid={!!errors.email}>
@@ -210,10 +215,11 @@ export const SignupForm = (props: FlexProps) => {
       <Button
         mt={4}
         type="submit"
-        colorScheme="brand"
+        layerStyle={colorModeButton}
         size="lg"
         isLoading={signupMutation.isLoading}
         {...(signupMutation.isSuccess && {
+          layerStyle: undefined,
           colorScheme: 'green'
         })}
       >

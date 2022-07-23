@@ -31,6 +31,11 @@ export const Navbar = () => {
   const { user, logout } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
 
+  const colorModeButton = useColorModeValue(
+    'lightModeButton',
+    'darkModeButton'
+  );
+
   return (
     <Flex py={4} px={10} height={NAVBAR_HEIGHT} alignItems="center" gap={6}>
       <Logo />
@@ -42,7 +47,14 @@ export const Navbar = () => {
           aria-label="Toggle dark mode"
           onClick={toggleColorMode}
         />
-        <Button colorScheme="brand">Book A Flight</Button>
+        <NextLink href={user === null ? '/signup' : '/flights'} passHref>
+          <Button
+            as={Link}
+            layerStyle={colorModeButton}
+          >
+            Book A Flight
+          </Button>
+        </NextLink>
         <IconButton
           icon={<BiSupport />}
           aria-label="Notifications"
