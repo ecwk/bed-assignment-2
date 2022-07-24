@@ -18,11 +18,27 @@ module.exports = (database) => {
   });
 
   router.get(
-    '/direct/:originAirportId/:destinationAirportId',
+    '/direct/one-way/:originAirportId/:destinationAirportId',
     async (req, res, next) => {
       try {
         const { originAirportId, destinationAirportId } = req.params;
-        const flights = await flightModel.findAllByDirection(
+        const flights = await flightModel.findDirectOneWayFlights(
+          originAirportId,
+          destinationAirportId
+        );
+        res.status(200).json({ flights });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.get(
+    '/direct/two-way/:originAirportId/:destinationAirportId',
+    async (req, res, next) => {
+      try {
+        const { originAirportId, destinationAirportId } = req.params;
+        const flights = await flightModel.findDirectTwoWayFlights(
           originAirportId,
           destinationAirportId
         );

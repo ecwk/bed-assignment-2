@@ -1,4 +1,5 @@
 const express = require('express');
+const createError = require('http-errors');
 
 const { AirportValidationSchema } = require('./airport.validation');
 const { validateBody, protectedRoute } = require('../../common/middleware');
@@ -12,6 +13,22 @@ module.exports = (database) => {
     try {
       const airports = await airportModel.findAll();
       res.json({ airports });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/:airportId', async (req, res, next) => {
+    try {
+      const airport = await airportModel.findOne(
+        'airport_id',
+        req.params.airportId
+      );
+      if (!airport) {
+        return next(createError(404, 'Airport not found'));
+      } else {
+        res.status(200).json({ airport });
+      }
     } catch (err) {
       next(err);
     }

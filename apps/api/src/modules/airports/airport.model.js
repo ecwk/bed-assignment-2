@@ -11,12 +11,24 @@ const AirportModel = (database) => ({
           a.created_on createdOn,
           a.last_modified_on lastModifiedOn
         FROM airport a
-      `);
+      `
+    );
     return airports;
   },
   findOne: async (key, value) => {
     const [airports] = await database.query(
-      'SELECT * FROM airport WHERE ?? = ?',
+      `
+        SELECT
+          airport_id airportId,
+          name,
+          country,
+          city,
+          description,
+          created_on createdOn,
+          last_modified_on lastModifiedOn
+        FROM airport
+        WHERE ?? = ?
+      `,
       [key, value]
     );
     return airports[0];

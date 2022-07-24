@@ -14,20 +14,23 @@ const FlightModel = (database) => ({
         SELECT 
           f.flight_id flightId,
           f.flight_code flightCode,
+          f.departure_date departureDate,
+          f.travel_time travelTime,
+          f.price price,
           f.aircraft_name aircraftName, 
+
           o.airport_id originAirportId,
           o.name originAirportName,
           o.country originAirportCountry,
           o.city originAirportCity,
           o.description originAirportDescription,
+
           d.airport_id destinationAirportId,
           d.name destinationAirportName,
           d.country destinationAirportCountry,
           d.city destinationAirportCity,
           d.description destinationAirportDescription,
-          f.embark_date embarkDate,
-          f.travel_time travelTime,
-          f.price price,
+
           f.created_on createdOn,
           f.last_modified_on as lastModifiedOn
         FROM flight AS f
@@ -37,34 +40,50 @@ const FlightModel = (database) => ({
     );
     return flights;
   },
-  findAllByDirection: async (originAirportId, destinationAirportId) => {
+  findDirectOneWayFlights: async (originAirportId, destinationAirportId) => {
     const [flights] = await database.query(
       `
-          SELECT
+        SELECT
+          flight_id flightId,
+          flight_code flightCode,
+          departure_date departureDate,
+          travel_time travelTime,
+          aircraft_name aircraftName,
+          price price
+        FROM flight
+        WHERE
+          origin_airport_id = ?
+          AND destination_airport_id = ?
+      `,
+      [originAirportId, destinationAirportId]
+    );
+    return flights;
+  },
+  findDirectTwoWayFlights: async (originAirportId, destinationAirportId) => {
+    const [flights] = await database.query(
+      `
+        SELECT
           f.flight_id flightId,
           f.flight_code flightCode,
-          f.aircraft_name aircraftName, 
-          f.embark_date embarkDate,
+          f.departure_date departureDate,
           f.travel_time travelTime,
+          f.aircraft_name aircraftName,
           f.price price,
-          f.created_on createdOn,
-          f.last_modified_on lastModifiedOn,
-          o.airport_id  originAirportId,
-          o.name originAirportName,
-          o.country originAirportCountry,
-          o.city originAirportCity,
-          o.description originAirportDescription,
-          d.airport_id destinationAirportId,
-          d.name destinationAirportName,
-          d.country destinationAirportCountry,
-          d.city destinationAirportCity,
-          d.description destinationAirportDescription
-        FROM flight AS f
-          INNER JOIN airport o ON f.origin_airport_id = o.airport_id
-          INNER JOIN airport d ON f.destination_airport_id = d.airport_id
+
+          fReturn.flight_id returnFlightId,
+          fReturn.flight_code returnFlightCode,
+          fReturn.departure_date returnDepartureDate,
+          fReturn.travel_time returnTravelTime,
+          fReturn.aircraft_name returnAircraftName,
+          fReturn.price returnPrice,
+
+          f.price + fReturn.price totalPrice
+        FROM
+          flight AS f
+          INNER JOIN flight fReturn ON f.origin_airport_id = fReturn.destination_airport_id
         WHERE
-          o.airport_id = ?
-          AND d.airport_id = ?
+          f.origin_airport_id = ?
+          AND fReturn.origin_airport_id = ?
       `,
       [originAirportId, destinationAirportId]
     );
@@ -102,7 +121,7 @@ const FlightModel = (database) => ({
     const results = await database.query(
       `
         INSERT INTO flight
-          (flightCode, aircraft, originAirport, destinationAirport, embarkDate, travelTime, price)
+          (flightCode, aircraft, originAirport, destinationAirport, departureDate, travelTime, price)
         VALUES
           (?, ?, ?, ?, ?, ?, ?);
       `,
@@ -111,7 +130,7 @@ const FlightModel = (database) => ({
         flight.aircraft,
         flight.originAirport,
         flight.destinationAirport,
-        flight.embarkDate,
+        flight.departureDate,
         flight.travelTime,
         flight.price
       ]
