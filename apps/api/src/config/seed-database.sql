@@ -138,7 +138,7 @@ INSERT INTO flight (
     `aircraft_name`,
     `origin_airport_id`,
     `destination_airport_id`,
-    `embark_date`,
+    `departure_date`,
     `travel_time`,
     `price`
   )
@@ -177,6 +177,15 @@ VALUES (
     '2022/08/30 05:45',
     '2 hours 0 mins',
     450.00
+  ),
+  (
+    'SP9132',
+    'Boeing 777',
+    2,
+    1,
+    '2022/09/05 22:30',
+    '2 hours 30 mins',
+    375.00
   ),
   (
     'SP9122',
