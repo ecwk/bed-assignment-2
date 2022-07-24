@@ -9,6 +9,8 @@ import {
 interface LoadpageContext {
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
+  isTimeout: boolean;
+  setIsTimeout: (isTimeout: boolean) => void;
 }
 
 export const LoadpageContext = createContext<LoadpageContext>(
@@ -17,9 +19,12 @@ export const LoadpageContext = createContext<LoadpageContext>(
 
 const useLoadpageProvider = (): LoadpageContext => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isTimeout, setIsTimeout] = useState(false);
 
   return {
     isLoading,
+    isTimeout,
+    setIsTimeout,
     setIsLoading
   };
 };
