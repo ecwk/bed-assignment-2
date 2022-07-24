@@ -11,7 +11,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { SelectDate } from './select-date';
 import { type Airport } from '@common/types';
 import { SelectLocation } from './select-location';
-import { FlightSearchOptions } from './flight-search-options';
+import { Options } from './options';
 
 export type FlightSearchFormData = {
   from: string;
@@ -67,7 +67,7 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
           <SelectDate />
         </GridItem>
         <GridItem area="options">
-          <FlightSearchOptions />
+          <Options />
         </GridItem>
         <GridItem area="button">
           <Button

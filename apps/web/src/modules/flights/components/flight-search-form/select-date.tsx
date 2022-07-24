@@ -15,7 +15,7 @@ export const SelectDate = ({ ...stackProps }: SelectDateProps) => {
   const { field: registerDepartureDate } = useController({
     control,
     name: 'departureDate',
-    defaultValue: dayjs(new Date()).add(1, 'week').toDate()
+    defaultValue: new Date()
   });
   const { field: registerReturnDate } = useController({
     control,

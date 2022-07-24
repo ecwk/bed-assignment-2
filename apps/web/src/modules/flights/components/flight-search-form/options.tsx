@@ -11,7 +11,7 @@ import { type FlightSearchFormData } from './flight-search-form';
 
 type FlightSearchFormProps = BoxProps & {};
 
-export const FlightSearchOptions = ({ ...boxProps }: FlightSearchFormProps) => {
+export const Options = ({ ...boxProps }: FlightSearchFormProps) => {
   const { register } = useFormContext<FlightSearchFormData>();
 
   return (
