@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '@modules/auth';
 
-const protectedRoutes = ['/dashboard', '/flights'];
+const protectedRoutes = ['/dashboard'];
 const loginSignupRoutes = ['/login', '/signup'];
 
 export const Redirects = () => {
@@ -13,7 +13,6 @@ export const Redirects = () => {
   useEffect(() => {
     const path = router.pathname;
 
-    // temp
     // TODO: Add home page
     if (path === '/') {
       router.push('/dashboard');
@@ -23,7 +22,8 @@ export const Redirects = () => {
       if (!user && protectedRoutes.includes(path)) {
         router.push('/login');
       } else if (user && loginSignupRoutes.includes(path)) {
-        router.push('/dashboard');
+        // only go back if previous path is in the same domain
+        router.push('/dashboard')
       } else {
       }
     }

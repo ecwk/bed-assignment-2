@@ -14,7 +14,8 @@ import {
   HStack,
   Link,
   useColorMode,
-  useColorModeValue
+  useColorModeValue,
+  Box
 } from '@chakra-ui/react';
 import { VscBell } from 'react-icons/vsc';
 import { BiSupport } from 'react-icons/bi';
@@ -38,7 +39,11 @@ export const Navbar = () => {
 
   return (
     <Flex py={4} px={10} height={NAVBAR_HEIGHT} alignItems="center" gap={6}>
-      <Logo />
+      <NextLink href="/login" passHref>
+        <Link>
+          <Logo />
+        </Link>
+      </NextLink>
       <Spacer />
       <HStack spacing={4}>
         <IconButton
@@ -47,11 +52,8 @@ export const Navbar = () => {
           aria-label="Toggle dark mode"
           onClick={toggleColorMode}
         />
-        <NextLink href={user === null ? '/signup' : '/flights'} passHref>
-          <Button
-            as={Link}
-            layerStyle={colorModeButton}
-          >
+        <NextLink href={user === null ? '/signup' : '/search'} passHref>
+          <Button as={Link} layerStyle={colorModeButton}>
             Book A Flight
           </Button>
         </NextLink>

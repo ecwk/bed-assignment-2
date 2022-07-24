@@ -52,7 +52,7 @@ export const colors = {
   }
 };
 
-export const theme = extendTheme({
+export const chakraTheme = extendTheme({
   colors,
   layerStyles: {
     lightModeButton: {
