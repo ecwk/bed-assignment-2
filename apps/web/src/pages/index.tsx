@@ -1,8 +1,14 @@
 import type { NextPage } from 'next';
 
-import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Heading, Text } from '@chakra-ui/react';
 
 const Home: NextPage = () => {
+  return (
+    <Center>
+      <Heading mt="200px" size="3xl">Home Page</Heading>
+    </Center>
+  );
+
   return (
     <Flex flexDir="column" alignItems="center">
       <Flex
