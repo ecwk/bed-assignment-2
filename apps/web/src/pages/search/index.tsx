@@ -1,34 +1,18 @@
 import {
-  Button,
   Flex,
-  Grid,
-  GridItem,
-  Heading,
-  Checkbox,
-  useColorModeValue,
-  HStack,
-  useTheme,
-  VStack,
   Box,
-  Text,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel
 } from '@chakra-ui/react';
-import { GetServerSideProps, NextPage } from 'next';
 import { AxiosError } from 'axios';
-import { forwardRef, useState, type ComponentPropsWithoutRef } from 'react';
+import { GetServerSideProps, NextPage } from 'next';
 
-import { server } from '@config/axios';
-import { type Airport } from '@common/types';
 import { FlightSearchForm } from '@modules/flights';
-import { BackgroundVideo } from '@common/components';
-
-type ServerSideProps = {
-  airports: Airport[] | null;
-};
+import { type Airport } from '@common/types';
+import { server } from '@config/axios';
 
 type BookFlightProps = ServerSideProps & {};
 
@@ -59,6 +43,10 @@ const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
       </Box>
     </Flex>
   );
+};
+
+type ServerSideProps = {
+  airports: Airport[] | null;
 };
 
 export const getServerSideProps: GetServerSideProps<

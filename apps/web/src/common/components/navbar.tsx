@@ -52,7 +52,7 @@ export const Navbar = () => {
           aria-label="Toggle dark mode"
           onClick={toggleColorMode}
         />
-        <NextLink href={user === null ? '/signup' : '/search'} passHref>
+        <NextLink href='/search' passHref>
           <Button as={Link} layerStyle={colorModeButton}>
             Book A Flight
           </Button>

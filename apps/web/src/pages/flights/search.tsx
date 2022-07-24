@@ -94,25 +94,19 @@ export const getServerSideProps: GetServerSideProps<
   ServerSideProps,
   ServerSideQueries
 > = async (ctx) => {
-  const token = ctx.req.cookies.token;
   const { from, to, departureDate, returnDate, isDirect } = ctx.query;
 
   let flights: Flight[] | null;
-  if (!token) {
-    flights = null;
-  } else {
-    try {
-      server.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const res = await server.get(
-        `/flights/direct/${from}/${to}?departureDate=${departureDate}&returnDate=${returnDate}&isDirect=${isDirect}`
-      );
-      flights = res.data?.flights ?? null;
-    } catch (err) {
-      if (!(err instanceof AxiosError)) {
-        console.error(err);
-      }
-      flights = null;
+  try {
+    const res = await server.get(
+      `/flights/direct/${from}/${to}?departureDate=${departureDate}&returnDate=${returnDate}&isDirect=${isDirect}`
+    );
+    flights = res.data?.flights ?? null;
+  } catch (err) {
+    if (!(err instanceof AxiosError)) {
+      console.error(err);
     }
+    flights = null;
   }
   return {
     props: {
