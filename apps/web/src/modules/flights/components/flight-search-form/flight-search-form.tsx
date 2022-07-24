@@ -17,9 +17,9 @@ export type FlightSearchFormData = {
   from: string;
   to: string;
   departureDate: Date;
-  isOneWay: boolean;
-  isDirect: boolean;
   returnDate?: Date | null;
+  isTwoWay: boolean;
+  isDirect: boolean;
 };
 
 type FlightSearchFormProps = {
@@ -36,13 +36,15 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
   );
 
   const onSubmit = methods.handleSubmit(
-    ({ from, to, departureDate, returnDate, isDirect }) => {
-      let url = '/flights/search?';
+    ({ from, to, departureDate, returnDate, isTwoWay, isDirect }) => {
+      let url = '/search/flights?';
       url += `from=${from}&`;
       url += `to=${to}&`;
       url += `departureDate=${departureDate.toISOString()}&`;
       url += `returnDate=${returnDate}&`;
-      url += `isDirect=${isDirect}`;
+      url += `isTwoWay=${isTwoWay}&`;
+      url += `isDirect=${isDirect}&`;
+      url = url.replace(/&$/, '');
       router.push(url);
     }
   );
@@ -60,7 +62,7 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
         onSubmit={onSubmit}
       >
         <GridItem area="heading" mt={5} mb={10}>
-          <Heading w="100%">Book A Flight</Heading>
+          <Heading w="100%">Find Your Flight</Heading>
         </GridItem>
         <GridItem area="input" display="flex" flexDir="column" gap={6}>
           <SelectLocation airports={airports} />

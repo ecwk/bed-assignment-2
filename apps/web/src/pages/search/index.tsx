@@ -10,17 +10,7 @@ type BookFlightProps = ServerSideProps & {};
 
 const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
   return (
-    <Tabs
-      sx={{
-        my: '80px',
-        maxW: '1000px',
-        w: '100%',
-        p: 10,
-        mx: 'auto',
-        background: 'brandPaleBlue.700',
-        borderRadius: 'xl'
-      }}
-    >
+    <Tabs isFitted sx={sx.tabs}>
       <TabList>
         <Tab>Flight</Tab>
         <Tab>Airports</Tab>
@@ -35,6 +25,18 @@ const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
       </TabPanels>
     </Tabs>
   );
+};
+
+const sx = {
+  tabs: {
+    my: '80px',
+    maxW: '1000px',
+    w: '100%',
+    p: 10,
+    mx: 'auto',
+    background: 'brandPaleBlue.700',
+    borderRadius: 'xl'
+  }
 };
 
 type ServerSideProps = {

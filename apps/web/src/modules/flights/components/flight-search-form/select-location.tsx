@@ -45,6 +45,7 @@ export const SelectLocation = ({
         searchable
         clearable
         required
+        maxDropdownHeight={200}
         sx={{
           label: {
             color: theme.colors.gray[200],
@@ -65,6 +66,7 @@ export const SelectLocation = ({
         searchable
         clearable
         required
+        maxDropdownHeight={200}
         sx={{
           label: {
             color: theme.colors.gray[200],

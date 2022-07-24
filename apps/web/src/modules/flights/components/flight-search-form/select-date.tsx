@@ -11,7 +11,7 @@ type SelectDateProps = StackProps & {};
 export const SelectDate = ({ ...stackProps }: SelectDateProps) => {
   const theme = useTheme();
   const { control, setValue } = useFormContext<FlightSearchFormData>();
-  const { isOneWay } = useWatch({ control });
+  const { isTwoWay } = useWatch({ control });
   const { field: registerDepartureDate } = useController({
     control,
     name: 'departureDate',
@@ -23,12 +23,12 @@ export const SelectDate = ({ ...stackProps }: SelectDateProps) => {
   });
 
   useEffect(() => {
-    if (isOneWay) {
-      setValue('returnDate', null);
-    } else {
+    if (isTwoWay) {
       setValue('returnDate', dayjs(new Date()).add(1, 'week').toDate());
+    } else {
+      setValue('returnDate', null);
     }
-  }, [isOneWay]);
+  }, [isTwoWay]);
 
   return (
     <HStack spacing={5} {...stackProps}>
@@ -64,7 +64,7 @@ export const SelectDate = ({ ...stackProps }: SelectDateProps) => {
         }}
         placeholder="Pick date"
         label="Return Date"
-        disabled={isOneWay}
+        disabled={!isTwoWay}
         minDate={new Date()}
         maxDate={dayjs(new Date()).add(1, 'year').toDate()}
         inputFormat="YYYY/MM/DD"
