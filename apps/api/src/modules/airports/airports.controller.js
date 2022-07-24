@@ -8,8 +8,6 @@ module.exports = (database) => {
   const router = express.Router();
   const airportModel = AirportModel(database);
 
-  router.use(protectedRoute);
-
   router.get('/', async (req, res, next) => {
     try {
       const airports = await airportModel.findAll();

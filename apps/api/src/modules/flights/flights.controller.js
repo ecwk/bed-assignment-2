@@ -1,14 +1,12 @@
 const express = require('express');
 
-const { validateBody, protectedRoute } = require('../../common/middleware');
+const { validateBody } = require('../../common/middleware');
 const { FlightValidationSchema } = require('./flight.validation');
 const { FlightModel } = require('./flight.model');
 
 module.exports = (database) => {
   const router = express.Router();
   const flightModel = FlightModel(database);
-
-  router.use(protectedRoute);
 
   router.get('/', async (req, res, next) => {
     try {
