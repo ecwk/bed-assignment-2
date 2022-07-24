@@ -21,7 +21,7 @@ CREATE TABLE airport (
   `name` VARCHAR(255) NOT NULL,
   `country` VARCHAR(255) NOT NULL,
   `city` VARCHAR(255) NOT NULL,
-  `description` VARCHAR(255),
+  `description` TEXT NOT NULL,
   `created_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `last_modified_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`airport_id`),

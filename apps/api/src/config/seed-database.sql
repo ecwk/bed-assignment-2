@@ -47,43 +47,91 @@ VALUES (
     null
   ),
   (
-	'Wade Clint',
+    'Wade Clint',
     'wadeclint51@mail.com',
     '+65 98009252',
     '$argon2i$v=19$m=4096,t=3,p=1$yaW2TcEv1ttwlonBOZOTrQ$dAfskXLOMSPDUi9ECvoSXnU+RXX4zTmJyUjrT0uq+mU',
     'admin',
     null
-);
+  );
 INSERT INTO airport (`name`, `country`, `city`, `description`)
 VALUES (
     'Changi Airport',
     'Singapore',
     'Singapore',
-    "Changi is one of the world's most technologically-advanced airports. It is Asia’s first purpose-built airport, and was voted by Skytrax as the World's Best Airport in 2016"
+    "Changi is one of the world's most technologically-advanced airports. It is Asia’s first purpose-built airport, and was voted by Skytrax as the World's Best Airport in 2016."
   ),
   (
     'Kuala Lumpur International Airport',
     'Malaysia',
     'Kuala Lumpur',
-    'Kuala Lumpur International Airport (KLIA) is the seventh busiest airport in the world and second busiest in Asia. It handles approximately 70 international airlines & hundreds of domestic flights each day'
+    'Kuala Lumpur International Airport (KLIA) is the seventh busiest airport in the world and second busiest in Asia. It handles approximately 70 international airlines & hundreds of domestic flights each day.'
   ),
   (
     'Taoyuan International Airport',
     'Taiwan',
     'Taipei',
-    'Taiwan Taoyuan International Airport is the main international airport of Taiwan. It is used by over 30 million passengers to travel'
+    'Taiwan Taoyuan International Airport is the main international airport of Taiwan. It is used by over 30 million passengers to travel.'
   ),
   (
     'Osaka International Airport',
     'Japan',
     'Osaka',
-    'Osaka International Airport (ITM) is an airport serving Osaka and Kansai region in Japan. The airport is also known as Itami Airport, and handles flights both domestically and internationally'
+    'Osaka International Airport (ITM) is an airport serving Osaka and Kansai region in Japan. The airport is also known as Itami Airport, and handles flights both domestically and internationally.'
   ),
   (
     'Beijing Capital International Airport',
     'China',
     'Beijing',
-    "The Beijing Capital International Airport is the primary international airport serving Beijing, capital of the People' s Republic of China"
+    "The Beijing Capital International Airport is the primary international airport serving Beijing, capital of the People's Republic of China."
+  ),
+  (
+    'John F. Kennedy International Airport',
+    'United States',
+    'New York',
+    "John F. Kennedy International Airport is the main international airport serving New York City. The airport is the busiest of the six airports in the New York airport system, the 13th-busiest airport in the United States, and the busiest international air passenger gateway into North America."
+  ),
+  (
+    'Frankfurt International Airport',
+    'Germany',
+    'Frankfurt',
+    'Frankfurt International Airport (FRA) is the main international airport in Germany. It is the busiest airport in Germany, and the second busiest in Europe.'
+  ),
+  (
+    'London Heathrow Airport',
+    'United Kingdom',
+    'London',
+    'London Heathrow Airport (LHR) is the main international airport in the United Kingdom. It is the busiest airport in the United Kingdom, and the second busiest in Europe.'
+  ),
+  (
+    'Hong Kong International Airport',
+    'Hong Kong',
+    'Hong Kong',
+    'Hong Kong International Airport (HKG) is the main international airport in Hong Kong. It is the busiest airport in Hong Kong, and the second busiest in Asia.'
+  ),
+  (
+    'Shanghai International Airport',
+    'China',
+    'Shanghai',
+    'Shanghai International Airport (SHA) is the main international airport in China. It is the busiest airport in China, and the second busiest in Asia.'
+  ),
+  (
+    "Shenzhen Bao'an International Airport",
+    'China',
+    'Shenzhen',
+    "Shenzhen Bao'an International Airport is the airport serving Shenzhen, Guangdong Province. It is located on the east bank of the Pearl River near Huangtian and Fuyong villages in Bao'an District, and is 32 km northwest of the city centre."
+  ),
+  (
+    'Tokyo International Airport',
+    'Japan',
+    'Tokyo',
+    "Tokyo International Airport, commonly known as Haneda Airport, Tokyo Haneda Airport, and Haneda International Airport, is one of two international airports serving the Greater Tokyo Area, the other one being Narita International Airport."
+  ),
+  (
+    'Toronto Pearson International Airport',
+    'Canada',
+    'Toronto',
+    "Toronto Pearson International Airport is the main airport serving Toronto, its metropolitan area, and the surrounding region known as the Golden Horseshoe."
   );
 INSERT INTO flight (
     `flight_code`,
@@ -100,8 +148,26 @@ VALUES (
     1,
     5,
     '2022/08/24 10:45',
-    '6 hours 20 mins',
+    '7 hours 20 mins',
     750.00
+  ),
+  (
+    'SP9121',
+    'Boeing 737',
+    1,
+    5,
+    '2022/08/24 15:45',
+    '9 hours 45 mins',
+    750.00
+  ),
+  (
+    'SP9122',
+    'Boeing 777',
+    1,
+    5,
+    '2022/08/24 21:45',
+    '6 hours 20 mins',
+    900.00
   ),
   (
     'SP0950',
@@ -125,10 +191,10 @@ VALUES (
     'SP7345',
     'Boeing 727',
     1,
-    3,
+    12,
     '2022/08/30 8:45',
-    '6 hours 20 mins',
-    600.00
+    '15 hours 20 mins',
+    1200.00
   ),
   (
     'SP6334',
@@ -165,6 +231,24 @@ VALUES (
     '2022/08/19 12:00 ',
     '6 hours 50 mins ',
     540.00
+  ),
+  (
+    'SP4901',
+    'Boeing 777',
+    11,
+    1,
+    '2022/08/24 08:30',
+    '12 hours 50 mins',
+    1440.00
+  ),
+  (
+    'SP4902',
+    'Boeing 777',
+    8,
+    5,
+    '2022/08/24 19:30',
+    '9 hours 0 mins',
+    900.00
   );
 INSERT INTO booking (
     `name`,

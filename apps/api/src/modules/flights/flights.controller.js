@@ -19,6 +19,43 @@ module.exports = (database) => {
     }
   });
 
+  router.get(
+    '/direct/:originAirportId/:destinationAirportId',
+    async (req, res, next) => {
+      try {
+        const { originAirportId, destinationAirportId } = req.params;
+        const flights = await flightModel.findAllByDirection(
+          originAirportId,
+          destinationAirportId
+        );
+        res.status(200).json({ flights });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.get(
+    '/layover/:originAirportId/:destinationAirportId',
+    async (req, res, next) => {
+      try {
+        const { originAirportId, destinationAirportId } = req.params;
+        const flights = await flightModel.findAllTransferFlights(
+          originAirportId,
+          destinationAirportId
+        );
+        res.status(200).json(
+          flights.map((flight) => ({
+            ...flight,
+            'Total price': Number(flight['Total price'])
+          }))
+        );
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
   router.post(
     '/',
     validateBody(FlightValidationSchema(database)),
@@ -54,48 +91,6 @@ module.exports = (database) => {
       next(err);
     }
   });
-
-  router.get(
-    '/direction/:originAirportId/:destinationAirportId',
-    async (req, res, next) => {
-      try {
-        const { originAirportId, destinationAirportId } = req.params;
-        const flights = await flightModel.findAllByDirection(
-          originAirportId,
-          destinationAirportId
-        );
-        res.status(200).json(
-          flights.map((flight) => ({
-            ...flight,
-            price: Number(flight.price)
-          }))
-        );
-      } catch (err) {
-        next(err);
-      }
-    }
-  );
-
-  router.get(
-    '/transfer/:originAirportId/:destinationAirportId',
-    async (req, res, next) => {
-      try {
-        const { originAirportId, destinationAirportId } = req.params;
-        const flights = await flightModel.findAllTransferFlights(
-          originAirportId,
-          destinationAirportId
-        );
-        res.status(200).json(
-          flights.map((flight) => ({
-            ...flight,
-            'Total price': Number(flight['Total price'])
-          }))
-        );
-      } catch (err) {
-        next(err);
-      }
-    }
-  );
 
   return router;
 };

@@ -1,6 +1,17 @@
 const AirportModel = (database) => ({
   findAll: async () => {
-    const [airports] = await database.query('SELECT * FROM airport');
+    const [airports] = await database.query(
+      `
+        SELECT
+          a.airport_id airportId,
+          a.name name,
+          a.country country,
+          a.city city,
+          a.description description,
+          a.created_on createdOn,
+          a.last_modified_on lastModifiedOn
+        FROM airport a
+      `);
     return airports;
   },
   findOne: async (key, value) => {

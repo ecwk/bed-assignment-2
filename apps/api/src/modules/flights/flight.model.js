@@ -1,3 +1,5 @@
+let sql = (string) => string;
+
 const FlightModel = (database) => ({
   findOne: async (key, value) => {
     const [flights] = await database.query(
@@ -13,13 +15,13 @@ const FlightModel = (database) => ({
           f.flight_id flightId,
           f.flight_code flightCode,
           f.aircraft_name aircraftName, 
-          o.airport_id  originAirportId,
+          o.airport_id originAirportId,
           o.name originAirportName,
           o.country originAirportCountry,
           o.city originAirportCity,
           o.description originAirportDescription,
-          d.airport_id  destinationAirportId,
-          d.name  destinationAirportName,
+          d.airport_id destinationAirportId,
+          d.name destinationAirportName,
           d.country destinationAirportCountry,
           d.city destinationAirportCity,
           d.description destinationAirportDescription,
@@ -38,24 +40,31 @@ const FlightModel = (database) => ({
   findAllByDirection: async (originAirportId, destinationAirportId) => {
     const [flights] = await database.query(
       `
-        SELECT
-          flight.flightid,
-          flight.flightCode,
-          flight.aircraft,
-          origin.name AS originAirport,
-          destination.name AS destinationAirport,
-          flight.embarkDate,
-          flight.travelTime,
-          flight.price,
-          flight.created_at,
-          flight.last_updated_at
-        FROM
-          flight
-          INNER JOIN airport origin ON origin.airportid = flight.originAirport
-          INNER JOIN airport destination ON destination.airportid = flight.destinationAirport
+          SELECT
+          f.flight_id flightId,
+          f.flight_code flightCode,
+          f.aircraft_name aircraftName, 
+          f.embark_date embarkDate,
+          f.travel_time travelTime,
+          f.price price,
+          f.created_on createdOn,
+          f.last_modified_on lastModifiedOn,
+          o.airport_id  originAirportId,
+          o.name originAirportName,
+          o.country originAirportCountry,
+          o.city originAirportCity,
+          o.description originAirportDescription,
+          d.airport_id destinationAirportId,
+          d.name destinationAirportName,
+          d.country destinationAirportCountry,
+          d.city destinationAirportCity,
+          d.description destinationAirportDescription
+        FROM flight AS f
+          INNER JOIN airport o ON f.origin_airport_id = o.airport_id
+          INNER JOIN airport d ON f.destination_airport_id = d.airport_id
         WHERE
-          origin.airportid = ?
-          AND destination.airportid = ?
+          o.airport_id = ?
+          AND d.airport_id = ?
       `,
       [originAirportId, destinationAirportId]
     );

@@ -1,22 +1,19 @@
 const express = require('express');
 
 const { AirportValidationSchema } = require('./airport.validation');
-const { validateBody } = require('../../common/middleware');
+const { validateBody, protectedRoute } = require('../../common/middleware');
 const { AirportModel } = require('./airport.model');
 
 module.exports = (database) => {
   const router = express.Router();
   const airportModel = AirportModel(database);
 
+  router.use(protectedRoute);
+
   router.get('/', async (req, res, next) => {
     try {
       const airports = await airportModel.findAll();
-      res.status(200).json(
-        airports.map((airport) => ({
-          ...airport,
-          description: undefined
-        }))
-      );
+      res.json({ airports });
     } catch (err) {
       next(err);
     }
