@@ -44,15 +44,14 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           USERNAME: ${{ secrets.USERNAME }}
+          WEB_PORT: ${{ secrets.WEB_PORT }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          envs: USERNAME
-          env:
-            WEB_PORT: ${{ secrets.WEB_PORT }}
+          envs: USERNAME,WEB_PORT
           script: |
             export PATH=$PATH:/home/$USERNAME/.local/share/pnpm
             export NVM_DIR=~/.nvm
