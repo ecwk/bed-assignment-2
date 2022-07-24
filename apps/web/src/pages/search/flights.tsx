@@ -9,40 +9,45 @@ import {
   StatHelpText,
   StatArrow,
   StatGroup,
-  Button
+  Button,
+  Link
 } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
 import { FaArrowRight } from 'react-icons/fa';
+import NextLink from 'next/link';
+import { BiLinkExternal } from 'react-icons/bi';
+import { Indicator } from '@mantine/core';
+import ms from 'ms';
 
 import { server } from '@config/axios';
-import { type Flight } from '@common/types';
+import { type Flight, type Airport } from '@common/types';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { getMs } from '@common/utils';
+import { AirportTitle, FlightItem } from '@modules/flights';
 
 type FlightsSearchProps = ServerSideProps & {};
 
-const SearchFlightsResult: NextPage<FlightsSearchProps> = ({ flights }) => {
+const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
+  oneWayFlights,
+  twoWayFlights,
+  originAirport,
+  destinationAirport
+}) => {
   const router = useRouter();
-  const { query } = router;
+  const isTwoWay = router.query.isTwoWay === 'true';
+  const isDirect = router.query.isDirect === 'true';
+  const { departureDate, returnDate } = router.query;
+  const departureDateString =
+    typeof departureDate === 'string' ? departureDate : '';
+  const returnDateString = typeof returnDate === 'string' ? returnDate : '';
 
-  if (!flights) {
-    return <></>;
-  }
-
-  const flight = flights[0];
-  const {
-    originAirportName,
-    originAirportCity,
-    originAirportCountry,
-    destinationAirportName,
-    destinationAirportCity,
-    destinationAirportCountry,
-    departureDate,
-    returnDate,
-    embarkDate
-  } = flight;
-  const isTwoWay = query.isTwoWay === 'true';
+  const returnDatez =
+    typeof router.query.returnDate === 'string'
+      ? dayjs(router.query.returnDate)
+      : null;
 
   return (
     <Flex
@@ -53,113 +58,59 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({ flights }) => {
       background="brandPaleBlue.700"
       borderRadius="xl"
     >
-      <Box px={10} mt={10}>
-        {/* 
-                from
-                to
-                departure date
-                return date
-                onewayflight
-                directflight
-              */}
-        <Heading>Search Results</Heading>
-        <Stat mt={5}>
-          <StatLabel>
-            From: {originAirportName}, {originAirportCountry},{' '}
-            {originAirportCity}
-          </StatLabel>
-          <StatLabel>
-            To: {destinationAirportName}, {destinationAirportCountry},{' '}
-            {destinationAirportCity}
-          </StatLabel>
-          <StatHelpText mt={2} mb={0}>
-            Departure Date:{' '}
-            {new Date(departureDate).toLocaleDateString('en-SG', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric'
-            })}{', '}
-            {new Date(departureDate).toLocaleTimeString('en-SG')}
-          </StatHelpText>
-          {isTwoWay && (
-            <StatHelpText>
-              Return Date:{' '}
-              {new Date(returnDate).toLocaleDateString('en-SG', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-              })}{', '}
-              {new Date(returnDate).toLocaleTimeString('en-SG')}
-            </StatHelpText>
+      <Box
+        mt={10}
+        sx={{
+          '&>*': {
+            px: 10
+          }
+        }}
+      >
+        <Heading>
+          {isTwoWay ? 'Two-Way' : 'One-Way'}
+          {isDirect ? ' Direct' : ' Layover'} Flights
+        </Heading>
+        <Flex justifyContent="space-around" my={16}>
+          <AirportTitle
+            type="departure"
+            airport={originAirport}
+            airportDepatureDate={departureDateString}
+          />
+          <FaArrowRight size="30px" style={{ alignSelf: 'center' }} />
+          <AirportTitle
+            type="return"
+            airport={destinationAirport}
+            airportDepatureDate={returnDateString}
+          />
+        </Flex>
+        <Flex flexDir="column">
+          {isTwoWay ? (
+            // twoWayFlights.map((flight) => ())
+            <></>
+          ) : (
+            oneWayFlights.map((flight, i) => (
+              <FlightItem key={flight.flightId} flight={flight} />
+            ))
           )}
-        </Stat>
+        </Flex>
       </Box>
-      {flights.map(
-        (
-          {
-            flightId,
-            flightCode,
-            aircraftName,
-            embarkDate,
-            travelTime,
-            price,
-            originAirportCity,
-            destinationAirportCity,
-            originAirportName,
-            destinationAirportName,
-            originAirportCountry,
-            destinationAirportCountry,
-            departureDate,
-            returnDate
-          },
-          i
-        ) => (
-          <Flex
-            key={flightId}
-            borderTop="1px solid"
-            borderColor="gray.600"
-            p={10}
-            mt={i === 0 ? 5 : 0}
-            alignItems="center"
-            justifyContent="space-around"
-          >
-            <Stat>
-              <StatLabel>{flightCode}</StatLabel>
-              <StatNumber color="green.300">${price}</StatNumber>
-            </Stat>
-            <Box>
-              <Button>Book This Flight</Button>
-            </Box>
-            {/* <Box my={10}>
-              <Heading size="sm" color="gray.300">
-                {originAirportCountry}, {originAirportCity}
-              </Heading>
-              <Heading size="lg">{originAirportName}</Heading>
-              <Text fontSize="sm">
-                {flightCode} ({aircraftName})
-              </Text>
-              <Text>${price}</Text>
-            </Box>
-            <FaArrowRight size="30px" style={{ marginTop: '30px' }} />
-            <Box>
-              <Heading size="sm" color="gray.300">
-                {destinationAirportCountry}, {destinationAirportCity}
-              </Heading>
-              <Heading size="lg">{destinationAirportName}</Heading>
-              <Text fontSize="sm">
-                {flightCode} ({aircraftName})
-              </Text>
-              <Text>${price}</Text>
-            </Box> */}
-          </Flex>
-        )
-      )}
     </Flex>
   );
 };
 
 type ServerSideProps = {
-  flights: Flight[] | null;
+  oneWayFlights: Flight[];
+  twoWayFlights: (Flight & {
+    returnFlightId: number;
+    returnFlightCode: string;
+    returnAircraftName: string;
+    returnTravelTime: string;
+    returnPrice: number;
+    returnDepartureDate: string;
+    totalPrice: string;
+  })[];
+  originAirport: Airport;
+  destinationAirport: Airport;
 };
 
 type ServerSideQueries = {
@@ -176,21 +127,21 @@ export const getServerSideProps: GetServerSideProps<
   ServerSideQueries
 > = async (ctx) => {
   const { from, to, departureDate, returnDate, isTwoWay, isDirect } = ctx.query;
-  let flights: Flight[] | null;
-  try {
-    const res = await server.get(
-      `/flights/direct/${from}/${to}?departureDate=${departureDate}&returnDate=${returnDate}&isTwoWay=${isTwoWay}&isDirect=${isDirect}`
-    );
-    flights = res.data?.flights ?? null;
-  } catch (err) {
-    if (!(err instanceof AxiosError)) {
-      console.error(err);
-    }
-    flights = null;
-  }
+  const oneWayFlights = (
+    await server.get(`/flights/direct/one-way/${from}/${to}`)
+  ).data.flights;
+  const twoWayFlights = (
+    await server.get(`flights/direct/two-way/${from}/${to}`)
+  ).data.flights;
+  const originAirport = (await server.get(`/airports/${from}`)).data.airport;
+  const destinationAirport = (await server.get(`/airports/${to}`)).data.airport;
+
   return {
     props: {
-      flights
+      oneWayFlights: oneWayFlights,
+      twoWayFlights: twoWayFlights,
+      originAirport: originAirport,
+      destinationAirport: destinationAirport
     }
   };
 };

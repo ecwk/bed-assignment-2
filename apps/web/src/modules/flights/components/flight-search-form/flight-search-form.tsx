@@ -14,8 +14,8 @@ import { SelectLocation } from './select-location';
 import { Options } from './options';
 
 export type FlightSearchFormData = {
-  from: string;
-  to: string;
+  from: string; // airportId
+  to: string;  // airportId
   departureDate: Date;
   returnDate?: Date | null;
   isTwoWay: boolean;

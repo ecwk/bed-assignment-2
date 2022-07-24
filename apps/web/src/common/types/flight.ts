@@ -1,20 +1,12 @@
+import { type Airport } from './airport';
+
 export type Flight = {
   flightId: number;
   flightCode: string;
   aircraftName: string;
-  embarkDate: string;
+  departureDate: string;
   travelTime: string;
   price: string;
-  createdOn: string;
-  lastModifiedOn: string;
   originAirportId: number;
-  originAirportName: string;
-  originAirportCountry: string;
-  originAirportCity: string;
-  originAirportDescription: string;
   destinationAirportId: number;
-  destinationAirportName: string;
-  destinationAirportCountry: string;
-  destinationAirportCity: string;
-  destinationAirportDescription: string;
 };

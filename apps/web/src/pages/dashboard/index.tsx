@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { Heading, Box } from '@chakra-ui/react';
+import { Heading, Box, Button } from '@chakra-ui/react';
 
 const Dashboard: NextPage = () => {
   return (
@@ -7,6 +7,13 @@ const Dashboard: NextPage = () => {
       <Heading fontSize="5xl" textAlign="center" fontWeight="black">
         Dashboard
       </Heading>
+      <Button
+        onClick={() => {
+          new Notification('Hello', { body: 'Hello World' });
+        }}
+      >
+        Notify
+      </Button>
     </Box>
   );
 };
