@@ -14,6 +14,21 @@ jobs:
       - name: 📚 Checkout
         uses: actions/checkout@v2
 
+      - name: ♻ Delete Old Files
+        uses: appleboy/ssh-action@master
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          envs: USERNAME
+          script: |
+            cd /var/www/vhosts/bed-assignment-2
+            find . -type f -not -name '.env.*' -delete
+
       - name: 📧 Copy files to VPS
         uses: appleboy/scp-action@master
         with:
@@ -36,10 +51,14 @@ jobs:
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           envs: USERNAME
+          env:
+            WEB_PORT: ${{ secrets.WEB_PORT }}
           script: |
             export PATH=$PATH:/home/$USERNAME/.local/share/pnpm
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
             cd /var/www/vhosts/bed-assignment-2
             npm install
-            pm2 restart bed-assignment-2
+            pm2 stop bed-assignment-2
+            pm2 delete bed-assignment-2
+            pm2 start "export WEB_PORT=$WEB_PORT && npm run start" --name "bed-assignment-2"
