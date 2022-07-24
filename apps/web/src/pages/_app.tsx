@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { AuthProvider, useAuth } from 'src/modules/auth/hooks';
+import { CartProvider } from '@common/hooks';
 import { LoadpageProvider, useLoadpage } from '@common/hooks';
 import { Redirects, Navbar } from '@common/components';
 import { chakraTheme } from '../common/config';
@@ -35,10 +36,12 @@ function MyApp({ Component, pageProps }: AppProps) {
         <MantineProviderWrapper>
           <AuthProvider>
             <LoadpageProvider>
-              <Redirects />
-              <Loading />
-              <Navbar />
-              <Component {...pageProps} />
+              <CartProvider>
+                <Redirects />
+                <Loading />
+                <Navbar />
+                <Component {...pageProps} />
+              </CartProvider>
             </LoadpageProvider>
           </AuthProvider>
         </MantineProviderWrapper>

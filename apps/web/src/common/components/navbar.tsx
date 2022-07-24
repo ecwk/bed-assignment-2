@@ -19,18 +19,21 @@ import {
 } from '@chakra-ui/react';
 import { VscBell } from 'react-icons/vsc';
 import { BiSupport } from 'react-icons/bi';
-import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
+import { Indicator } from '@mantine/core';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
+import { AiOutlineShoppingCart } from 'react-icons/ai';
+import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
 
 import { Logo } from './';
-import { NAVBAR_HEIGHT } from '@common/constants';
-import { useAuth } from '@modules/auth';
 import NextLink from 'next/link';
-import { darken } from 'polished';
+import { useAuth } from '@modules/auth';
+import { useCart } from '@common/hooks';
+import { NAVBAR_HEIGHT } from '@common/constants';
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
+  const { cart } = useCart();
 
   const colorModeButton = useColorModeValue(
     'lightModeButton',
@@ -52,7 +55,7 @@ export const Navbar = () => {
           aria-label="Toggle dark mode"
           onClick={toggleColorMode}
         />
-        <NextLink href='/search' passHref>
+        <NextLink href="/search" passHref>
           <Button as={Link} layerStyle={colorModeButton}>
             Book A Flight
           </Button>
@@ -77,7 +80,18 @@ export const Navbar = () => {
       </HStack>
       <Divider orientation="vertical" />
       {user ? (
-        <>
+        <HStack>
+          <Indicator
+            label={cart.length === 0 ? '' : cart.length}
+            size={cart.length === 0 ? 0 : 16}
+            color="red"
+          >
+            <IconButton
+              variant="ghost"
+              icon={<AiOutlineShoppingCart size="20px" />}
+              aria-label="Shopping Cart"
+            />
+          </Indicator>
           <Menu>
             {({ isOpen }) => (
               <>
@@ -123,7 +137,7 @@ export const Navbar = () => {
               </>
             )}
           </Menu>
-        </>
+        </HStack>
       ) : (
         <HStack gap={3}>
           <NextLink href="/login" passHref>
