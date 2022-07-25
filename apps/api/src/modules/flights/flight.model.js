@@ -40,7 +40,7 @@ const FlightModel = (database) => ({
     );
     return flights;
   },
-  findDirectOneWayFlights: async (originAirportId, destinationAirportId) => {
+  findDirectFlights: async (originAirportId, destinationAirportId) => {
     const [flights] = await database.query(
       `
         SELECT
@@ -56,43 +56,6 @@ const FlightModel = (database) => ({
           AND destination_airport_id = ?
       `,
       [originAirportId, destinationAirportId]
-    );
-    return flights;
-  },
-  findDirectTwoWayFlights: async (originAirportId, destinationAirportId) => {
-    const [flights] = await database.query(
-      `
-        SELECT
-          f.flight_id flightId,
-          f.flight_code flightCode,
-          f.departure_date departureDate,
-          f.travel_time travelTime,
-          f.aircraft_name aircraftName,
-          f.price price,
-
-          fReturn.flight_id returnFlightId,
-          fReturn.flight_code returnFlightCode,
-          fReturn.departure_date returnDepartureDate,
-          fReturn.travel_time returnTravelTime,
-          fReturn.aircraft_name returnAircraftName,
-          fReturn.price returnPrice,
-
-          f.price + fReturn.price totalPrice
-        FROM
-          flight AS f
-          INNER JOIN flight fReturn ON f.origin_airport_id = fReturn.destination_airport_id
-        WHERE
-          f.origin_airport_id = ?
-          AND f.destination_airport_id = ?
-          AND fReturn.origin_airport_id = ?
-          AND fReturn.destination_airport_id = ?
-      `,
-      [
-        originAirportId,
-        destinationAirportId,
-        destinationAirportId,
-        originAirportId
-      ]
     );
     return flights;
   },
