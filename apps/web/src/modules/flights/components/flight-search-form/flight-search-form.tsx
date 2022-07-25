@@ -74,7 +74,7 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
         <GridItem area="button">
           <Button
             type="submit"
-            isLoading={methods.formState.isSubmitting}
+            isLoading={methods.formState.isSubmitted}
             layerStyle={colorModeButton}
             sx={sx.button}
           >
