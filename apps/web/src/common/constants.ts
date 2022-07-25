@@ -2,6 +2,8 @@ import { Country } from './types';
 
 export const NAVBAR_HEIGHT = '80px';
 
+export const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+
 export const COUNTRIES: Country[] = [
   {
     name: 'Afghanistan',
