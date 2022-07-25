@@ -1,4 +1,11 @@
-import { Box, Flex, Heading, Text, Link } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Link,
+  type BoxProps
+} from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { AxiosError } from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
@@ -9,7 +16,7 @@ import ms from 'ms';
 import { Airport } from '@common/types';
 import dayjs from 'dayjs';
 
-type ResultHeadingProps = {
+type ResultHeadingProps = BoxProps & {
   airport: Airport;
   airportDepatureDate?: string;
   type?: 'departure' | 'return';
@@ -18,7 +25,8 @@ type ResultHeadingProps = {
 export const AirportTitle = ({
   airport,
   airportDepatureDate = '',
-  type
+  type,
+  ...boxProps
 }: ResultHeadingProps) => {
   const { airportId, country, city, name } = airport;
   const departureDateString = dayjs(airportDepatureDate).isValid()
@@ -26,7 +34,7 @@ export const AirportTitle = ({
     : '-';
 
   return (
-    <Box>
+    <Box {...boxProps}>
       <Heading size="xs" fontWeight="bold">
         <Text as="span" color="brandGold.200" fontWeight="semibold">
           {country.toUpperCase()}
@@ -36,8 +44,8 @@ export const AirportTitle = ({
       <Heading size="lg" position="relative">
         <NextLink href={`/airports/${airportId}`} passHref>
           <Link display="flex" alignItems="center">
-            {name}
-            <Box ml={1} mt={2}>
+            <Text as="span">{name}</Text>
+            <Box ml={1} mt={2} as="span">
               <BiLinkExternal size="16px" />
             </Box>
           </Link>

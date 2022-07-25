@@ -10,8 +10,11 @@ import {
   StatArrow,
   StatGroup,
   Button,
-  Link
+  Link,
+  Divider
 } from '@chakra-ui/react';
+import { Grid, GridItem } from '@chakra-ui/react';
+import { Wrap, WrapItem } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
 import { FaArrowRight } from 'react-icons/fa';
@@ -43,11 +46,6 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
   const departureDateString =
     typeof departureDate === 'string' ? departureDate : '';
   const returnDateString = typeof returnDate === 'string' ? returnDate : '';
-
-  const returnDatez =
-    typeof router.query.returnDate === 'string'
-      ? dayjs(router.query.returnDate)
-      : null;
 
   return (
     <Flex
@@ -83,7 +81,25 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
             airportDepatureDate={returnDateString}
           />
         </Flex>
-        <Flex flexDir="column">
+        <Grid
+          borderTop="1px solid"
+          borderColor="gray.600"
+          gridTemplateColumns="repeat(3, 1fr)"
+          gridGap={10}
+        >
+          {isTwoWay
+            ? twoWayFlights.map((flight, i) => (
+                <GridItem key={flight.flightId}>
+                  <FlightItem flight={flight} />
+                </GridItem>
+              ))
+            : oneWayFlights.map((flight, i) => (
+                <GridItem key={flight.flightId}>
+                  <FlightItem flight={flight} />
+                </GridItem>
+              ))}
+        </Grid>
+        {/* <Flex flexDir="column" borderTop="1px solid" borderColor="gray.600">
           {isTwoWay ? (
             // twoWayFlights.map((flight) => ())
             <></>
@@ -92,7 +108,52 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
               <FlightItem key={flight.flightId} flight={flight} />
             ))
           )}
-        </Flex>
+        </Flex> */}
+        {isTwoWay && (
+          <Box>
+            <Flex justifyContent="space-around" my={16}>
+              <AirportTitle
+                type="departure"
+                airport={destinationAirport}
+                airportDepatureDate={departureDateString}
+              />
+              <FaArrowRight size="30px" style={{ alignSelf: 'center' }} />
+              <AirportTitle
+                type="return"
+                airport={originAirport}
+                airportDepatureDate={returnDateString}
+              />
+            </Flex>
+            <Grid
+              borderTop="1px solid"
+              borderColor="gray.600"
+              gridTemplateColumns="repeat(3, 1fr)"
+              gridGap={10}
+            >
+              {isTwoWay
+                ? twoWayFlights.map((flight) => (
+                    <GridItem key={flight.returnFlightId}>
+                      <FlightItem
+                        flight={{
+                          ...flight,
+                          flightId: flight.returnFlightId,
+                          flightCode: flight.returnFlightCode,
+                          aircraftName: flight.returnAircraftName,
+                          travelTime: flight.returnTravelTime,
+                          price: flight.returnPrice,
+                          departureDate: flight.returnDepartureDate
+                        }}
+                      />
+                    </GridItem>
+                  ))
+                : oneWayFlights.map((flight, i) => (
+                    <GridItem key={flight.flightId}>
+                      <FlightItem flight={flight} />
+                    </GridItem>
+                  ))}
+            </Grid>
+          </Box>
+        )}
       </Box>
     </Flex>
   );
@@ -105,7 +166,7 @@ type ServerSideProps = {
     returnFlightCode: string;
     returnAircraftName: string;
     returnTravelTime: string;
-    returnPrice: number;
+    returnPrice: string;
     returnDepartureDate: string;
     totalPrice: string;
   })[];
