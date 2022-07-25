@@ -61,7 +61,7 @@ export const CartMenu = () => {
   } = useCart();
 
   return (
-    <Menu closeOnBlur={false}>
+    <Menu>
       <Indicator
         label={cart.length === 0 ? '' : cart.length}
         size={cart.length === 0 ? 0 : 16}
@@ -99,7 +99,7 @@ export const CartMenu = () => {
               <Heading size="md">
                 {name} <Text as="span">x {quantity}</Text>
               </Heading>
-              <Text color="gray.400">${price.toFixed(2)}</Text>
+              <Text color="gray.400">${(price * quantity).toFixed(2)}</Text>
               <Flex justifyContent="space-between" alignItems="center" mt={4}>
                 <HStack spacing={2}>
                   <IconButton
