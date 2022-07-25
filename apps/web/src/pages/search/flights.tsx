@@ -23,6 +23,7 @@ import { BiLinkExternal } from 'react-icons/bi';
 import { Indicator } from '@mantine/core';
 import ms from 'ms';
 import { Pagination } from '@mantine/core';
+import { ChevronLeftIcon } from '@chakra-ui/icons';
 
 import { server } from '@config/axios';
 import { type Flight, type Airport } from '@common/types';
@@ -51,7 +52,17 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
   const returnDateString = typeof returnDate === 'string' ? returnDate : '';
 
   return (
-    <Flex flexDir="column" maxW="1000px" mx="auto" my="80px" gap={20}>
+    <Flex flexDir="column" maxW="1000px" mx="auto" my="80px">
+      <Box>
+        <NextLink href="/search">
+          <Button
+            variant="ghost"
+            leftIcon={<ChevronLeftIcon w="20px" h="20px" />}
+          >
+            Back
+          </Button>
+        </NextLink>
+      </Box>
       <Flex
         sx={{
           flexDir: 'column',
@@ -60,7 +71,8 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
           '&>*': {
             px: 10
           },
-          justifyContent: 'center'
+          justifyContent: 'center',
+          mt: 2
         }}
       >
         <Flex justifyContent="space-around" my={16}>
@@ -70,9 +82,7 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
             airportDepatureDate={departureDateString}
           />
           <FaArrowRight size="30px" style={{ alignSelf: 'center' }} />
-          <AirportTitle
-            airport={destinationAirport}
-          />
+          <AirportTitle airport={destinationAirport} />
         </Flex>
         <Grid
           borderTop="1px solid"
@@ -108,7 +118,8 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
             '&>*': {
               px: 10
             },
-            justifyContent: 'center'
+            justifyContent: 'center',
+            mt: 20
           }}
         >
           <Flex justifyContent="space-around" my={16}>
@@ -118,9 +129,7 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
               airportDepatureDate={returnDateString}
             />
             <FaArrowRight size="30px" style={{ alignSelf: 'center' }} />
-            <AirportTitle
-              airport={originAirport}
-            />
+            <AirportTitle airport={originAirport} />
           </Flex>
           <Grid
             borderTop="1px solid"
