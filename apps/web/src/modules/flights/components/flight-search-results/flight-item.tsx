@@ -89,6 +89,7 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
       <Heading fontSize="lg">{flightCode}</Heading>
       <Flex flexDir="column">
         <Text>{aircraftName}</Text>
+        {departDateTime.format('MMM DD, YYYY')}
         <Text color="gray">
           {departDateTime.format('HH:mm')} - {arrivalDateTime.format('HH:mm')}
         </Text>

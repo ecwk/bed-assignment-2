@@ -15,7 +15,7 @@ import { Options } from './options';
 
 export type FlightSearchFormData = {
   from: string; // airportId
-  to: string;  // airportId
+  to: string; // airportId
   departureDate: Date;
   returnDate?: Date | null;
   isTwoWay: boolean;
@@ -35,19 +35,18 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
     'darkModeButton'
   );
 
-  const onSubmit = methods.handleSubmit(
-    ({ from, to, departureDate, returnDate, isTwoWay, isDirect }) => {
-      let url = '/search/flights?';
-      url += `from=${from}&`;
-      url += `to=${to}&`;
-      url += `departureDate=${departureDate.toISOString()}&`;
-      url += `returnDate=${returnDate}&`;
-      url += `isTwoWay=${isTwoWay}&`;
-      url += `isDirect=${isDirect}&`;
-      url = url.replace(/&$/, '');
-      router.push(url);
-    }
-  );
+  const onSubmit = methods.handleSubmit((formData) => {
+    let url = '/search/flights?';
+    Object.entries(formData).forEach(([key, value], i) => {
+      if (value instanceof Date) {
+        url += `${key}=${value.toISOString()}&`;
+      } else {
+        url += `${key}=${value}&`;
+      }
+    });
+    url = url.replace(/&$/, '');
+    router.push(url);
+  });
 
   return (
     <FormProvider {...methods}>

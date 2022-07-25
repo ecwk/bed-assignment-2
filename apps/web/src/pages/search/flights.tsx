@@ -32,6 +32,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { getMs } from '@common/utils';
 import { AirportTitle, FlightItem } from '@modules/flights';
+import { DATE_FORMAT } from '@common/constants';
 
 type FlightsSearchProps = ServerSideProps & {};
 
@@ -181,16 +182,25 @@ export const getServerSideProps: GetServerSideProps<
   ServerSideProps,
   ServerSideQueries
 > = async (ctx) => {
-  const { from, to, departureDate, returnDate, isTwoWay, isDirect } = ctx.query;
-  const flights = (await server.get(`/flights/direct/${from}/${to}`)).data
-    .flights;
+  const query = ctx.query;
+
+  const flights = (
+    await server.get(
+      `/flights/direct/${query.from}/${query.to}?date=${query.departureDate}&dateFilterType=exact`
+    )
+  ).data.flights;
   const returnFlights =
-    isTwoWay === 'true'
-      ? (await server.get(`/flights/direct/${to}/${from}`)).data.flights
+    query.isTwoWay === 'true'
+      ? (
+          await server.get(
+            `/flights/direct/${query.to}/${query.from}?date=${query.returnDate}&dateFilterType=exact`
+          )
+        ).data.flights
       : null;
-  console.log(returnFlights);
-  const originAirport = (await server.get(`/airports/${from}`)).data.airport;
-  const destinationAirport = (await server.get(`/airports/${to}`)).data.airport;
+  const originAirport = (await server.get(`/airports/${query.from}`)).data
+    .airport;
+  const destinationAirport = (await server.get(`/airports/${query.to}`)).data
+    .airport;
 
   return {
     props: {
