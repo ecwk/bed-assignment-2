@@ -61,7 +61,7 @@ export const CartMenu = () => {
   } = useCart();
 
   return (
-    <Menu>
+    <Menu closeOnBlur={false}>
       <Indicator
         label={cart.length === 0 ? '' : cart.length}
         size={cart.length === 0 ? 0 : 16}
@@ -129,7 +129,9 @@ export const CartMenu = () => {
             </Flex>
           ))}
           {cart.length === 0 && (
-            <Text textAlign="center" fontSize="sm" color='gray.300'>Your cart is empty</Text>
+            <Text textAlign="center" fontSize="sm" color="gray.300">
+              Your cart is empty
+            </Text>
           )}
         </MenuGroup>
       </MenuList>

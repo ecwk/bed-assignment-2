@@ -8,6 +8,8 @@ import {
 import { useLocalStorage } from '@mantine/hooks';
 
 import { type CartItem } from '@common/types';
+import { useAuth } from '@modules/auth';
+import { useRouter } from 'next/router';
 
 interface CartContext {
   cart: CartItem[];
@@ -21,6 +23,7 @@ interface CartContext {
 export const CartContext = createContext<CartContext>({} as CartContext);
 
 const useCartProvider = (): CartContext => {
+  const router = useRouter();
   const [cart, setCart] = useLocalStorage<CartItem[]>({
     key: 'cart',
     defaultValue: []
@@ -33,7 +36,7 @@ const useCartProvider = (): CartContext => {
         (prevItem) => prevItem.id === item.id
       );
       if (itemIndex !== -1) {
-        const newCart = [...prevCart];
+        const newCart = JSON.parse(JSON.stringify(prevCart));
         newCart[itemIndex].quantity += item.quantity;
         return newCart;
       }
@@ -48,7 +51,7 @@ const useCartProvider = (): CartContext => {
       if (itemIndex === -1) {
         return prevCart;
       }
-      const newCart = [...prevCart];
+      const newCart = JSON.parse(JSON.stringify(prevCart));
       newCart[itemIndex].quantity += increment;
       return newCart;
     });
@@ -62,7 +65,7 @@ const useCartProvider = (): CartContext => {
       if (itemIndex === -1) {
         return prevCart;
       }
-      const newCart = [...prevCart];
+      const newCart = JSON.parse(JSON.stringify(prevCart));
       newCart[itemIndex].quantity -= decrement;
       if (newCart[itemIndex].quantity <= 0) {
         newCart.splice(itemIndex, 1);

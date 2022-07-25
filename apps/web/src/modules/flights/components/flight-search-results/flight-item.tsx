@@ -9,11 +9,7 @@ import {
   FormControl,
   useToast,
   Image,
-  Box,
-  Heading
-} from '@chakra-ui/react';
-import { Grid, GridItem } from '@chakra-ui/react';
-import {
+  Heading,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -21,14 +17,19 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure
+  useDisclosure,
+  Flex,
+  Text,
+  Button,
+  FlexProps
 } from '@chakra-ui/react';
-import { Flex, Text, Button, FlexProps } from '@chakra-ui/react';
-
-import { useCart } from '@common/hooks';
-import { getMs } from '@common/utils';
-import { type Flight } from '@common/types';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
+
+import { getMs } from '@common/utils';
+import { useCart } from '@common/hooks';
+import { useAuth } from '@modules/auth';
+import { type Flight } from '@common/types';
 
 type FlightItemProps = FlexProps & {
   flight: Flight;
@@ -36,9 +37,11 @@ type FlightItemProps = FlexProps & {
 
 export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
   const [quantity, setQuantity] = useState('1');
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const router = useRouter();
 
   const {
     flightId,
@@ -53,31 +56,31 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
   const arrivalDateTime = dayjs(departDateTime).add(travelTimeMs, 'ms');
 
   const handleClick = () => {
-    toast({
-      title: 'Added to cart',
-      description: `${flightCode} - $${Number(price).toFixed(2)} x ${quantity}`,
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-      position: 'bottom-right'
-    });
-    addToCart({
-      id: `flightId-${flightId}`,
-      name: flightCode,
-      quantity: parseInt(quantity, 10),
-      price: parseInt(price, 10)
-    });
+    if (!user) {
+      router.push('/login');
+    } else {
+      onClose();
+      toast({
+        title: 'Added to cart',
+        description: `${flightCode} - $${Number(price).toFixed(
+          2
+        )} x ${quantity}`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom-right'
+      });
+      addToCart({
+        id: `flightId-${flightId}`,
+        name: flightCode,
+        quantity: parseInt(quantity, 10),
+        price: parseInt(price, 10)
+      });
+    }
   };
 
   return (
-    <Flex
-      key={flightId}
-      // border="1px solid"
-      // borderColor="gray.600"
-      flexDir="column"
-      p={5}
-      {...flexProps}
-    >
+    <Flex key={flightId} flexDir="column" p={5} {...flexProps}>
       <Image
         borderRadius="xl"
         src="https://bit.ly/dan-abramov"
@@ -127,14 +130,7 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
             <Button variant="outline" onClick={onClose}>
               Close
             </Button>
-            <Button
-              colorScheme="brandGold"
-              mr={3}
-              onClick={() => {
-                onClose();
-                handleClick();
-              }}
-            >
+            <Button colorScheme="brandGold" mr={3} onClick={handleClick}>
               Add To Cart
             </Button>
           </ModalFooter>
