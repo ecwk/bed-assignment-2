@@ -39,7 +39,7 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
     let url = '/search/flights?';
     Object.entries(formData).forEach(([key, value], i) => {
       if (value instanceof Date) {
-        url += `${key}=${value.toISOString()}&`;
+        url += `${key}=${value.toString()}&`;
       } else {
         url += `${key}=${value}&`;
       }
