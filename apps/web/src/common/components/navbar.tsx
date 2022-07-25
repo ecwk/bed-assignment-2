@@ -24,7 +24,7 @@ import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
 
-import { Logo } from './';
+import { Logo, CartMenu, UserMenu } from './';
 import NextLink from 'next/link';
 import { useAuth } from '@modules/auth';
 import { useCart } from '@common/hooks';
@@ -80,63 +80,9 @@ export const Navbar = () => {
       </HStack>
       <Divider orientation="vertical" />
       {user ? (
-        <HStack>
-          <Indicator
-            label={cart.length === 0 ? '' : cart.length}
-            size={cart.length === 0 ? 0 : 16}
-            color="red"
-          >
-            <IconButton
-              variant="ghost"
-              icon={<AiOutlineShoppingCart size="20px" />}
-              aria-label="Shopping Cart"
-            />
-          </Indicator>
-          <Menu>
-            {({ isOpen }) => (
-              <>
-                <MenuButton
-                  as={Button}
-                  variant="ghost"
-                  colorScheme="gray"
-                  fontSize="12px"
-                  fontWeight="700"
-                >
-                  <Flex alignItems="center" gap={2}>
-                    <Avatar size="sm" name={user.username} />
-                    {/* <ProfileAvatar user={user} size="sm" /> */}
-                    <Text as="span" ml={2} mr={1} verticalAlign="middle">
-                      {user.username}
-                    </Text>
-                    {isOpen ? <MdArrowDropUp /> : <MdArrowDropDown />}
-                  </Flex>
-                </MenuButton>
-                <MenuList p={3} borderRadius="2xl">
-                  <NextLink href="/dashboard" passHref>
-                    <MenuItem borderRadius="xl" minH="45px">
-                      Dashboard
-                    </MenuItem>
-                  </NextLink>
-                  <MenuDivider />
-                  <MenuItem
-                    borderRadius="xl"
-                    minH="45px"
-                    icon={<MdExitToApp size="20px" />}
-                    onClick={() => {
-                      logout();
-                    }}
-                    fontWeight="500"
-                    color="#EB5757"
-                    _hover={{
-                      backgroundColor: '#eb575726'
-                    }}
-                  >
-                    Logout
-                  </MenuItem>
-                </MenuList>
-              </>
-            )}
-          </Menu>
+        <HStack spacing={4}>
+          <CartMenu />
+          <UserMenu />
         </HStack>
       ) : (
         <HStack gap={3}>
