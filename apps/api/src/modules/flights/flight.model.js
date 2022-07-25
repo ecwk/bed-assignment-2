@@ -83,9 +83,16 @@ const FlightModel = (database) => ({
           INNER JOIN flight fReturn ON f.origin_airport_id = fReturn.destination_airport_id
         WHERE
           f.origin_airport_id = ?
+          AND f.destination_airport_id = ?
           AND fReturn.origin_airport_id = ?
+          AND fReturn.destination_airport_id = ?
       `,
-      [originAirportId, destinationAirportId]
+      [
+        originAirportId,
+        destinationAirportId,
+        destinationAirportId,
+        originAirportId
+      ]
     );
     return flights;
   },
