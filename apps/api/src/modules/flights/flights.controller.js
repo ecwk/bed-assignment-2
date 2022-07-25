@@ -1,8 +1,10 @@
+const dayjs = require('dayjs');
 const express = require('express');
 
+const { FlightModel } = require('./flight.model');
 const { validateBody } = require('../../common/middleware');
 const { FlightValidationSchema } = require('./flight.validation');
-const { FlightModel } = require('./flight.model');
+const { DATE_FORMAT } = require('../../common/constants');
 
 module.exports = (database) => {
   const router = express.Router();
@@ -20,11 +22,44 @@ module.exports = (database) => {
   router.get(
     '/direct/:originAirportId/:destinationAirportId',
     async (req, res, next) => {
+      const dateFilterType = req.query?.dateFilterType || 'none';
+      let dateFrom, dateTo;
+
+      switch (dateFilterType) {
+        case 'none':
+          dateFrom = '';
+          dateTo = '';
+          break;
+        case 'exact':
+          dateFrom = req.query.date;
+          dateTo = req.query.date;
+          break;
+        case 'range':
+          dateFrom = req.query.dateFrom;
+          dateTo = req.query.dateTo;
+          break;
+      }
+
+      if (dateFilterType !== 'none') {
+        dateFrom = dayjs(dateFrom)
+          .set('hour', 0)
+          .set('minute', 0)
+          .set('second', 0)
+          .format(DATE_FORMAT);
+        dateTo = dayjs(dateTo)
+          .set('hour', 23)
+          .set('minute', 59)
+          .set('second', 59)
+          .format(DATE_FORMAT);
+      }
+
       try {
         const { originAirportId, destinationAirportId } = req.params;
         const flights = await flightModel.findDirectFlights(
           originAirportId,
-          destinationAirportId
+          destinationAirportId,
+          dateFrom,
+          dateTo
         );
         res.status(200).json({ flights });
       } catch (err) {

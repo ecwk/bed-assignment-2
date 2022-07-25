@@ -1,5 +1,3 @@
-let sql = (string) => string;
-
 const FlightModel = (database) => ({
   findOne: async (key, value) => {
     const [flights] = await database.query(
@@ -40,23 +38,33 @@ const FlightModel = (database) => ({
     );
     return flights;
   },
-  findDirectFlights: async (originAirportId, destinationAirportId) => {
-    const [flights] = await database.query(
-      `
-        SELECT
-          flight_id flightId,
-          flight_code flightCode,
-          departure_date departureDate,
-          travel_time travelTime,
-          aircraft_name aircraftName,
-          price price
-        FROM flight
-        WHERE
-          origin_airport_id = ?
-          AND destination_airport_id = ?
-      `,
-      [originAirportId, destinationAirportId]
-    );
+  findDirectFlights: async (
+    originAirportId,
+    destinationAirportId,
+    fromDate = '',
+    toDate = ''
+  ) => {
+    const query = `
+      SELECT
+        flight_id flightId,
+        flight_code flightCode,
+        departure_date departureDate,
+        travel_time travelTime,
+        aircraft_name aircraftName,
+        price price
+      FROM flight
+      WHERE
+        origin_airport_id = ?
+        AND destination_airport_id = ?
+        ${fromDate && toDate ? `AND departure_date BETWEEN ? AND ?` : ''}
+    `;
+
+    const [flights] = await database.query(query, [
+      originAirportId,
+      destinationAirportId,
+      fromDate,
+      toDate
+    ]);
     return flights;
   },
   findAllTransferFlights: async (originAirportId, destinationAirportId) => {
