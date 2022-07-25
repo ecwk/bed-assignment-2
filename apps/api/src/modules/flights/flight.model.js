@@ -56,7 +56,7 @@ const FlightModel = (database) => ({
       WHERE
         origin_airport_id = ?
         AND destination_airport_id = ?
-        ${fromDate && toDate ? `AND departure_date BETWEEN ? AND ?` : ''}
+        ${fromDate && toDate ? `AND departure_date BETWEEN ?? AND ??` : ''}
     `;
 
     const [flights] = await database.query(query, [
