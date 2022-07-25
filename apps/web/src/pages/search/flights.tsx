@@ -22,23 +22,26 @@ import NextLink from 'next/link';
 import { BiLinkExternal } from 'react-icons/bi';
 import { Indicator } from '@mantine/core';
 import ms from 'ms';
+import { Pagination } from '@mantine/core';
 
 import { server } from '@config/axios';
 import { type Flight, type Airport } from '@common/types';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getMs } from '@common/utils';
 import { AirportTitle, FlightItem } from '@modules/flights';
 
 type FlightsSearchProps = ServerSideProps & {};
 
 const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
-  oneWayFlights,
-  twoWayFlights,
+  flights,
+  returnFlights,
   originAirport,
   destinationAirport
 }) => {
+  const [flightPage, setFlightPage] = useState(1);
+  const [returnFlightPage, setReturnFlightPage] = useState(1);
   const router = useRouter();
   const isTwoWay = router.query.isTwoWay === 'true';
   const isDirect = router.query.isDirect === 'true';
@@ -48,26 +51,18 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
   const returnDateString = typeof returnDate === 'string' ? returnDate : '';
 
   return (
-    <Flex
-      flexDir="column"
-      maxW="1000px"
-      mx="auto"
-      my="80px"
-      background="brandPaleBlue.700"
-      borderRadius="xl"
-    >
-      <Box
-        mt={10}
+    <Flex flexDir="column" maxW="1000px" mx="auto" my="80px" gap={20}>
+      <Flex
         sx={{
+          flexDir: 'column',
+          background: 'brandPaleBlue.700',
+          borderRadius: 'xl',
           '&>*': {
             px: 10
-          }
+          },
+          justifyContent: 'center'
         }}
       >
-        <Heading>
-          {isTwoWay ? 'Two-Way' : 'One-Way'}
-          {isDirect ? ' Direct' : ' Layover'} Flights
-        </Heading>
         <Flex justifyContent="space-around" my={16}>
           <AirportTitle
             type="departure"
@@ -76,9 +71,7 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
           />
           <FaArrowRight size="30px" style={{ alignSelf: 'center' }} />
           <AirportTitle
-            type="return"
             airport={destinationAirport}
-            airportDepatureDate={returnDateString}
           />
         </Flex>
         <Grid
@@ -87,89 +80,81 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
           gridTemplateColumns="repeat(3, 1fr)"
           gridGap={10}
         >
-          {isTwoWay
-            ? twoWayFlights.map((flight, i) => (
-                <GridItem key={flight.flightId}>
-                  <FlightItem flight={flight} />
-                </GridItem>
-              ))
-            : oneWayFlights.map((flight, i) => (
-                <GridItem key={flight.flightId}>
+          {flights
+            .slice((flightPage - 1) * 3, flightPage * 3)
+            .map((flight, index) => (
+              <GridItem key={flight.flightId} mt={5}>
+                <FlightItem flight={flight} />
+              </GridItem>
+            ))}
+        </Grid>
+        <Pagination
+          sx={{
+            justifyContent: 'center',
+            marginTop: '20px',
+            marginBottom: '40px'
+          }}
+          page={flightPage}
+          onChange={setFlightPage}
+          total={Math.ceil(flights.length / 3)}
+        />
+      </Flex>
+      {isTwoWay && (
+        <Flex
+          sx={{
+            flexDir: 'column',
+            background: 'brandPaleBlue.700',
+            borderRadius: 'xl',
+            '&>*': {
+              px: 10
+            },
+            justifyContent: 'center'
+          }}
+        >
+          <Flex justifyContent="space-around" my={16}>
+            <AirportTitle
+              type="departure"
+              airport={destinationAirport}
+              airportDepatureDate={returnDateString}
+            />
+            <FaArrowRight size="30px" style={{ alignSelf: 'center' }} />
+            <AirportTitle
+              airport={originAirport}
+            />
+          </Flex>
+          <Grid
+            borderTop="1px solid"
+            borderColor="gray.600"
+            gridTemplateColumns="repeat(3, 1fr)"
+            gridGap={10}
+          >
+            {returnFlights
+              ?.slice((returnFlightPage - 1) * 3, returnFlightPage * 3)
+              .map((flight) => (
+                <GridItem key={flight.flightId} mt={5}>
                   <FlightItem flight={flight} />
                 </GridItem>
               ))}
-        </Grid>
-        {/* <Flex flexDir="column" borderTop="1px solid" borderColor="gray.600">
-          {isTwoWay ? (
-            // twoWayFlights.map((flight) => ())
-            <></>
-          ) : (
-            oneWayFlights.map((flight, i) => (
-              <FlightItem key={flight.flightId} flight={flight} />
-            ))
-          )}
-        </Flex> */}
-        {isTwoWay && (
-          <Box>
-            <Flex justifyContent="space-around" my={16}>
-              <AirportTitle
-                type="departure"
-                airport={destinationAirport}
-                airportDepatureDate={departureDateString}
-              />
-              <FaArrowRight size="30px" style={{ alignSelf: 'center' }} />
-              <AirportTitle
-                type="return"
-                airport={originAirport}
-                airportDepatureDate={returnDateString}
-              />
-            </Flex>
-            <Grid
-              borderTop="1px solid"
-              borderColor="gray.600"
-              gridTemplateColumns="repeat(3, 1fr)"
-              gridGap={10}
-            >
-              {isTwoWay
-                ? twoWayFlights.map((flight) => (
-                    <GridItem key={flight.returnFlightId}>
-                      <FlightItem
-                        flight={{
-                          ...flight,
-                          flightId: flight.returnFlightId,
-                          flightCode: flight.returnFlightCode,
-                          aircraftName: flight.returnAircraftName,
-                          travelTime: flight.returnTravelTime,
-                          price: flight.returnPrice,
-                          departureDate: flight.returnDepartureDate
-                        }}
-                      />
-                    </GridItem>
-                  ))
-                : oneWayFlights.map((flight, i) => (
-                    <GridItem key={flight.flightId}>
-                      <FlightItem flight={flight} />
-                    </GridItem>
-                  ))}
-            </Grid>
-          </Box>
-        )}
-      </Box>
+          </Grid>
+          <Pagination
+            sx={{
+              justifyContent: 'center',
+              marginTop: '20px',
+              marginBottom: '40px'
+            }}
+            page={returnFlightPage}
+            onChange={setReturnFlightPage}
+            total={Math.ceil(returnFlights ? returnFlights.length / 3 : 0)}
+          />
+        </Flex>
+      )}
     </Flex>
   );
 };
 
 type ServerSideProps = {
-  oneWayFlights: Flight[];
-  twoWayFlights: (Flight & {
-    returnFlightId: number;
-    returnFlightCode: string;
-    returnAircraftName: string;
-    returnTravelTime: string;
-    returnPrice: string;
-    returnDepartureDate: string;
-    totalPrice: string;
-  })[];
+  flights: Flight[];
+  returnFlights?: Flight[] | null;
   originAirport: Airport;
   destinationAirport: Airport;
 };
@@ -188,21 +173,22 @@ export const getServerSideProps: GetServerSideProps<
   ServerSideQueries
 > = async (ctx) => {
   const { from, to, departureDate, returnDate, isTwoWay, isDirect } = ctx.query;
-  const oneWayFlights = (
-    await server.get(`/flights/direct/one-way/${from}/${to}`)
-  ).data.flights;
-  const twoWayFlights = (
-    await server.get(`flights/direct/two-way/${from}/${to}`)
-  ).data.flights;
+  const flights = (await server.get(`/flights/direct/${from}/${to}`)).data
+    .flights;
+  const returnFlights =
+    isTwoWay === 'true'
+      ? (await server.get(`/flights/direct/${to}/${from}`)).data.flights
+      : null;
+  console.log(returnFlights);
   const originAirport = (await server.get(`/airports/${from}`)).data.airport;
   const destinationAirport = (await server.get(`/airports/${to}`)).data.airport;
 
   return {
     props: {
-      oneWayFlights: oneWayFlights,
-      twoWayFlights: twoWayFlights,
-      originAirport: originAirport,
-      destinationAirport: destinationAirport
+      flights,
+      returnFlights,
+      originAirport,
+      destinationAirport
     }
   };
 };
