@@ -37,7 +37,6 @@ export const colors = {
     800: '#4b3c00',
     900: '#1b1400'
   },
-  brandText: '#D2D2D2',
   brandPaleBlue: {
     50: '#edeffa',
     100: '#d2d5e0',
@@ -49,7 +48,8 @@ export const colors = {
     700: '#363d49',
     800: '#1B2027',
     900: '#060b14'
-  }
+  },
+  brandText: '#D2D2D2'
 };
 
 export const chakraTheme = extendTheme({
