@@ -1,4 +1,4 @@
-USE sp_air
+USE sp_air;
 
 INSERT INTO users (
     `username`,
