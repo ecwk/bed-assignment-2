@@ -91,13 +91,25 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
           gridTemplateColumns="repeat(3, 1fr)"
           gridGap={10}
         >
-          {flights
-            .slice((flightPage - 1) * 3, flightPage * 3)
-            .map((flight, index) => (
-              <GridItem key={flight.flightId} mt={5}>
-                <FlightItem flight={flight} />
-              </GridItem>
-            ))}
+          {flights.length > 0 ? (
+            flights
+              .slice((flightPage - 1) * 3, flightPage * 3)
+              .map((flight, index) => (
+                <GridItem key={flight.flightId} mt={5}>
+                  <FlightItem flight={flight} />
+                </GridItem>
+              ))
+          ) : (
+            <Text
+              gridColumn="1 / span 3"
+              textAlign="center"
+              fontSize="md"
+              color="gray.400"
+              my={10}
+            >
+              No flights found for the selected criteria.
+            </Text>
+          )}
         </Grid>
         <Pagination
           sx={{
@@ -138,13 +150,25 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
             gridTemplateColumns="repeat(3, 1fr)"
             gridGap={10}
           >
-            {returnFlights
-              ?.slice((returnFlightPage - 1) * 3, returnFlightPage * 3)
-              .map((flight) => (
-                <GridItem key={flight.flightId} mt={5}>
-                  <FlightItem flight={flight} />
-                </GridItem>
-              ))}
+            {returnFlights?.length || -1 > 0 ? (
+              returnFlights
+                ?.slice((returnFlightPage - 1) * 3, returnFlightPage * 3)
+                .map((flight) => (
+                  <GridItem key={flight.flightId} mt={5}>
+                    <FlightItem flight={flight} />
+                  </GridItem>
+                ))
+            ) : (
+              <Text
+                gridColumn="1 / span 3"
+                textAlign="center"
+                fontSize="md"
+                color="gray.400"
+                my={10}
+              >
+                No flights found for the selected criteria.
+              </Text>
+            )}
           </Grid>
           <Pagination
             sx={{
