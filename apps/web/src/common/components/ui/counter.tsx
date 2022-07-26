@@ -5,8 +5,8 @@ import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 type CounterProps = FlexProps & {
   value: number;
   setValue: Dispatch<SetStateAction<number>>;
-  min?: number;
-  max?: number;
+  min: number;
+  max: number;
   step?: number;
 };
 
