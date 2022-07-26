@@ -95,7 +95,7 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
             flights
               .slice((flightPage - 1) * 3, flightPage * 3)
               .map((flight, index) => (
-                <GridItem key={flight.flightId} mt={5}>
+                <GridItem key={flight.flightId} mt={10}>
                   <FlightItem flight={flight} />
                 </GridItem>
               ))

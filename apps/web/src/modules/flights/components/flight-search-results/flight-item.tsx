@@ -21,12 +21,18 @@ import {
   Flex,
   Text,
   Button,
-  FlexProps
+  FlexProps,
+  Box,
+  Tag,
+  HStack,
+  IconButton
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 
 import { getMs } from '@common/utils';
+import { Counter } from '@common/components';
 import { useCart } from '@common/hooks';
 import { useAuth } from '@modules/auth';
 import { type Flight } from '@common/types';
@@ -36,6 +42,7 @@ type FlightItemProps = FlexProps & {
 };
 
 export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
+  const [count, setCount] = useState(1);
   const [quantity, setQuantity] = useState('1');
   const { user } = useAuth();
   const { addToCart } = useCart();
@@ -80,46 +87,67 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
   };
 
   return (
-    <Flex key={flightId} flexDir="column" p={5} {...flexProps}>
+    <Flex
+      key={flightId}
+      flexDir="column"
+      border="1px solid"
+      borderRadius="xl"
+      borderColor="gray.500"
+      {...flexProps}
+    >
       <Image
-        borderRadius="xl"
+        borderTopRadius="xl"
         src="https://bit.ly/dan-abramov"
         alt="Dan Abramov"
       />
-      <Heading fontSize="lg">{flightCode}</Heading>
-      <Flex flexDir="column">
-        <Text>{aircraftName}</Text>
-        {departDateTime.format('MMM DD, YYYY')}
+      <Flex flexDir="column" p={5}>
+        <HStack mt={2}>
+          <Tag size="sm" colorScheme="blue" borderRadius="2xl">
+            DISCOUNT
+          </Tag>
+          <Tag size="sm" colorScheme="green" borderRadius="2xl">
+            -10%
+          </Tag>
+          <Tag size="sm" colorScheme="red" borderRadius="2xl">
+            NEW
+          </Tag>
+        </HStack>
+        <Heading fontSize="2xl" mt={2}>
+          {flightCode}
+        </Heading>
+        <Text>{dayjs(departureDate).format('DD MMM YYYY, ddd')}</Text>
         <Text color="gray">
-          {departDateTime.format('HH:mm')} - {arrivalDateTime.format('HH:mm')}
+          {departDateTime.format('HH:mm a')} -{' '}
+          {arrivalDateTime.format('HH:mm a')}
         </Text>
-        <Text fontSize="xl" fontWeight="bold" color="green.200">
-          ${price}
-        </Text>
-      </Flex>
-      <FormControl>
-        <FormLabel>Quantity</FormLabel>
-        <NumberInput
-          size="sm"
-          defaultValue={1}
-          min={1}
-          max={10}
-          value={quantity}
-          onChange={(value) => setQuantity(value)}
+        <Button
+          w="max-content"
+          variant="link"
+          fontWeight="normal"
+          fontSize="sm"
+          colorScheme="blue"
+          onClick={onOpen}
         >
-          <NumberInputField />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
-      </FormControl>
-      <Button onClick={handleClick} colorScheme="brandGold">
-        Add To Cart
-      </Button>
-      <Button onClick={onOpen} variant="outline">
-        View Details
-      </Button>
+          View details
+        </Button>
+        <Flex flexDir="column">
+          {/* <Text fontSize="xl" fontWeight="bold" color="green.200">
+            ${price}
+          </Text> */}
+        </Flex>
+        <FormControl></FormControl>
+        <Flex alignItems="end" gap={2}>
+          <Button onClick={onOpen} variant="outline">
+            View Details
+          </Button>
+          <Box>
+            <Counter value={count} setValue={setCount} min={1} max={999} />
+            <Button mt={2} onClick={handleClick} colorScheme="brandGold">
+              Add To Cart
+            </Button>
+          </Box>
+        </Flex>
+      </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
