@@ -6,12 +6,14 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider, useWatch } from 'react-hook-form';
 
 import { Options } from './options';
 import { SelectDate } from './select-date';
-import { type Airport } from '@common/types';
+import { Flight, type Airport } from '@common/types';
 import { SelectLocation } from './select-location';
+import { useQuery } from '@tanstack/react-query';
+import { client } from '@config/axios';
 
 export type FlightSearchFormData = {
   from: string; // airportId
@@ -29,6 +31,32 @@ type FlightSearchFormProps = {
 export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
   const router = useRouter();
   const methods = useForm<FlightSearchFormData>();
+  const { to, from } = useWatch<FlightSearchFormData>({
+    control: methods.control
+  });
+
+  const flightsQuery = useQuery(
+    ['flights', { to, from }],
+    (ctx) =>
+      client.get(`/flights/direct/${from}/${to}?dateFilterType=none`, {
+        signal: ctx.signal
+      }),
+    {
+      enabled: !!from && !!to
+    }
+  );
+  const returnFlightsQuery = useQuery(
+    ['returnFlights', { to, from }],
+    (ctx) =>
+      client.get(`/flights/direct/${to}/${from}?dateFilterType=none`, {
+        signal: ctx.signal
+      }),
+    {
+      enabled: !!from && !!to
+    }
+  );
+  const flights: Flight[] = flightsQuery.data?.data?.flights;
+  const returnFlights: Flight[] = returnFlightsQuery.data?.data?.flights;
 
   const onSubmit = methods.handleSubmit((formData) => {
     let url = '/search/flights?';
@@ -61,8 +89,12 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
         </GridItem>
 
         <GridItem area="input" display="flex" flexDir="column" gap={6}>
-          <SelectLocation airports={airports} />
-          <SelectDate />
+          <SelectLocation
+            airports={airports}
+            flights={flights}
+            returnFlights={returnFlights}
+          />
+          <SelectDate flights={flights} returnFlights={returnFlights} />
         </GridItem>
 
         <GridItem area="options">

@@ -1,22 +1,34 @@
-import { useFormContext, useWatch, useController } from 'react-hook-form';
 import { Select } from '@mantine/core';
 import { forwardRef, type ComponentPropsWithoutRef } from 'react';
-import { Box, Text, Flex, useTheme, type FlexProps } from '@chakra-ui/react';
+import { useFormContext, useWatch, useController } from 'react-hook-form';
+import {
+  Box,
+  Text,
+  Flex,
+  useTheme,
+  type FlexProps,
+  FormControl,
+  FormHelperText
+} from '@chakra-ui/react';
 
-import { type Airport } from '@common/types';
+import { type Flight, type Airport } from '@common/types';
 import { type FlightSearchFormData } from './flight-search-form';
 
 type SelectLocationProps = FlexProps & {
   airports: Airport[];
+  flights: Flight[];
+  returnFlights: Flight[];
 };
 
 export const SelectLocation = ({
   airports,
+  flights,
+  returnFlights,
   ...flexProps
 }: SelectLocationProps) => {
   const theme = useTheme();
   const { control } = useFormContext<FlightSearchFormData>();
-  const { from, to } = useWatch({ control });
+  const { from, to, isTwoWay } = useWatch({ control });
   const { field: registerFrom } = useController({ control, name: 'from' });
   const { field: registerTo } = useController({ control, name: 'to' });
 
@@ -55,27 +67,34 @@ export const SelectLocation = ({
         }}
         {...registerFrom}
       />
-      <Select
-        id="flight-to"
-        label="To"
-        placeholder="Pick location"
-        nothingFound="No Flights Found"
-        itemComponent={SelectItem}
-        filter={selectFilter}
-        data={airportData.filter((item) => item.value !== from)}
-        searchable
-        clearable
-        required
-        maxDropdownHeight={200}
-        sx={{
-          label: {
-            color: theme.colors.gray[200],
-            fontSize: '15px',
-            fontWeight: 'normal'
-          }
-        }}
-        {...registerTo}
-      />
+      <FormControl>
+        <Select
+          id="flight-to"
+          label="To"
+          placeholder="Pick location"
+          nothingFound="No Flights Found"
+          itemComponent={SelectItem}
+          filter={selectFilter}
+          data={airportData.filter((item) => item.value !== from)}
+          searchable
+          clearable
+          required
+          maxDropdownHeight={200}
+          sx={{
+            label: {
+              color: theme.colors.gray[200],
+              fontSize: '15px',
+              fontWeight: 'normal'
+            }
+          }}
+          {...registerTo}
+        />
+        <FormHelperText>
+          Found {flights?.length || '0'} departure
+          {isTwoWay ? ` and ${returnFlights?.length || '0'} return ` : ' '}
+          flights
+        </FormHelperText>
+      </FormControl>
     </Flex>
   );
 };
