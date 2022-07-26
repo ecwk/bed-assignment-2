@@ -1,41 +1,82 @@
-import dayjs from 'dayjs';
-import { DatePicker } from '@mantine/dates';
 import {
-  Box,
   Flex,
   HStack,
-  useTheme,
   Text,
+  FormControl,
+  FormHelperText,
+  useTheme,
   type StackProps
 } from '@chakra-ui/react';
+import dayjs from 'dayjs';
+import { DatePicker } from '@mantine/dates';
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useFormContext, useWatch, useController } from 'react-hook-form';
 
-import { useEffect, useState } from 'react';
+import { client } from '@config/axios';
+import { type Flight } from '@common/types';
 import { type FlightSearchFormData } from './flight-search-form';
 
 type SelectDateProps = StackProps & {};
 
 export const SelectDate = ({ ...stackProps }: SelectDateProps) => {
-  const [departureMaxDate, setDepartureMaxDate] = useState<Date | undefined>(
-    undefined
-  );
-  const [returnMinDate, setReturnMinDate] = useState<Date | undefined>(
-    undefined
-  );
   const theme = useTheme();
   const { control, setValue } = useFormContext<FlightSearchFormData>();
-  const { departureDate, returnDate, from, to, isTwoWay } = useWatch({
+  const { from, to, isTwoWay } = useWatch({
     control
   });
   const { field: registerDepartureDate } = useController({
     control,
-    name: 'departureDate',
-    defaultValue: new Date()
+    name: 'departureDate'
   });
   const { field: registerReturnDate } = useController({
     control,
     name: 'returnDate'
   });
+
+  const { data: dataFlights } = useQuery(
+    [
+      'flights',
+      {
+        from: from,
+        to: to
+      }
+    ],
+    (ctx) => {
+      return client.get(`/flights/direct/${from}/${to}?dateFilterType=none`, {
+        signal: ctx.signal
+      });
+    },
+    {
+      enabled: !!from && !!to // fetch only when location set
+    }
+  );
+  const { data: dataReturnFlights } = useQuery(
+    [
+      'returnFlights',
+      {
+        to,
+        from
+      }
+    ],
+    (ctx) => {
+      return client.get(`/flights/direct/${to}/${from}?dateFilterType=none`, {
+        signal: ctx.signal
+      });
+    },
+    {
+      enabled: !!from && !!to && !!isTwoWay
+    }
+  );
+
+  const flights: Flight[] = dataFlights?.data?.flights;
+  const returnFlights: Flight[] = dataReturnFlights?.data?.flights;
+
+  // TODO: performance issue
+  /* 
+    instead of looping through flights for every day,
+    just loop through flights once and store the flight number in an array
+  */
 
   useEffect(() => {
     if (!isTwoWay) {
@@ -43,102 +84,107 @@ export const SelectDate = ({ ...stackProps }: SelectDateProps) => {
     }
   }, [isTwoWay]);
 
-  useEffect(() => {
-    if (returnDate) {
-      const clone = dayjs(new Date(returnDate));
-      if (clone.isValid()) {
-        setDepartureMaxDate(clone.subtract(1, 'day').toDate());
+  const renderDay = (flights: Flight[]) => (date: Date) => {
+    const day = date.getDate();
+    let numberOfFlights = 0;
+    flights?.forEach(({ departureDate }) => {
+      if (dayjs(departureDate).isSame(date, 'day')) {
+        numberOfFlights++;
       }
-    } else {
-      setDepartureMaxDate(dayjs(new Date()).add(1, 'year').toDate());
-    }
-  }, [returnDate]);
-  useEffect(() => {
-    if (departureDate) {
-      const clone = dayjs(new Date(departureDate));
-      if (clone.isValid()) {
-        setReturnMinDate(() => dayjs(clone).add(1, 'day').toDate());
-      }
-    } else {
-      setReturnMinDate(new Date());
-    }
-  }, [departureDate]);
+    });
+
+    return (
+      <Flex flexDir="column" textAlign="center">
+        <Text
+          mt="-4px"
+          color={date.getDay() === 5 && date.getDate() === 13 ? '' : ''}
+        >
+          {day}
+        </Text>
+        {dayjs(date).isAfter(dayjs().subtract(1, 'day')) &&
+          dayjs(date).isBefore(dayjs().add(1, 'year')) && (
+            <Text
+              mt="-20px"
+              fontSize="xx-small"
+              color={numberOfFlights === 0 ? 'gray.400' : 'brandGold.300'}
+              fontWeight="bold"
+            >
+              {numberOfFlights === 0 ? '-' : numberOfFlights}
+            </Text>
+          )}
+      </Flex>
+    );
+  };
 
   return (
     <HStack spacing={5} {...stackProps}>
-      <DatePicker
-        id="flight-departure-date"
-        sx={{
-          flexGrow: 1,
-          label: {
-            color: theme.colors.gray[200],
-            fontSize: '15px',
-            fontWeight: 'normal'
-          }
-        }}
-        placeholder="Pick date"
-        label="Depature Date"
-        required
-        minDate={new Date()}
-        maxDate={departureMaxDate}
-        inputFormat="YYYY/MM/DD"
-        allowFreeInput
-        clearable={false}
-        disabled={!from || !to}
-        renderDay={RenderDay}
-        styles={(theme) => ({
-          dropdown: {
-            width: '374px'
-          },
-          day: {
-            width: '50px',
-            height: '70px'
-          }
-        })}
-        closeCalendarOnChange={false}
-        {...registerDepartureDate}
-      />
-      <DatePicker
-        id="flight-return-date"
-        sx={{
-          flexGrow: 1,
-          label: {
-            color: theme.colors.gray[200],
-            fontSize: '15px',
-            fontWeight: 'normal'
-          }
-        }}
-        placeholder="Pick date"
-        label="Return Date"
-        minDate={returnMinDate}
-        maxDate={dayjs(new Date()).add(1, 'year').toDate()}
-        inputFormat="YYYY/MM/DD"
-        allowFreeInput
-        required
-        clearable={false}
-        disabled={!from || !to || !isTwoWay}
-        {...registerReturnDate}
-      />
+      <FormControl>
+        <DatePicker
+          id="flight-departure-date"
+          placeholder="Pick date"
+          label="Depature Date"
+          required
+          inputFormat="YYYY/MM/DD"
+          clearable={false}
+          disabled={!from || !to}
+          dropdownPosition="top"
+          defaultValue={new Date()}
+          minDate={new Date()}
+          maxDate={dayjs(new Date()).add(1, 'year').toDate()}
+          renderDay={renderDay(flights)}
+          styles={(theme) => ({
+            day: {
+              height: '45px'
+            }
+          })}
+          sx={{
+            flexGrow: 1,
+            label: {
+              color: theme.colors.gray[200],
+              fontSize: '15px',
+              fontWeight: 'normal'
+            }
+          }}
+          {...registerDepartureDate}
+        />
+        <FormHelperText>
+          Found {flights?.length || '0'} flight
+          {flights?.length === 1 ? '' : 's'}
+        </FormHelperText>
+      </FormControl>
+      <FormControl>
+        <DatePicker
+          id="flight-return-date"
+          placeholder={isTwoWay ? 'Pick Return Date' : 'Disabled'}
+          label="Return Date"
+          required
+          inputFormat="YYYY/MM/DD"
+          clearable={false}
+          disabled={!isTwoWay || !from || !to}
+          dropdownPosition="top"
+          minDate={new Date()}
+          maxDate={dayjs(new Date()).add(1, 'year').toDate()}
+          renderDay={renderDay(returnFlights)}
+          styles={(theme) => ({
+            day: {
+              height: '45px'
+            }
+          })}
+          sx={{
+            flexGrow: 1,
+            label: {
+              color: theme.colors.gray[200],
+              fontSize: '15px',
+              fontWeight: 'normal'
+            }
+          }}
+          {...registerReturnDate}
+        />
+        <FormHelperText>
+          Found {returnFlights?.length || '0'} flight
+          {returnFlights?.length === 1 ? '' : 's'}
+        </FormHelperText>
+      </FormControl>
     </HStack>
-  );
-};
-
-const RenderDay = (date: Date) => {
-  const { control, setValue } = useFormContext<FlightSearchFormData>();
-  const { departureDate, returnDate, from, to, isTwoWay } = useWatch({
-    control
-  });
-
-  const day = date.getDate();
-  return (
-    <Flex flexDir="column" textAlign="start" pl="10px">
-      <Text mt="-2px">{day}</Text>
-      <Text mt="-20px" fontSize="xx-small" color="gray.400">
-        0
-      </Text>
-      <Text mt="-26px" fontSize="xx-small" color="gray.400">
-        Flights
-      </Text>
-    </Flex>
   );
 };
