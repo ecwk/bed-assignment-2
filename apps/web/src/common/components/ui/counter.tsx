@@ -1,5 +1,5 @@
 import { Flex, FlexProps, IconButton, Text } from '@chakra-ui/react';
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 
 type CounterProps = FlexProps & {
@@ -8,6 +8,7 @@ type CounterProps = FlexProps & {
   min: number;
   max: number;
   step?: number;
+  size?: 'sm' | 'md' | 'lg' | 'xs';
 };
 
 export const Counter = ({
@@ -16,6 +17,7 @@ export const Counter = ({
   min,
   max,
   step = 1,
+  size = 'sm',
   ...flexProps
 }: CounterProps) => {
   const handleIncrement = () => {
@@ -30,30 +32,37 @@ export const Counter = ({
   };
 
   return (
-    <Flex w="100%" justifyContent="space-between" {...flexProps}>
-      <IconButton
-        onClick={handleIncrement}
-        aria-label="Increase Quantity"
-        size="sm"
-        borderRightRadius="0"
-      >
-        <AiOutlinePlus />
-      </IconButton>
-      <Flex
-        background="blackAlpha.200"
-        w="100%"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text>{value}</Text>
-      </Flex>
+    <Flex justifyContent="space-between" {...flexProps}>
       <IconButton
         onClick={handleDecrement}
         aria-label="Decrease Quantity"
-        size="sm"
+        size={size}
         borderLeftRadius="0"
       >
         <AiOutlineMinus />
+      </IconButton>
+      <Flex
+        background="blackAlpha.200"
+        justifyContent="center"
+        alignItems="center"
+        px={
+          {
+            xs: '4',
+            sm: '4',
+            md: '5',
+            lg: '6'
+          }[size]
+        }
+      >
+        <Text fontSize={size}>{value}</Text>
+      </Flex>
+      <IconButton
+        onClick={handleIncrement}
+        aria-label="Increase Quantity"
+        size={size}
+        borderRightRadius="0"
+      >
+        <AiOutlinePlus />
       </IconButton>
     </Flex>
   );
