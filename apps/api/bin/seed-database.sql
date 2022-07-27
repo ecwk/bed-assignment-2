@@ -1,5 +1,4 @@
 USE sp_air;
-
 INSERT INTO users (
     `username`,
     `email`,
@@ -29,7 +28,7 @@ VALUES (
     'lilycollins19@mail.com',
     '+65 83455041',
     '$argon2i$v=19$m=4096,t=3,p=1$eYlrfJGwavG5SOMEKNljhg$w30zpVsb3E2Q+TI/ds+tRx6inQ9nkYdjBx3fJdApvBQ',
-    'admin',
+    'user',
     null
   ),
   (
@@ -37,7 +36,7 @@ VALUES (
     'timothyganter04@mail.com',
     '+61 (02) 123-4567',
     '$argon2i$v=19$m=4096,t=3,p=1$yaW2TcEv1ttwlonBOZOTrQ$dAfskXLOMSPDUi9ECvoSXnU+RXX4zTmJyUjrT0uq+mU',
-    'admin',
+    'user',
     null
   ),
   (
@@ -52,6 +51,14 @@ VALUES (
     'Wade Clint',
     'wadeclint51@mail.com',
     '+65 98009252',
+    '$argon2i$v=19$m=4096,t=3,p=1$yaW2TcEv1ttwlonBOZOTrQ$dAfskXLOMSPDUi9ECvoSXnU+RXX4zTmJyUjrT0uq+mU',
+    'user',
+    null
+  ),
+  (
+    'root',
+    'root@admin.com',
+    '+65 12345678',
     '$argon2i$v=19$m=4096,t=3,p=1$yaW2TcEv1ttwlonBOZOTrQ$dAfskXLOMSPDUi9ECvoSXnU+RXX4zTmJyUjrT0uq+mU',
     'admin',
     null
@@ -177,6 +184,33 @@ VALUES (
     1,
     2,
     '2022-08-30 05:45:00',
+    '2 hours 0 mins',
+    450.00
+  ),
+  (
+    'SP9141',
+    'Boeing 777',
+    1,
+    2,
+    '2022-08-30 16:45:00',
+    '2 hours 0 mins',
+    450.00
+  ),
+  (
+    'SP9151',
+    'Boeing 777',
+    1,
+    2,
+    '2022-08-30 12:45:00',
+    '2 hours 0 mins',
+    450.00
+  ),
+  (
+    'SP9161',
+    'Boeing 777',
+    1,
+    2,
+    '2022-08-30 07:45:00',
     '2 hours 0 mins',
     450.00
   ),
