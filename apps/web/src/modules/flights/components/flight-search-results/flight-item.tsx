@@ -25,11 +25,14 @@ import {
   Box,
   Tag,
   HStack,
-  IconButton
+  Img,
+  IconButton,
+  VStack
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
+import NextImage from 'next/image';
 
 import { getMs } from '@common/utils';
 import { Counter } from '@common/components';
@@ -42,8 +45,7 @@ type FlightItemProps = FlexProps & {
 };
 
 export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
-  const [count, setCount] = useState(1);
-  const [quantity, setQuantity] = useState('1');
+  const [quantity, setQuantity] = useState(1);
   const { user } = useAuth();
   const { addToCart } = useCart();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -80,7 +82,7 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
       addToCart({
         id: `flightId-${flightId}`,
         name: flightCode,
-        quantity: parseInt(quantity, 10),
+        quantity: quantity,
         price: parseInt(price, 10)
       });
     }
@@ -97,8 +99,8 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
     >
       <Image
         borderTopRadius="xl"
-        src="https://bit.ly/dan-abramov"
-        alt="Dan Abramov"
+        src="https://random.imagecdn.app/500/500"
+        alt="flight booking"
       />
       <Flex flexDir="column" p={5}>
         <HStack mt={2}>
@@ -130,23 +132,27 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
         >
           View details
         </Button>
-        <Flex flexDir="column">
-          {/* <Text fontSize="xl" fontWeight="bold" color="green.200">
-            ${price}
-          </Text> */}
+        <Flex mt={4} justifyContent="space-between" alignItems="center">
+          <Flex alignItems="center" gap={1}>
+            <Text textAlign="end" fontSize="xl">
+              $
+            </Text>
+            <Text as="span" fontSize="2xl" fontWeight="bold">
+              {Number(price).toFixed(2)}
+            </Text>
+          </Flex>
+          <Counter
+            size="sm"
+            value={quantity}
+            setValue={setQuantity}
+            min={1}
+            max={999}
+          />
         </Flex>
-        <FormControl></FormControl>
-        <Flex alignItems="end" gap={2}>
-          <Button onClick={onOpen} variant="outline">
-            View Details
-          </Button>
-          <Box>
-            <Counter value={count} setValue={setCount} min={1} max={999} />
-            <Button mt={2} onClick={handleClick} colorScheme="brandGold">
-              Add To Cart
-            </Button>
-          </Box>
-        </Flex>
+        <Flex gap={2} justifyContent="flex-end" mt={2}></Flex>
+        <Button mt={2} onClick={handleClick} colorScheme="brandGold">
+          Add To Cart
+        </Button>
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
