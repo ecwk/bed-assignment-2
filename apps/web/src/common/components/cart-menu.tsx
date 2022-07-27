@@ -1,29 +1,12 @@
 import {
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  FormLabel,
-  FormControl,
-  useToast
-} from '@chakra-ui/react';
-import {
   Flex,
-  Spacer,
   Text,
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
-  MenuDivider,
-  Divider,
-  Button,
   IconButton,
-  Avatar,
   HStack,
   useColorMode,
-  useColorModeValue,
   Box,
   MenuGroup,
   Heading

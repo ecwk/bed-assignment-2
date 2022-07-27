@@ -33,18 +33,30 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 import NextImage from 'next/image';
-
+import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { getMs } from '@common/utils';
+import { FlightItemModal } from './flight-item-modal';
 import { Counter } from '@common/components';
 import { useCart } from '@common/hooks';
 import { useAuth } from '@modules/auth';
-import { type Flight } from '@common/types';
+import { type Flight, type Airport } from '@common/types';
 
 type FlightItemProps = FlexProps & {
   flight: Flight;
+  isTwoWay: boolean;
+  isDirect: boolean;
+  originAirport: Airport;
+  destinationAirport: Airport;
 };
 
-export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
+export const FlightItem = ({
+  flight,
+  isTwoWay,
+  isDirect,
+  originAirport,
+  destinationAirport,
+  ...flexProps
+}: FlightItemProps) => {
   const [quantity, setQuantity] = useState(1);
   const { user } = useAuth();
   const { addToCart } = useCart();
@@ -63,6 +75,7 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
   const travelTimeMs = getMs(travelTime);
   const departDateTime = dayjs(departureDate);
   const arrivalDateTime = dayjs(departDateTime).add(travelTimeMs, 'ms');
+  const mockImage = 'https://random.imagecdn.app/500/500';
 
   const handleClick = () => {
     if (!user) {
@@ -94,14 +107,11 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
       flexDir="column"
       border="1px solid"
       borderRadius="xl"
-      borderColor="gray.500"
+      borderColor="gray.600"
       {...flexProps}
+      background="gray.900"
     >
-      <Image
-        borderTopRadius="xl"
-        src="https://random.imagecdn.app/500/500"
-        alt="flight booking"
-      />
+      <Image borderTopRadius="xl" src={mockImage} alt="flight booking" />
       <Flex flexDir="column" p={5}>
         <HStack mt={2}>
           <Tag size="sm" colorScheme="blue" borderRadius="2xl">
@@ -114,63 +124,82 @@ export const FlightItem = ({ flight, ...flexProps }: FlightItemProps) => {
             NEW
           </Tag>
         </HStack>
-        <Heading fontSize="2xl" mt={2}>
-          {flightCode}
-        </Heading>
-        <Text>{dayjs(departureDate).format('DD MMM YYYY, ddd')}</Text>
-        <Text color="gray">
-          {departDateTime.format('HH:mm a')} -{' '}
-          {arrivalDateTime.format('HH:mm a')}
-        </Text>
-        <Button
-          w="max-content"
-          variant="link"
-          fontWeight="normal"
-          fontSize="sm"
-          colorScheme="blue"
-          onClick={onOpen}
-        >
-          View details
-        </Button>
-        <Flex mt={4} justifyContent="space-between" alignItems="center">
-          <Flex alignItems="center" gap={1}>
-            <Text textAlign="end" fontSize="xl">
-              $
+        <Flex className="item-content">
+          <Box className="item-details" flexGrow="1" mt={4}>
+            <Heading size="md">{originAirport.name}</Heading>
+            <Text>{dayjs(departureDate).format('ddd, DD MMM YYYY')}</Text>
+            <Text color="gray">
+              {departDateTime.format('HH:mm a')} -{' '}
+              {arrivalDateTime.format('HH:mm a')}
             </Text>
-            <Text as="span" fontSize="2xl" fontWeight="bold">
-              {Number(price).toFixed(2)}
-            </Text>
+            <Button
+              w="max-content"
+              variant="link"
+              fontWeight="normal"
+              fontSize="sm"
+              colorScheme="blue"
+              onClick={onOpen}
+            >
+              View details
+            </Button>
+            <Counter
+              mt={4}
+              maxW="150px"
+              size="sm"
+              value={quantity}
+              setValue={setQuantity}
+              min={1}
+              max={999}
+            />
+          </Box>
+          <Flex
+            className="item-buttons"
+            flexShrink={-1}
+            flexDir="column"
+            justifyContent="flex-end"
+            alignItems="flex-end"
+          >
+            <IconButton
+              aria-label="add to cart"
+              width="max-content"
+              // colorScheme="brandGold"
+              mt={2}
+              size="lg"
+              onClick={handleClick}
+              variant="ghost"
+            >
+              <AiOutlineShoppingCart size={40} />
+            </IconButton>
+            <Flex alignItems="flex-end" mt={2} gap={1}>
+              <Text
+                color="gray.500"
+                textAlign="end"
+                fontSize="lg"
+                // fontWeight="bold"
+                h="max-content"
+              >
+                $
+              </Text>
+              <Text as="span" fontSize="2xl" fontWeight="normal">
+                {Number(price).toFixed(2)}
+              </Text>
+            </Flex>
           </Flex>
-          <Counter
-            size="sm"
-            value={quantity}
-            setValue={setQuantity}
-            min={1}
-            max={999}
-          />
         </Flex>
-        <Flex gap={2} justifyContent="flex-end" mt={2}></Flex>
-        <Button mt={2} onClick={handleClick} colorScheme="brandGold">
-          Add To Cart
-        </Button>
       </Flex>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody></ModalBody>
-
-          <ModalFooter display="flex" gap={5}>
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
-            <Button colorScheme="brandGold" mr={3} onClick={handleClick}>
-              Add To Cart
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <FlightItemModal
+        isOpen={isOpen}
+        onClose={onClose}
+        addToCart={handleClick}
+        quantity={quantity}
+        setQuantity={setQuantity}
+        flight={flight}
+        isTwoWay={isTwoWay}
+        isDirect={isDirect}
+        originAirport={originAirport}
+        destinationAirport={destinationAirport}
+        src={mockImage}
+      />
     </Flex>
   );
 };

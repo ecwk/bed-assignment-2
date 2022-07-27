@@ -53,7 +53,7 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
   const returnDateString = typeof returnDate === 'string' ? returnDate : '';
 
   return (
-    <Flex flexDir="column" maxW="1000px" mx="auto" my="80px">
+    <Flex flexDir="column" maxW="1200px" mx="auto" my="80px">
       <Box>
         <NextLink href="/search">
           <Button
@@ -76,7 +76,7 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
           mt: 2
         }}
       >
-        <Flex justifyContent="space-around" my={16}>
+        <Flex justifyContent="space-around" my={16} maxW="1200px" w="100%" alignSelf="center">
           <AirportTitle
             type="departure"
             airport={originAirport}
@@ -96,7 +96,13 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
               .slice((flightPage - 1) * 3, flightPage * 3)
               .map((flight, index) => (
                 <GridItem key={flight.flightId} mt={10}>
-                  <FlightItem flight={flight} />
+                  <FlightItem
+                    flight={flight}
+                    isTwoWay={isTwoWay}
+                    isDirect={isDirect}
+                    originAirport={originAirport}
+                    destinationAirport={destinationAirport}
+                  />
                 </GridItem>
               ))
           ) : (
@@ -155,7 +161,13 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
                 ?.slice((returnFlightPage - 1) * 3, returnFlightPage * 3)
                 .map((flight) => (
                   <GridItem key={flight.flightId} mt={5}>
-                    <FlightItem flight={flight} />
+                    <FlightItem
+                      flight={flight}
+                      isTwoWay={isTwoWay}
+                      isDirect={isDirect}
+                      originAirport={originAirport}
+                      destinationAirport={destinationAirport}
+                    />
                   </GridItem>
                 ))
             ) : (

@@ -37,7 +37,7 @@ export const Counter = ({
         onClick={handleDecrement}
         aria-label="Decrease Quantity"
         size={size}
-        borderLeftRadius="0"
+        borderRightRadius="0"
       >
         <AiOutlineMinus />
       </IconButton>
@@ -45,6 +45,7 @@ export const Counter = ({
         background="blackAlpha.200"
         justifyContent="center"
         alignItems="center"
+        w="100%"
         px={
           {
             xs: '4',
@@ -60,7 +61,7 @@ export const Counter = ({
         onClick={handleIncrement}
         aria-label="Increase Quantity"
         size={size}
-        borderRightRadius="0"
+        borderLeftRadius="0"
       >
         <AiOutlinePlus />
       </IconButton>
