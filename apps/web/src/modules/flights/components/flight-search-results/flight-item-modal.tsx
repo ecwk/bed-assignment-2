@@ -96,7 +96,7 @@ export const FlightItemModal = ({
               </Tag>
             </HStack>
             <Heading fontSize="3xl" mt={2}>
-              {originAirport.name}
+              {flight.aircraftName} ({flight.flightCode})
             </Heading>
             <Box>
               <Text fontSize="lg">

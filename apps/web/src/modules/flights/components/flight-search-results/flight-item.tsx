@@ -94,9 +94,11 @@ export const FlightItem = ({
       });
       addToCart({
         id: `flightId-${flightId}`,
-        name: flightCode,
+        name: `SP Air Ticket - ${flightCode}`,
+        description: `Flight from ${originAirport.name} to ${destinationAirport.name}`,
         quantity: quantity,
-        price: parseInt(price, 10)
+        price: parseInt(price, 10),
+        image: mockImage
       });
     }
   };
@@ -126,7 +128,10 @@ export const FlightItem = ({
         </HStack>
         <Flex className="item-content">
           <Box className="item-details" flexGrow="1" mt={4}>
-            <Heading size="md">{originAirport.name}</Heading>
+            {/* <Heading size="md">{originAirport.name}</Heading> */}
+            <Heading size="md">
+              {flight.aircraftName} ({flight.flightCode})
+            </Heading>
             <Text>{dayjs(departureDate).format('ddd, DD MMM YYYY')}</Text>
             <Text color="gray">
               {departDateTime.format('HH:mm a')} -{' '}
@@ -168,7 +173,7 @@ export const FlightItem = ({
               onClick={handleClick}
               variant="ghost"
             >
-              <AiOutlineShoppingCart size={40} />
+              <AiOutlineShoppingCart size={30} />
             </IconButton>
             <Flex alignItems="flex-end" mt={2} gap={1}>
               <Text

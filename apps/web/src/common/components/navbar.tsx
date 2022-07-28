@@ -44,7 +44,7 @@ export const Navbar = () => {
     <Flex py={4} px={10} height={NAVBAR_HEIGHT} alignItems="center" gap={6}>
       <NextLink href="/" passHref>
         <Link>
-          <Logo size={0.9} />
+          <Logo size={0.6} />
         </Link>
       </NextLink>
       <Spacer />
