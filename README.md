@@ -1,8 +1,12 @@
 # BED Assignment 2
 
-![image](https://user-images.githubusercontent.com/82776299/180184337-70a57078-15ac-4ca9-9a1a-97e19bc11fcf.png)
+<a href="https://bed-assignment-2.deploy.cnoside.dev">
+  <img src="https://user-images.githubusercontent.com/82776299/180184337-70a57078-15ac-4ca9-9a1a-97e19bc11fcf.png" /> 
+</a>
 
-This is a submission for my school's backend web development (BED) assignment.
+This is a submission for my school's backend web development (BED) assignment. 
+
+The app is hosted on https://bed-assignment-2.deploy.cnoside.dev
 
 ## What's inside?
 
