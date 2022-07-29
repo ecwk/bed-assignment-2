@@ -16,7 +16,7 @@ export const Redirects = () => {
       if (!user && protectedRoutes.includes(path)) {
         router.push('/signup');
       } else if (user && '/login' === path) {
-        router.back();
+        router.push('/search')
       } else {
       }
     }

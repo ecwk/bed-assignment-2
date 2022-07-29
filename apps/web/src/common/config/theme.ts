@@ -54,6 +54,13 @@ export const colors = {
 
 export const chakraTheme = extendTheme({
   colors,
+  breakpoints: {
+    sm: '400px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1440px',
+    '2xl': '1920px'
+  },
   layerStyles: {
     lightModeButton: {
       color: '#1B2026',

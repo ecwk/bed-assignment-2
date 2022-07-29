@@ -24,23 +24,46 @@ const Login: NextPage = () => {
   const textAccent = useColorModeValue('blue.200', 'brandGold.300');
 
   return (
-    <Flex minH={`calc(100vh - ${NAVBAR_HEIGHT})`}>
+    <Flex
+      minH={`calc(100vh - ${NAVBAR_HEIGHT})`}
+      px={{
+        base: 2,
+        sm: 5,
+        xl: 10
+      }}
+    >
       <BackgroundVideo />
       <Flex
         color="brandText"
         flexDir="column"
-        mt="200px"
-        ml="200px"
+        alignItems={{
+          base: 'center',
+          lg: 'flex-start'
+        }}
+        mt={{
+          base: '80px',
+          md: '200px'
+        }}
+        ml={{
+          base: '0',
+          lg: '200px'
+        }}
+        mb={{
+          base: '80px',
+          md: '40px'
+        }}
         width="100%"
       >
-        <Heading size="md">LOGIN</Heading>
-        <Heading my={4} size="3xl">
-          Welcome back
-          <Text as="span" color={textAccent}>
-            .
-          </Text>
-        </Heading>
-        <Box maxW="400px">
+        <Box>
+          <Heading size="md">LOGIN</Heading>
+          <Heading my={4} size="3xl">
+            Welcome back
+            <Text as="span" color={textAccent}>
+              .
+            </Text>
+          </Heading>
+        </Box>
+        <Box maxW="400px" w="100%">
           <LoginForm mt={6} />
           <Text mt={6} textAlign="center">
             Don't have an account yet?{' '}

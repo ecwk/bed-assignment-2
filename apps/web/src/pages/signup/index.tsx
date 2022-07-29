@@ -30,19 +30,52 @@ const Signup: NextPage = () => {
   };
 
   return (
-    <Flex>
+    <Flex
+      px={{
+        base: 2,
+        sm: 5,
+        xl: 10
+      }}
+    >
       <BackgroundVideo />
-      <Flex color="brandText" flexDir="column" mt="170px" ml="200px" mb="40px">
-        <Heading size="md" color="brand">
-          SIGN UP
-        </Heading>
-        <Heading my={4} size="3xl">
-          Create Your Account
-          <Text as="span" color={textAccent}>
-            .
-          </Text>
-        </Heading>
-        <Box maxW="500px">
+      <Flex
+        color="brandText"
+        flexDir="column"
+        w="100%"
+        alignItems={{
+          base: 'center',
+          lg: 'flex-start'
+        }}
+        mt={{
+          base: '80px',
+          md: '170px'
+        }}
+        ml={{
+          base: '0',
+          lg: '200px'
+        }}
+        mb={{
+          base: '80px',
+          md: '40px'
+        }}
+      >
+        <Box>
+          <Heading size="md" color="brand">
+            SIGN UP
+          </Heading>
+          <Heading my={4} size="3xl">
+            Create Your Account
+            <Text as="span" color={textAccent}>
+              .
+            </Text>
+          </Heading>
+        </Box>
+        <Box
+          maxW={{
+            base: '400px',
+            md: '500px'
+          }}
+        >
           <SignupForm mt={6} />
           <Text mt={6} textAlign="center">
             Already created an account?{' '}

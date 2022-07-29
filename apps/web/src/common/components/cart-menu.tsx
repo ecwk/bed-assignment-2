@@ -9,7 +9,8 @@ import {
   useColorMode,
   Box,
   MenuGroup,
-  Heading
+  Heading,
+  MenuProps
 } from '@chakra-ui/react';
 import { VscBell } from 'react-icons/vsc';
 import { BiSupport } from 'react-icons/bi';
@@ -32,7 +33,11 @@ import { Link } from '@common/components';
 import { useState } from 'react';
 import { type CartItem } from '@common/types';
 
-export const CartMenu = () => {
+type CartMenuProps = {
+  display?: Record<string, string>;
+};
+
+export const CartMenu = ({ display }: CartMenuProps) => {
   const { user, logout } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
   const {
@@ -45,20 +50,29 @@ export const CartMenu = () => {
 
   return (
     <Menu>
-      <Indicator
-        label={cart.length === 0 ? '' : cart.length}
-        size={cart.length === 0 ? 0 : 16}
-        color="red"
-      >
-        <MenuButton
-          as={IconButton}
-          variant="ghost"
-          icon={<AiOutlineShoppingCart size="20px" />}
-          aria-label="Shopping Cart"
-        />
-      </Indicator>
+      <Box display={display}>
+        <Indicator
+          label={cart.length === 0 ? '' : cart.length}
+          size={cart.length === 0 ? 0 : 16}
+          color="red"
+        >
+          <MenuButton
+            as={IconButton}
+            variant="ghost"
+            icon={<AiOutlineShoppingCart size="20px" />}
+            aria-label="Shopping Cart"
+          />
+        </Indicator>
+      </Box>
 
-      <MenuList pt={4} pb={6} px={6} borderRadius="xl" minW="300px">
+      <MenuList
+        pt={4}
+        pb={6}
+        px={6}
+        borderRadius="xl"
+        minW="300px"
+        display={display}
+      >
         <MenuGroup>
           <Box
             display="flex"

@@ -85,7 +85,7 @@ export const SelectDate = ({
   };
 
   return (
-    <HStack spacing={5} {...stackProps}>
+    <HStack spacing={5} {...stackProps} alignItems="flex-start">
       <FormControl>
         <DatePicker
           id="flight-departure-date"
@@ -116,7 +116,7 @@ export const SelectDate = ({
           {...registerDepartureDate}
         />
         <FormHelperText>
-          Has{' '}
+          Selected{' '}
           {
             flights?.filter((flight) =>
               dayjs(flight.departureDate).isSame(departureDate, 'day')
@@ -156,7 +156,7 @@ export const SelectDate = ({
         />
         <FormHelperText>
           {isTwoWay
-            ? `Has ${
+            ? `Selected ${
                 returnFlights?.filter((flight) =>
                   dayjs(flight.departureDate).isSame(returnDate, 'date')
                 ).length || 0

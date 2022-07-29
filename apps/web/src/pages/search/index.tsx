@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react';
+import { Tabs, TabList, TabPanels, Tab, TabPanel, Box } from '@chakra-ui/react';
 
 import { server } from '@config/axios';
 import { type Airport } from '@common/types';
@@ -10,20 +10,28 @@ type BookFlightProps = ServerSideProps & {};
 
 const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
   return (
-    <Tabs isFitted sx={sx.tabs}>
-      <TabList>
-        <Tab>Flight</Tab>
-        <Tab>Airports</Tab>
-        <Tab>Users</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel>
-          <FlightSearchForm airports={airports || []} />
-        </TabPanel>
-        <TabPanel>Airport</TabPanel>
-        <TabPanel>Users</TabPanel>
-      </TabPanels>
-    </Tabs>
+    <Box
+      px={{
+        base: 2,
+        sm: 5,
+        xl: 10
+      }}
+    >
+      <Tabs isFitted sx={sx.tabs}>
+        <TabList>
+          <Tab>Flight</Tab>
+          <Tab>Airports</Tab>
+          <Tab>Users</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel px={0}>
+            <FlightSearchForm airports={airports || []} />
+          </TabPanel>
+          <TabPanel>Airport</TabPanel>
+          <TabPanel>Users</TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Box>
   );
 };
 
@@ -32,7 +40,12 @@ const sx = {
     my: '80px',
     maxW: '1000px',
     w: '100%',
-    p: 10,
+    py: 10,
+    px: {
+      base: 4,
+      sm: 6,
+      md: 10
+    },
     mx: 'auto',
     background: 'brandPaleBlue.700',
     borderRadius: 'xl'

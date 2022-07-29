@@ -9,7 +9,9 @@ const Dashboard: NextPage = () => {
       </Heading>
       <Button
         onClick={() => {
-          new Notification('Hello', { body: 'Hello World' });
+          if (Notification) {
+            new Notification('Hello', { body: 'Hello World' });
+          }
         }}
       >
         Notify

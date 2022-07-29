@@ -8,7 +8,8 @@ import {
   MenuDivider,
   Button,
   Avatar,
-  useColorMode
+  useColorMode,
+  Link
 } from '@chakra-ui/react';
 import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
 
@@ -18,6 +19,7 @@ import { useCart } from '@common/hooks';
 
 export const UserMenu = () => {
   const { user, logout } = useAuth();
+  const { cart } = useCart();
 
   return (
     <Menu>
@@ -40,9 +42,70 @@ export const UserMenu = () => {
             </Flex>
           </MenuButton>
           <MenuList p={3} borderRadius="2xl">
+            <NextLink href="/search" passHref>
+              <MenuItem
+                borderRadius="xl"
+                minH="45px"
+                display={{
+                  base: 'block',
+                  md: 'none'
+                }}
+              >
+                Book A Flight
+              </MenuItem>
+            </NextLink>
             <NextLink href="/dashboard" passHref>
               <MenuItem borderRadius="xl" minH="45px">
                 Dashboard
+              </MenuItem>
+            </NextLink>
+            <NextLink href="/cart" passHref>
+              <MenuItem
+                borderRadius="xl"
+                minH="45px"
+                display={{
+                  base: 'block',
+                  md: 'none'
+                }}
+              >
+                Cart ({cart.length})
+              </MenuItem>
+            </NextLink>
+            <MenuDivider
+              display={{
+                base: 'block',
+                lg: 'none'
+              }}
+            />
+            <MenuItem
+              borderRadius="xl"
+              minH="45px"
+              onClick={() => {
+                if ('Notification' in window) {
+                  Notification.requestPermission();
+                }
+              }}
+              display={{
+                base: 'block',
+                lg: 'none'
+              }}
+            >
+              {'Notification' in window
+                ? Notification.permission === 'granted'
+                  ? 'Notifications'
+                  : 'Enable Notifications'
+                : 'Notifications'}
+            </MenuItem>
+            <NextLink href="/dashboard" passHref>
+              <MenuItem
+                borderRadius="xl"
+                minH="45px"
+                display={{
+                  base: 'block',
+                  lg: 'none'
+                }}
+              >
+                Support
               </MenuItem>
             </NextLink>
             <MenuDivider />

@@ -27,12 +27,12 @@ import {
   HStack,
   Img,
   IconButton,
-  VStack
+  VStack,
+  Skeleton
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
-import NextImage from 'next/image';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { getMs } from '@common/utils';
 import { FlightItemModal } from './flight-item-modal';
@@ -40,6 +40,16 @@ import { Counter } from '@common/components';
 import { useCart } from '@common/hooks';
 import { useAuth } from '@modules/auth';
 import { type Flight, type Airport } from '@common/types';
+import NextImage from 'next/image';
+
+
+const getMockImage = () => {
+  // random number from 500 - 600
+  const random = Math.floor(Math.random() * 100) + 500;
+
+  return `https://random.imagecdn.app/${random}/${random}`;
+};
+// const mockImage = 'https://random.imagecdn.app/500/500';
 
 type FlightItemProps = FlexProps & {
   flight: Flight;
@@ -75,7 +85,8 @@ export const FlightItem = ({
   const travelTimeMs = getMs(travelTime);
   const departDateTime = dayjs(departureDate);
   const arrivalDateTime = dayjs(departDateTime).add(travelTimeMs, 'ms');
-  const mockImage = 'https://random.imagecdn.app/500/500';
+
+  const mockImage = getMockImage()
 
   const handleClick = () => {
     if (!user) {
@@ -113,7 +124,12 @@ export const FlightItem = ({
       {...flexProps}
       background="gray.900"
     >
-      <Image borderTopRadius="xl" src={mockImage} alt="flight booking" />
+      <Img
+        boxSize="100%"
+        borderTopRadius="xl"
+        src={mockImage}
+        alt="flight booking"
+      />
       <Flex flexDir="column" p={5}>
         <HStack mt={2}>
           <Tag size="sm" colorScheme="blue" borderRadius="2xl">

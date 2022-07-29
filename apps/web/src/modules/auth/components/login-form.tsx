@@ -21,6 +21,7 @@ import { AiOutlineCheck } from 'react-icons/ai';
 import { sleep } from '@common/utils';
 
 import { useAuth } from '@modules/auth';
+import { useRouter } from 'next/router';
 
 type LoginFormData = {
   email: string;
@@ -33,6 +34,7 @@ export const LoginForm = (props: LoginFormProps) => {
   const { login } = useAuth();
   const { register, handleSubmit } = useForm<LoginFormData>();
   const toast = useToast();
+  const router = useRouter();
 
   const loginMutation = useMutation(
     ({ email, password }: LoginFormData) => {

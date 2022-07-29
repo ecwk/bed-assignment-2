@@ -76,11 +76,19 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
     <FormProvider {...methods}>
       <Grid
         as="form"
-        gridTemplateAreas={`
+        gridTemplateAreas={{
+          base: `
+            "heading heading"
+            "input input"
+            "options options"
+            "button button"
+          `,
+          lg: `
             "heading heading"
             "input options"
             "button button"
-          `}
+          `
+        }}
         columnGap={5}
         onSubmit={onSubmit}
       >
@@ -98,7 +106,12 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
         </GridItem>
 
         <GridItem area="options">
-          <Options />
+          <Options
+            mt={{
+              base: 5,
+              lg: 0
+            }}
+          />
         </GridItem>
 
         <GridItem area="button">

@@ -1,87 +1,130 @@
 import {
   Flex,
   Spacer,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
   Divider,
   Button,
   IconButton,
-  Avatar,
   HStack,
   Link,
   useColorMode,
   useColorModeValue,
+  Input,
   Box
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { VscBell } from 'react-icons/vsc';
 import { BiSupport } from 'react-icons/bi';
-import { Indicator } from '@mantine/core';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
-import { AiOutlineShoppingCart } from 'react-icons/ai';
-import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
 
-import { Logo, CartMenu, UserMenu } from './';
-import NextLink from 'next/link';
 import { useAuth } from '@modules/auth';
-import { useCart } from '@common/hooks';
+import { Logo, CartMenu, UserMenu } from './';
 import { NAVBAR_HEIGHT } from '@common/constants';
 
 export const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { cart } = useCart();
 
   const colorModeButton = useColorModeValue(
     'lightModeButton',
     'darkModeButton'
   );
 
+  const display = {
+    base: 'none',
+    lg: 'flex'
+  };
+
   return (
-    <Flex py={4} px={10} height={NAVBAR_HEIGHT} alignItems="center" gap={6}>
+    <Flex
+      py={4}
+      px={{
+        base: 2,
+        sm: 5,
+        xl: 10
+      }}
+      height={NAVBAR_HEIGHT}
+      alignItems="center"
+      justifyContent={{ base: 'space-between', md: 'flex-start' }}
+      gap={{
+        base: 0,
+        sm: 6
+      }}
+    >
       <NextLink href="/" passHref>
-        <Link>
+        <Link ml="-15px">
           <Logo size={0.6} />
         </Link>
       </NextLink>
-      <Spacer />
+      <Input
+        placeholder="search"
+        maxW="350px"
+        display={{
+          base: 'none',
+          md: 'block'
+        }}
+      />
+      <Spacer
+        display={{
+          base: 'none',
+          md: 'block'
+        }}
+      />
       <HStack spacing={4}>
         <IconButton
           variant="outline"
           icon={colorMode === 'light' ? <IoMdMoon /> : <IoMdSunny />}
           aria-label="Toggle dark mode"
           onClick={toggleColorMode}
+          display={{
+            base: 'none',
+            md: 'flex'
+          }}
         />
         <NextLink href="/search" passHref>
-          <Button as={Link} layerStyle={colorModeButton}>
+          <Button
+            as={Link}
+            layerStyle={colorModeButton}
+            display={{
+              base: 'none',
+              md: 'flex'
+            }}
+          >
             Book A Flight
           </Button>
         </NextLink>
         <IconButton
+          aria-label="Contact support"
+          display={display}
           icon={<BiSupport />}
-          aria-label="Notifications"
           variant="ghost"
           size="md"
           ml={4}
         />
         <IconButton
-          icon={<VscBell />}
           aria-label="Notifications"
+          display={display}
+          icon={<VscBell />}
           variant="ghost"
           size="md"
           ml={4}
           onClick={() => {
-            Notification.requestPermission();
+            if (Notification) {
+              Notification.requestPermission();
+            }
           }}
         />
       </HStack>
-      <Divider orientation="vertical" />
+      <Divider orientation="vertical" display={display} />
       {user ? (
         <HStack spacing={4}>
-          <CartMenu />
+          <Box
+            display={{
+              base: 'none',
+              md: 'block'
+            }}
+          >
+            <CartMenu />
+          </Box>
           <UserMenu />
         </HStack>
       ) : (
