@@ -42,7 +42,6 @@ import { useAuth } from '@modules/auth';
 import { type Flight, type Airport } from '@common/types';
 import NextImage from 'next/image';
 
-
 const getMockImage = () => {
   // random number from 500 - 600
   const random = Math.floor(Math.random() * 100) + 500;
@@ -86,7 +85,7 @@ export const FlightItem = ({
   const departDateTime = dayjs(departureDate);
   const arrivalDateTime = dayjs(departDateTime).add(travelTimeMs, 'ms');
 
-  const mockImage = getMockImage()
+  const mockImage = getMockImage();
 
   const handleClick = () => {
     if (!user) {
@@ -129,6 +128,8 @@ export const FlightItem = ({
         borderTopRadius="xl"
         src={mockImage}
         alt="flight booking"
+        h="250px"
+        objectFit="cover"
       />
       <Flex flexDir="column" p={5}>
         <HStack mt={2}>
@@ -165,7 +166,7 @@ export const FlightItem = ({
             </Button>
             <Counter
               mt={4}
-              maxW="150px"
+              maxW="100px"
               size="sm"
               value={quantity}
               setValue={setQuantity}
@@ -196,7 +197,6 @@ export const FlightItem = ({
                 color="gray.500"
                 textAlign="end"
                 fontSize="lg"
-                // fontWeight="bold"
                 h="max-content"
               >
                 $

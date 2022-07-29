@@ -24,7 +24,7 @@ const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
           <Tab>Users</Tab>
         </TabList>
         <TabPanels>
-          <TabPanel px={0}>
+          <TabPanel>
             <FlightSearchForm airports={airports || []} />
           </TabPanel>
           <TabPanel>Airport</TabPanel>

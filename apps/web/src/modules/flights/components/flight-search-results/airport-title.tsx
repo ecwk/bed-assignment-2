@@ -6,15 +6,11 @@ import {
   Link,
   type BoxProps
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
-import { AxiosError } from 'axios';
-import { GetServerSideProps, NextPage } from 'next';
-import { FaArrowRight } from 'react-icons/fa';
-import { BiLinkExternal } from 'react-icons/bi';
-import { Indicator } from '@mantine/core';
-import ms from 'ms';
-import { Airport } from '@common/types';
 import dayjs from 'dayjs';
+import NextLink from 'next/link';
+import { BiLinkExternal } from 'react-icons/bi';
+
+import { Airport } from '@common/types';
 
 type ResultHeadingProps = BoxProps & {
   airport: Airport;
@@ -43,9 +39,9 @@ export const AirportTitle = ({
       </Heading>
       <Heading size="lg" position="relative">
         <NextLink href={`/airports/${airportId}`} passHref>
-          <Link display="flex" alignItems="center">
-            <Text as="span">{name}</Text>
-            <Box ml={1} mt={2} as="span">
+          <Link display="flex" alignItems="center" justifyContent="flex-start">
+            <Text flexShrink={-1}>{name}</Text>
+            <Box ml={1} mt={2} flexGrow={100}>
               <BiLinkExternal size="16px" />
             </Box>
           </Link>
