@@ -1,4 +1,5 @@
 const argon2 = require('argon2');
+const { isEmpty } = require('lodash');
 
 const UserModel = (database) => ({
   findAll: async () => {
@@ -96,6 +97,26 @@ const UserModel = (database) => ({
         user.profilePicUrl,
         userId
       ]
+    );
+    return results[0].affectedRows;
+  },
+  patchByUserid: async (userId, user) => {
+    if (isEmpty(user)) {
+      return false;
+    }
+    if (user.password) {
+      user.password = await argon2.hash(user.password);
+    }
+    const results = await database.query(
+      `
+        UPDATE users
+        SET
+        ${Object.keys(user)
+          .map((key) => `${key} = ?`)
+          .join(', ')}
+        WHERE user_id = ?
+      `,
+      [...Object.values(user), userId]
     );
     return results[0].affectedRows;
   }

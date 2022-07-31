@@ -69,5 +69,28 @@ module.exports = (database) => {
       }
     }
   );
+
+  router.patch(
+    '/:userId',
+    (req, res, next) =>
+      validateBody(UserValidationSchema(database, req.params.userId).patch)(
+        req,
+        res,
+        next
+      ),
+    async (req, res, next) => {
+      const user = req.body;
+      const patchedUserId = await userModel.patchByUserid(
+        req.params.userId,
+        user
+      );
+      if (patchedUserId === 0) {
+        return next(createError(404, 'User not found'));
+      }
+      const patchedUser = await userModel.findOne('user_id', req.params.userId);
+      res.status(200).json({ user: patchedUser });
+    }
+  );
+
   return router;
 };

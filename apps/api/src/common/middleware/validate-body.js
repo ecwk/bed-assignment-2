@@ -1,7 +1,10 @@
 const { ValidationError } = require('yup');
 
+const { HTTP_ERROR_CODES } = require('../constants');
+
 const validateBody = (validationSchema) => async (req, res, next) => {
   try {
+    console.log(req.body);
     const res = await validationSchema.validate(req.body, {
       abortEarly: false,
       stripUnknown: true
@@ -10,16 +13,11 @@ const validateBody = (validationSchema) => async (req, res, next) => {
     next();
   } catch (err) {
     if (err instanceof ValidationError) {
-      let statusCode = 400;
-      let message = 'Bad Request';
-      if (err.inner.some((error) => error.type.match(/.+-is-unique/))) {
-        statusCode = 422;
-        message = 'Unprocessable Entity';
-      }
-      res.status(statusCode).json({
-        statusCode,
-        message,
-        error: err.errors.map((message) => message)
+      const errors = err.inner.map((error) => [error.path, error.errors[0]]);
+      res.status(400).json({
+        statusCode: 400,
+        message: HTTP_ERROR_CODES[400],
+        errors: Object.fromEntries(errors)
       });
     } else {
       next(err);

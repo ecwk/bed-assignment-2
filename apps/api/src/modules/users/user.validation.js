@@ -210,9 +210,127 @@ const UserValidationSchema = (database, userId) => {
     .strict(true)
     .noUnknown(true, 'No unknown fields are allowed');
 
+  const patch = yup
+    .object({
+      username: yup
+        .string()
+        .test(
+          'username-is-unique',
+          'Username is already taken',
+          async (value) => {
+            const user = await userModel.findOne('username', value);
+            if (user && user.userId !== Number(userId)) {
+              return false;
+            }
+            return true;
+          }
+        )
+        .notRequired(),
+      email: yup
+        .string()
+        .email('Email must be a valid email')
+        .test('email-is-unique', 'Email is already taken', async (value) => {
+          const user = await userModel.findOne('email', value);
+          if (user && user.userId !== Number(userId)) {
+            return false;
+          }
+          return true;
+        })
+        .notRequired(),
+      contact: yup
+        .string()
+        .test(
+          'contact-is-unique',
+          'Contact is already taken',
+          async (value) => {
+            if (value) {
+              const user = await userModel.findOne('contact', value);
+              if (user && user.userId !== Number(userId)) {
+                return false;
+              }
+            }
+            return true;
+          }
+        )
+        .test(
+          'isValidContactFormat',
+          'Contact must follow the format: +[code] [number]',
+          (value) => {
+            if (value) {
+              const mobileCode = value?.match(/^\+.+(?=\s)/)?.[0];
+              const phoneNumber = value?.replace(mobileCode, '').trim();
+              if (!(mobileCode && phoneNumber)) {
+                return false;
+              }
+            }
+            return true;
+          }
+        )
+        .test(
+          'isValidContact',
+          'Contact must be a valid number',
+          async (value) => {
+            if (value) {
+              const mobileCode = value?.match(/^\+.+(?=\s)/)?.[0];
+              const phoneNumber = value?.replace(mobileCode, '').trim();
+              const country = COUNTRIES.find(
+                (country) => mobileCode === country.mobileCode
+              );
+              if (!country) {
+                return false;
+              }
+              return isValidNumberForRegion(phoneNumber, country.code);
+            }
+            return true;
+          }
+        )
+        .notRequired(),
+      password: yup
+        .string()
+        .matches(/(?=.*[a-z]).*/, {
+          message: 'Password must contain at least 1 lowercase letter'
+        })
+        .matches(/(?=.*[A-Z]).*/, {
+          message: 'Password must contain at least 1 uppercase letter'
+        })
+        .matches(/(?=.*[0-9]).*/, {
+          message: 'Password must contain at least 1 number'
+        })
+        .matches(/(?=.*[!@#$%^&*]).*/, {
+          message:
+            'Password must contain at least 1 special character (!@#$%^&*)'
+        })
+        .test(
+          'minimumLength',
+          'Password must contain at least 8 characters',
+          (value) => {
+            if (value) {
+              return value.length >= 8;
+            } else {
+              return true;
+            }
+          }
+        )
+        .notRequired(),
+      role: yup
+        .string()
+        .oneOf(
+          Object.values(ROLES),
+          `Role must be [${Object.values(ROLES).join(', ')}]`
+        )
+        .notRequired(),
+      profilePicUrl: yup
+        .string()
+        .url('profilePicUrl must be a valid URL')
+        .notRequired()
+    })
+    .strict(true)
+    .noUnknown(true, 'No unknown fields are allowed');
+
   return {
     create,
-    update
+    update,
+    patch
   };
 };
 

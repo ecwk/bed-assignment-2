@@ -777,13 +777,6 @@ const COUNTRIES = [
     mobileCode: '+962'
   },
   {
-    name: 'Kazakhstan',
-    code: 'KZ',
-    timezone: 'Central Asia Standard Time',
-    utc: 'UTC+06:00',
-    mobileCode: '+7'
-  },
-  {
     name: 'Kenya',
     code: 'KE',
     timezone: 'E. Africa Standard Time',
