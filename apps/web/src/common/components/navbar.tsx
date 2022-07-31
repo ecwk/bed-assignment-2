@@ -17,8 +17,8 @@ import { BiSupport } from 'react-icons/bi';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 
 import { useAuth } from '@modules/auth';
-import { Logo, CartMenu, UserMenu } from './';
 import { NAVBAR_HEIGHT } from '@common/constants';
+import { Logo, CartMenu, UserMenu } from '@common/components';
 
 export const Navbar = () => {
   const { user } = useAuth();
@@ -116,7 +116,7 @@ export const Navbar = () => {
       </HStack>
       <Divider orientation="vertical" display={display} />
       {user ? (
-        <HStack spacing={4}>
+        <Flex gap={6}>
           <Box
             display={{
               base: 'none',
@@ -126,7 +126,7 @@ export const Navbar = () => {
             <CartMenu />
           </Box>
           <UserMenu />
-        </HStack>
+        </Flex>
       ) : (
         <HStack gap={3}>
           <NextLink href="/login" passHref>
