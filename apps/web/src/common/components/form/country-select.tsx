@@ -4,10 +4,9 @@ import {
   Select,
   type FormControlProps
 } from '@chakra-ui/react';
-import { useState, useEffect, ChangeEventHandler } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { ChangeEventHandler } from 'react';
+import { useFormContext } from 'react-hook-form';
 
-import { Country } from '@common/types';
 import { COUNTRIES } from '@common/constants';
 
 export type CountrySelectProps = FormControlProps & {
@@ -49,17 +48,13 @@ export function CountrySelect({
           {label}
         </FormLabel>
       )}
-      <Select
-        {...(name && register(name))}
-        value={value}
-        onChange={onChange}
-      >
+      <Select {...(name && register(name))} value={value} onChange={onChange}>
         {COUNTRIES.map(({ name, code, mobileCode }) => (
           <option
             key={name}
             value={useCode ? code : useMobileCode ? mobileCode : code}
           >
-            {name} ({mobileCode})
+            {name} ({useMobileCode ? mobileCode : code})
           </option>
         ))}
       </Select>

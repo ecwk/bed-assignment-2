@@ -1,23 +1,36 @@
 import * as yup from 'yup';
 import { AxiosError } from 'axios';
-import { useState, useEffect } from 'react';
+import {
+  createContext,
+  useState,
+  useContext,
+  type ReactNode,
+  useEffect
+} from 'react';
 import { useToast } from '@chakra-ui/react';
 
 import { type ErrorResponse } from '@common/types';
 import { client } from '@config/axios';
 import { type FieldValues } from '@common/types';
 
-type UseAxiosInterceptorProps = {
+interface ContextProps<TFieldValues extends FieldValues = FieldValues> {
+  error: ErrorResponse<TFieldValues> | null;
+  validationErrors: TFieldValues | null;
+  clearErrors: () => void;
+}
+
+const AxiosInterceptorContext = createContext<ContextProps>({} as ContextProps);
+
+type ProviderProps = {
+  children?: ReactNode;
   enableToast?: boolean;
 };
 
-const defaultProps: UseAxiosInterceptorProps = {
-  enableToast: false
-};
-
-export function useAxiosInterceptor<
+export const useAxiosInterceptorProvider = <
   TFieldValues extends FieldValues = FieldValues
->({ enableToast }: UseAxiosInterceptorProps = defaultProps) {
+>({
+  enableToast = false
+}: ProviderProps): ContextProps<TFieldValues> => {
   const toast = useToast();
   const [error, setError] = useState<ErrorResponse<TFieldValues> | null>(null);
   const [validationErrors, setValidationErrors] = useState<TFieldValues | null>(
@@ -79,4 +92,27 @@ export function useAxiosInterceptor<
   }, [validationErrors, error]);
 
   return { error, validationErrors, clearErrors };
-}
+};
+
+export const AxiosInterceptorProvider = ({
+  enableToast,
+  children
+}: ProviderProps) => {
+  const context = useAxiosInterceptorProvider({ enableToast });
+
+  return (
+    <AxiosInterceptorContext.Provider value={context}>
+      {children}
+    </AxiosInterceptorContext.Provider>
+  );
+};
+
+export const useAxiosInterceptor = <
+  TFieldValues extends FieldValues = FieldValues
+>(): ContextProps<TFieldValues> => {
+  const context = useContext(
+    AxiosInterceptorContext
+  ) as ContextProps<TFieldValues>;
+
+  return context;
+};

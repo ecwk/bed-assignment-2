@@ -8,7 +8,7 @@ export type TitleProps = BoxProps & {
 
 export function Title({ as = 'h1', title, subtitle, ...boxProps }: TitleProps) {
   return (
-    <Box {...boxProps}>
+    <Box as="header" {...boxProps}>
       <Heading as={as}>{title}</Heading>
       {subtitle && <Text color="gray.400">{subtitle}</Text>}
     </Box>

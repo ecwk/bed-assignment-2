@@ -36,10 +36,10 @@ export const Navbar = () => {
 
   return (
     <Flex
+      as="nav"
       py={4}
       px={{
-        base: 2,
-        sm: 5,
+        base: 5,
         xl: 10
       }}
       height={NAVBAR_HEIGHT}

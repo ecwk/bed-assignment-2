@@ -5,9 +5,9 @@ import {
   FormLabel,
   Input as ChakraInput
 } from '@chakra-ui/react';
-import { useEffect } from 'react';
-
 import { useFormContext } from 'react-hook-form';
+
+import { useAxiosInterceptor } from '@common/hooks';
 
 export type InputProps = FormControlProps & {
   name: string;
@@ -27,16 +27,19 @@ export function Input({
   errorRes,
   ...formControlProps
 }: InputProps) {
+  const { validationErrors } = useAxiosInterceptor();
   const {
     register,
     formState: { errors, dirtyFields }
   } = useFormContext<Record<string, unknown>>();
   const error = errors[name];
+  const validationError = validationErrors?.[name];
+  const isDirty = dirtyFields?.[name];
 
   return (
     <FormControl
       {...formControlProps}
-      isInvalid={!!error || (!!errorRes && !dirtyFields?.[name])}
+      isInvalid={!!error || (!isDirty && !!validationError)}
     >
       {label && (
         <FormLabel color="whiteAlpha.600" mb={0} fontWeight="normal">
@@ -50,8 +53,8 @@ export function Input({
         defaultValue={defaultValue}
       />
       {error && <FormErrorMessage>{error?.message}</FormErrorMessage>}
-      {!!errorRes && !dirtyFields?.[name] && (
-        <FormErrorMessage>{errorRes}</FormErrorMessage>
+      {!isDirty && !!validationError && (
+        <FormErrorMessage>{validationError}</FormErrorMessage>
       )}
     </FormControl>
   );

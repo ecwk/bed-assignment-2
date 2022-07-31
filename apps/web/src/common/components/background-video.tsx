@@ -4,8 +4,9 @@ export const BackgroundVideo = () => {
   const { colorMode } = useColorMode();
 
   return (
-    <>
+    <Box className="background-video">
       <Box
+        className="background-overlay"
         position="fixed"
         zIndex="-1"
         top="0"
@@ -61,6 +62,6 @@ export const BackgroundVideo = () => {
           />
         </Box>
       )}
-    </>
+    </Box>
   );
 };
