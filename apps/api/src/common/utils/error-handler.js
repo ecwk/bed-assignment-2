@@ -13,6 +13,9 @@ const errorHandler = (err, req, res, next) => {
     res.status(400).send({ error: 'Bad Request' });
   } else {
     if (!res.headersSent) {
+      // log the error
+      // logger(err)
+      console.error(err)
       res.status(500).json({
         statusCode: 500,
         message: HTTP_ERROR_CODES[500],

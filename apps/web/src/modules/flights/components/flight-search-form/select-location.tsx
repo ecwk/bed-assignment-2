@@ -1,6 +1,9 @@
-import { Select } from '@mantine/core';
-import { forwardRef, type ComponentPropsWithoutRef } from 'react';
-import { useFormContext, useWatch, useController } from 'react-hook-form';
+import {
+  forwardRef,
+  useEffect,
+  useState,
+  type ComponentPropsWithoutRef
+} from 'react';
 import {
   Box,
   Text,
@@ -10,6 +13,9 @@ import {
   FormControl,
   FormHelperText
 } from '@chakra-ui/react';
+import { Select } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useFormContext, useWatch, useController } from 'react-hook-form';
 
 import { type Flight, type Airport } from '@common/types';
 import { type FlightSearchFormData } from './flight-search-form';
@@ -26,6 +32,12 @@ export const SelectLocation = ({
   returnFlights,
   ...flexProps
 }: SelectLocationProps) => {
+  const [query, setQuery] = useState('');
+  const [query2, setQuery2] = useState('');
+  const [debouncedQuery] = useDebouncedValue(query, 400);
+  const [debouncedQuery2] = useDebouncedValue(query2, 400);
+  const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const theme = useTheme();
   const { control } = useFormContext<FlightSearchFormData>();
   const { from, to, isTwoWay } = useWatch({ control });
@@ -39,48 +51,105 @@ export const SelectLocation = ({
     city
   }));
 
-  const selectFilter = (query: string, item: typeof airportData[0]) =>
-    item.label?.toLowerCase().includes(query.toLowerCase().trim()) ||
-    item.city.toLowerCase().includes(query.toLowerCase().trim()) ||
-    item.country.toLowerCase().includes(query.toLowerCase().trim());
+  useEffect(() => {
+    if (query !== debouncedQuery) {
+      setLoading(true);
+    } else if (query === debouncedQuery) {
+      setLoading(false);
+    }
+  }, [query, debouncedQuery]);
+
+  useEffect(() => {
+    console.log(query2);
+    if (query2 !== debouncedQuery2) {
+      setLoading2(true);
+    } else if (query2 === debouncedQuery2) {
+      setLoading2(false);
+    }
+  }, [query2, debouncedQuery2]);
+
+  const selectFilter = (query: string, item: typeof airportData[0]) => {
+    if (query || query === '') {
+      setQuery(query);
+    }
+    if (loading) {
+      return false;
+    }
+    return (
+      item.label?.toLowerCase().includes(debouncedQuery.toLowerCase().trim()) ||
+      item.city.toLowerCase().includes(debouncedQuery.toLowerCase().trim()) ||
+      item.country.toLowerCase().includes(debouncedQuery.toLowerCase().trim())
+    );
+  };
+
+  const selectFilter2 = (query: string, item: typeof airportData[0]) => {
+    if (query || query === '') {
+      setQuery2(query);
+    }
+    if (loading) {
+      return false;
+    }
+    return (
+      item.label
+        ?.toLowerCase()
+        .includes(debouncedQuery2.toLowerCase().trim()) ||
+      item.city.toLowerCase().includes(debouncedQuery2.toLowerCase().trim()) ||
+      item.country.toLowerCase().includes(debouncedQuery2.toLowerCase().trim())
+    );
+  };
 
   return (
     <Flex flexDir="column" {...flexProps} gap={2}>
-      <Select
-        id="flight-from"
-        label="From"
-        placeholder="Pick location"
-        nothingFound="No Flights Found"
-        itemComponent={SelectItem}
-        filter={selectFilter}
-        data={airportData.filter((item) => item.value !== to)}
-        searchable
-        clearable
-        required
-        maxDropdownHeight={200}
-        sx={{
-          label: {
-            color: theme.colors.gray[200],
-            fontSize: '15px',
-            fontWeight: 'normal'
-          }
-        }}
-        {...registerFrom}
-      />
       <FormControl>
         <Select
-          id="flight-to"
-          label="To"
-          placeholder="Pick location"
-          nothingFound="No Flights Found"
+          id="flight-from"
+          label="From"
+          placeholder="Where are you leaving from?"
+          nothingFound={
+            debouncedQuery.length === 0
+              ? 'Type Something!'
+              : loading
+              ? 'Loading...'
+              : 'No Flights Found'
+          }
           itemComponent={SelectItem}
           filter={selectFilter}
-          data={airportData.filter((item) => item.value !== from)}
+          data={airportData.filter((item) => item.value !== to)}
+          limit={20}
           searchable
           clearable
           required
           maxDropdownHeight={200}
           sx={{
+            label: {
+              color: theme.colors.gray[200],
+              fontSize: '15px',
+              fontWeight: 'normal'
+            }
+          }}
+          {...registerFrom}
+        />
+        <Select
+          id="flight-to"
+          label="To"
+          placeholder="Where would you like to go?"
+          nothingFound={
+            debouncedQuery2.length === 0
+              ? 'Type Something!'
+              : loading2
+              ? 'Loading...'
+              : 'No Flights Found'
+          }
+          itemComponent={SelectItem}
+          filter={selectFilter2}
+          data={airportData.filter((item) => item.value !== from)}
+          limit={20}
+          searchable
+          clearable
+          required
+          maxDropdownHeight={200}
+          sx={{
+            marginTop: '10px',
             label: {
               color: theme.colors.gray[200],
               fontSize: '15px',
