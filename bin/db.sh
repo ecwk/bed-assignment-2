@@ -1,7 +1,21 @@
 #!/bin/bash
 
 # Runs the sql scripts
-read -p "Enter user" user
-read -p "Enter password" password
+$user = "root"
+read -p "Enter username[$user]: " temp
+if [ -n "$temp" ]; then
+  user=$temp
+fi
 
-mysql -u $user -p$password < init-database.sql && mysql -u $user -p$password < seed-database.sql && echo "Database initialized" || echo "Database not initialized"
+$password = "password"
+read -p "Enter password[$password]: " temp
+if [ -n "$temp" ]; then
+  password=$temp
+fi
+
+mysql -u $user -p$password < init-database.sql
+mysql -u $user -p$password < seed-airports.sql
+mysql -u $user -p$password < seed-flights.sql
+mysql -u $user -p$password < seed-users.sql
+
+echo "Done"
