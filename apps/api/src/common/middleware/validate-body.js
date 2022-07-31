@@ -4,7 +4,6 @@ const { HTTP_ERROR_CODES } = require('../constants');
 
 const validateBody = (validationSchema) => async (req, res, next) => {
   try {
-    console.log(req.body);
     const res = await validationSchema.validate(req.body, {
       abortEarly: false,
       stripUnknown: true
