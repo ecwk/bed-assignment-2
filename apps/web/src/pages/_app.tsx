@@ -2,12 +2,14 @@ import 'dayjs/locale/en-sg';
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AnimatePresence } from 'framer-motion';
 
 import {
   Redirects,
   Navbar,
   MantineProviderWrapper,
-  Loadpage
+  Loadpage,
+  AnimationWrapper
 } from '@common/components';
 import 'src/common/styles/globals.css';
 import { chakraTheme } from '@common/config';
@@ -27,7 +29,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <CartProvider>
                   <Redirects />
                   <Navbar />
-                  <Component {...pageProps} />
+                  <AnimationWrapper>
+                    <Component {...pageProps} />
+                  </AnimationWrapper>
                 </CartProvider>
               </Loadpage>
             </LoadpageProvider>
