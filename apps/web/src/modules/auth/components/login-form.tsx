@@ -1,39 +1,30 @@
-import {
-  Flex,
-  FlexProps,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Button,
-  useToast,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-  useColorModeValue
-} from '@chakra-ui/react';
-import { AxiosError } from 'axios';
-import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { BsLockFill } from 'react-icons/bs';
-import { MdOutlineAlternateEmail } from 'react-icons/md';
-import { AiOutlineCheck } from 'react-icons/ai';
-import { sleep } from '@common/utils';
-
-import { useAuth } from '@modules/auth';
 import { useRouter } from 'next/router';
+import { Text } from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
+import { AtSignIcon } from '@chakra-ui/icons';
+import { useMutation } from '@tanstack/react-query';
+
+import {
+  Link,
+  Form,
+  Input,
+  PasswordInput,
+  FormButton,
+  type FormProps
+} from '@common/components';
+import { sleep } from '@common/utils';
+import { useAuth } from '@modules/auth';
 
 type LoginFormData = {
   email: string;
   password: string;
 };
 
-type LoginFormProps = FlexProps & {};
+type LoginFormProps = Partial<FormProps> & {};
 
-export const LoginForm = (props: LoginFormProps) => {
+export const LoginForm = ({ sx, ...formProps }: LoginFormProps) => {
+  const methods = useForm<LoginFormData>();
   const { login } = useAuth();
-  const { register, handleSubmit } = useForm<LoginFormData>();
-  const toast = useToast();
   const router = useRouter();
 
   const loginMutation = useMutation(
@@ -41,86 +32,56 @@ export const LoginForm = (props: LoginFormProps) => {
       return login(email, password);
     },
     {
-      onError: (err) => {
-        if (err instanceof AxiosError) {
-          const status = err.response?.status;
-          const data = err.response?.data;
-          let title: string, description: string;
-
-          if (status === 401) {
-            title = 'Invalid Credentials';
-            description = 'Please check your email and password';
-          } else {
-            title = data.error || data.message;
-            description = data.error ? data.message : undefined;
-          }
-          toast({
-            title: title,
-            description: description,
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
-            position: 'top'
-          });
-        } else {
-          // log to server
-          // ...
-          console.error(err);
-          toast({
-            title: 'An Error Occurred',
-            description: `This error has been reported. Try again later.`,
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
-            position: 'top'
-          });
-        }
+      onMutate: async () => {
+        await sleep(2000);
+      },
+      onSuccess: () => {
+        setTimeout(() => {
+          router.push('/settings/profile');
+        }, 1000);
       }
     }
   );
-  const onSubmit = handleSubmit((loginFormData) => {
-    loginMutation.mutate(loginFormData);
-  });
 
-  const colorModeButton = useColorModeValue(
-    'lightModeButton',
-    'darkModeButton'
-  );
+  const onSubmit = (data: LoginFormData) => {
+    loginMutation.mutate(data);
+  };
 
   return (
-    <Flex as="form" flexDir="column" gap={5} onSubmit={onSubmit} {...props}>
-      <FormControl isInvalid={loginMutation.isError}>
-        <InputGroup size="lg">
-          <InputLeftElement>
-            <MdOutlineAlternateEmail />
-          </InputLeftElement>
-          <Input {...register('email')} type="email" placeholder="Email" />
-        </InputGroup>
-      </FormControl>
-      <FormControl isInvalid={loginMutation.isError}>
-        <InputGroup size="lg">
-          <InputLeftElement>
-            <BsLockFill />
-          </InputLeftElement>
-          <Input
-            {...register('password')}
-            type="password"
-            placeholder="Password"
-          />
-        </InputGroup>
-      </FormControl>
-      <Button
-        type="submit"
-        layerStyle={colorModeButton}
-        size="lg"
+    <Form
+      enableToast={true}
+      methods={methods}
+      onSubmit={onSubmit}
+      sx={{ display: 'flex', flexDir: 'column', gap: 5, ...sx }}
+      {...formProps}
+    >
+      <Input
+        inputProps={{
+          size: 'lg'
+        }}
+        name="email"
+        type="email"
+        placeholder="Email"
+        leftElement={<AtSignIcon />}
+      />
+      <PasswordInput
+        name="password"
+        placeholder="Password"
+        inputProps={{ size: 'lg' }}
+      />
+      <FormButton
         isLoading={loginMutation.isLoading}
-        {...(loginMutation.isSuccess && {
-          layerStyle: undefined,
-          colorScheme: 'green'
-        })}
+        isSuccess={loginMutation.isSuccess}
       >
-        {loginMutation.isSuccess ? <AiOutlineCheck /> : 'Login'}
-      </Button>
-    </Flex>
+        Login
+      </FormButton>
+      <Text textAlign="center" color="whiteAlpha.800">
+        Don't have an account yet?{' '}
+        <Link href="/signup" color="brandGold.300">
+          Sign Up
+        </Link>
+        .
+      </Text>
+    </Form>
   );
 };

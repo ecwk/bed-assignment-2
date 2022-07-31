@@ -1,9 +1,12 @@
 import {
   FormControl,
-  FormControlProps,
   FormErrorMessage,
   FormLabel,
-  Input as ChakraInput
+  Input as ChakraInput,
+  InputGroup,
+  InputLeftElement,
+  type FormControlProps,
+  type InputGroupProps
 } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
 
@@ -15,7 +18,8 @@ export type InputProps = FormControlProps & {
   type?: string;
   placeholder?: string;
   defaultValue?: string;
-  errorRes?: string;
+  inputProps?: InputGroupProps;
+  leftElement?: React.ReactNode;
 };
 
 export function Input({
@@ -24,10 +28,11 @@ export function Input({
   type,
   placeholder,
   defaultValue,
-  errorRes,
+  inputProps,
+  leftElement,
   ...formControlProps
 }: InputProps) {
-  const { validationErrors } = useAxiosInterceptor();
+  const { error: errorRes, validationErrors } = useAxiosInterceptor();
   const {
     register,
     formState: { errors, dirtyFields }
@@ -39,19 +44,26 @@ export function Input({
   return (
     <FormControl
       {...formControlProps}
-      isInvalid={!!error || (!isDirty && !!validationError)}
+      isInvalid={
+        !!error ||
+        (!isDirty && !!validationError) ||
+        (!isDirty && errorRes?.statusCode === 401)
+      }
     >
       {label && (
         <FormLabel color="whiteAlpha.600" mb={0} fontWeight="normal">
           {label}
         </FormLabel>
       )}
-      <ChakraInput
-        {...register(name)}
-        type={type}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-      />
+      <InputGroup {...inputProps}>
+        {leftElement && <InputLeftElement>{leftElement}</InputLeftElement>}
+        <ChakraInput
+          {...register(name)}
+          type={type}
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+        />
+      </InputGroup>
       {error && <FormErrorMessage>{error?.message}</FormErrorMessage>}
       {!isDirty && !!validationError && (
         <FormErrorMessage>{validationError}</FormErrorMessage>

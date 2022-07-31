@@ -28,7 +28,7 @@ type SignupFormData = {
 
 type SignupFormProps = Partial<FormProps> & {};
 
-export const SignupForm = ({ ...formProps }: SignupFormProps) => {
+export const SignupForm = ({ sx, ...formProps }: SignupFormProps) => {
   const [mobileCode, setMobileCode] = useState('+65');
   const methods = useForm<SignupFormData>({
     resolver: yupResolver(signupSchema(mobileCode))
@@ -44,7 +44,7 @@ export const SignupForm = ({ ...formProps }: SignupFormProps) => {
       onMutate: async () => {
         await sleep(2000);
       },
-      onSuccess: async () => {
+      onSuccess: () => {
         setTimeout(() => {
           router.push('/login');
         }, 1000);
@@ -61,7 +61,7 @@ export const SignupForm = ({ ...formProps }: SignupFormProps) => {
       enableToast={true}
       methods={methods}
       onSubmit={onSubmit}
-      sx={{ display: 'flex', flexDir: 'column', gap: 4 }}
+      sx={{ display: 'flex', flexDir: 'column', gap: 4, ...sx }}
       {...formProps}
     >
       <Input name="email" type="email" label="Email" placeholder="Email" />
@@ -98,6 +98,7 @@ export const SignupForm = ({ ...formProps }: SignupFormProps) => {
         />
       </Flex>
       <FormButton
+        mt={4}
         isLoading={signupMutation.isLoading}
         isSuccess={signupMutation.isSuccess}
       >

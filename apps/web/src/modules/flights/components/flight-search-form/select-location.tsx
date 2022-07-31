@@ -11,7 +11,8 @@ import {
   useTheme,
   type FlexProps,
   FormControl,
-  FormHelperText
+  FormHelperText,
+  Heading
 } from '@chakra-ui/react';
 import { Select } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -108,7 +109,7 @@ export const SelectLocation = ({
           itemComponent={SelectItem}
           filter={selectFilter}
           data={airportData.filter((item) => item.value !== to)}
-          limit={20}
+          limit={10}
           searchable
           clearable
           required
@@ -130,7 +131,7 @@ export const SelectLocation = ({
           itemComponent={SelectItem}
           filter={selectFilter2}
           data={airportData.filter((item) => item.value !== from)}
-          limit={20}
+          limit={10}
           searchable
           clearable
           required

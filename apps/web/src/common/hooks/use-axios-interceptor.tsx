@@ -68,26 +68,38 @@ export const useAxiosInterceptorProvider = <
   }, []);
 
   useEffect(() => {
-    if (enableToast && validationErrors && error) {
-      Object.entries(validationErrors).forEach(([key, value]) => {
+    if (enableToast) {
+      if (validationErrors && error) {
+        Object.entries(validationErrors).forEach(([key, value]) => {
+          toast({
+            title: error.message,
+            description: value,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+            position: 'top'
+          });
+        });
+      } else if (error?.statusCode === 401) {
         toast({
           title: error.message,
-          description: value,
+          description: error.error,
           status: 'error',
-          duration: 10000,
+          duration: 5000,
           isClosable: true,
           position: 'top'
         });
-      });
-    } else if (enableToast && error) {
-      toast({
-        title: error.message,
-        description: 'This incident has been reported, please try again later.',
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-        position: 'top'
-      });
+      } else if (error) {
+        toast({
+          title: error.message,
+          description:
+            'This incident has been reported, please try again later.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top'
+        });
+      }
     }
   }, [validationErrors, error]);
 

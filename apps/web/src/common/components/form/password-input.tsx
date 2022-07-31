@@ -4,45 +4,57 @@ import {
   FormLabel,
   Input,
   InputGroup,
+  InputLeftElement,
   InputRightElement,
   IconButton,
   FormErrorMessage,
-  type InputProps
+  type InputGroupProps
 } from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { ViewIcon, ViewOffIcon, LockIcon } from '@chakra-ui/icons';
 
 import { useFormContext } from 'react-hook-form';
 import { useState } from 'react';
+import { useAxiosInterceptor } from '@common/hooks';
 
 export type PasswordInputProps = FormControlProps & {
   name: string;
   label?: string;
   placeholder?: string;
   toggleShowPassword?: boolean;
+  inputProps?: InputGroupProps;
 };
 
 export function PasswordInput({
   name,
-  label = 'Password',
-  placeholder = 'Password',
+  label,
+  placeholder,
   toggleShowPassword = true,
+  inputProps,
   ...formControlProps
 }: PasswordInputProps) {
+  const { error: errorRes } = useAxiosInterceptor();
   const [show, setShow] = useState(false);
   const {
     register,
-    formState: { errors }
+    formState: { errors, dirtyFields }
   } = useFormContext<Record<string, unknown>>();
   const error = errors[name];
+  const isDirty = dirtyFields?.[name];
 
   const toggleShow = () => setShow((prev) => !prev);
 
   return (
-    <FormControl {...formControlProps} isInvalid={!!error}>
+    <FormControl
+      {...formControlProps}
+      isInvalid={!!error || (!isDirty && errorRes?.statusCode === 401)}
+    >
       <FormLabel color="whiteAlpha.600" mb={0} fontWeight="normal">
         {label}
       </FormLabel>
-      <InputGroup>
+      <InputGroup {...inputProps}>
+        <InputLeftElement>
+          <LockIcon />
+        </InputLeftElement>
         <Input
           {...register(name)}
           type={show ? 'text' : 'password'}
@@ -61,6 +73,9 @@ export function PasswordInput({
         )}
       </InputGroup>
       {error && <FormErrorMessage>{error?.message}</FormErrorMessage>}
+      {!isDirty && errorRes?.statusCode === 401 && (
+        <FormErrorMessage>{errorRes?.error}</FormErrorMessage>
+      )}
     </FormControl>
   );
 }

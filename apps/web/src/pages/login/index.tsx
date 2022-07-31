@@ -21,59 +21,54 @@ import { useLoadpage } from '@common/hooks';
 import { BackgroundVideo } from '@common/components';
 
 const Login: NextPage = () => {
-  const textAccent = useColorModeValue('blue.200', 'brandGold.300');
-
   return (
     <Flex
-      minH={`calc(100vh - ${NAVBAR_HEIGHT})`}
-      px={{
-        base: 2,
-        sm: 5,
-        xl: 10
-      }}
-    >
-      <BackgroundVideo />
-      <Flex
-        color="brandText"
-        flexDir="column"
-        alignItems={{
-          base: 'center',
-          lg: 'flex-start'
-        }}
-        mt={{
+      as="main"
+      sx={{
+        flexDir: 'column',
+        mt: {
           base: '80px',
           md: '200px'
-        }}
-        ml={{
+        },
+        ml: {
           base: '0',
           lg: '200px'
-        }}
-        mb={{
+        },
+        mb: {
           base: '80px',
           md: '40px'
-        }}
-        width="100%"
-      >
-        <Box>
-          <Heading size="md">LOGIN</Heading>
-          <Heading my={4} size="3xl">
-            Welcome back
-            <Text as="span" color={textAccent}>
-              .
-            </Text>
-          </Heading>
-        </Box>
-        <Box maxW="400px" w="100%">
-          <LoginForm mt={6} />
-          <Text mt={6} textAlign="center">
-            Don't have an account yet?{' '}
-            <NextLink href="/signup" passHref>
-              <Link color={textAccent}>Sign Up</Link>
-            </NextLink>
+        },
+        px: {
+          base: 5,
+          xl: 10
+        },
+        alignItems: {
+          base: 'center',
+          lg: 'flex-start'
+        }
+      }}
+    >
+      <Box as="header">
+        <Heading as="h2" size="md" color="brand">
+          LOGIN
+        </Heading>
+        <Heading as="h1" my={4} size="3xl">
+          Welcome back
+          <Text as="span" color="brandGold.300">
             .
           </Text>
-        </Box>
-      </Flex>
+        </Heading>
+      </Box>
+
+      <LoginForm
+        sx={{
+          mt: 6,
+          w: '100%',
+          maxW: '400px'
+        }}
+      />
+
+      <BackgroundVideo />
     </Flex>
   );
 };

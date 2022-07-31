@@ -17,7 +17,6 @@ export type ContactInputProps = FormControlProps & {
   type?: string;
   placeholder?: string;
   mobileCode: string | undefined;
-  errorRes?: string;
 };
 
 export function ContactInput({
@@ -26,7 +25,6 @@ export function ContactInput({
   type,
   placeholder,
   mobileCode,
-  errorRes,
   ...formControlProps
 }: ContactInputProps) {
   const { validationErrors } = useAxiosInterceptor();
