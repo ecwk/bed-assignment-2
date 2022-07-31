@@ -4,7 +4,7 @@
   <img src="https://user-images.githubusercontent.com/82776299/180184337-70a57078-15ac-4ca9-9a1a-97e19bc11fcf.png" /> 
 </a>
 
-This is a submission for my school's backend web development (BED) assignment. 
+This is a submission for my school's backend web development (BED) assignment.
 
 The app is hosted on https://bed-assignment-2.deploy.cnoside.dev
 
@@ -46,13 +46,35 @@ The app is hosted on https://bed-assignment-2.deploy.cnoside.dev
 - [node](https://nodejs.org/): ^16.0.0
 - [MySQL Server](https://www.mysql.com/)
 
-### Configuration
+### Setup The Environment
 
-Refer to `.env.example` in both `apps/api` and `apps/web` directories and create a `.env` file in each.
+Refer to `.env.example` in both `apps/api` and `apps/web`.
+
+Create `.env` in `apps/api` and `.env.local` in `apps/web`.
+
+### Run SQL Scripts
+
+**Linux (Bash)**
+
+```bash
+cd bed-assignment-2/bin
+
+chmod 700 db.sh
+
+./db.sh
+```
+
+**Windows (PowerShell)**
+
+```powershell
+cd bed-assignment-2\bin
+
+./db.ps1
+```
 
 ### Start the App
 
-#### For Development
+**For Development**
 
 To develop all apps and packages, run the following command:
 
@@ -63,7 +85,7 @@ cd bed-assignment-2
 npm run dev
 ```
 
-#### For Production
+**For Production**
 
 To start the app for production, run the following commands:
 
