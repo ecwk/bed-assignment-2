@@ -11,11 +11,12 @@ import {
   useColorMode,
   Link
 } from '@chakra-ui/react';
-import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
-
 import NextLink from 'next/link';
 import { useAuth } from '@modules/auth';
 import { useCart } from '@common/hooks';
+import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
+
+import { ProfileAvatar } from '@common/components';
 
 export const UserMenu = () => {
   const { user, logout } = useAuth();
@@ -33,8 +34,7 @@ export const UserMenu = () => {
             fontWeight="700"
           >
             <Flex alignItems="center" gap={2}>
-              <Avatar size="sm" name={user?.username} />
-              {/* <ProfileAvatar user={user} size="sm" /> */}
+              <ProfileAvatar user={user} size="sm" />
               <Text as="span" ml={2} mr={1} verticalAlign="middle">
                 {user?.username}
               </Text>
@@ -52,6 +52,11 @@ export const UserMenu = () => {
                 }}
               >
                 Book A Flight
+              </MenuItem>
+            </NextLink>
+            <NextLink href="/settings/profile" passHref>
+              <MenuItem borderRadius="xl" minH="45px">
+                Profile
               </MenuItem>
             </NextLink>
             <NextLink href="/dashboard" passHref>
@@ -96,7 +101,7 @@ export const UserMenu = () => {
                   : 'Enable Notifications'
                 : 'Notifications'}
             </MenuItem>
-            <NextLink href="/dashboard" passHref>
+            <NextLink href="#" passHref>
               <MenuItem
                 borderRadius="xl"
                 minH="45px"
@@ -109,6 +114,11 @@ export const UserMenu = () => {
               </MenuItem>
             </NextLink>
             <MenuDivider />
+            <NextLink href="/settings" passHref>
+              <MenuItem borderRadius="xl" minH="45px">
+                Settings
+              </MenuItem>
+            </NextLink>
             <MenuItem
               borderRadius="xl"
               minH="45px"

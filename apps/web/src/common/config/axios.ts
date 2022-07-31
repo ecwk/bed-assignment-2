@@ -22,7 +22,7 @@ if (env.NODE_ENV === 'development') {
     },
     async (error) => {
       await sleep(env.delay);
-      throw error;
+      return Promise.reject(error);
     }
   );
 

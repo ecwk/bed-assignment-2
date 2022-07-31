@@ -811,13 +811,6 @@ export const COUNTRIES: Country[] = [
     mobileCode: '+82'
   },
   {
-    name: 'Kosovo',
-    code: 'XK',
-    timezone: 'Central European Standard Time',
-    utc: 'UTC+01:00',
-    mobileCode: '+'
-  },
-  {
     name: 'Kuwait',
     code: 'KW',
     timezone: 'Arab Standard Time',

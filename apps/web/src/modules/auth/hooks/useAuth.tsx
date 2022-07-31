@@ -11,22 +11,8 @@ import { client } from '@config/axios';
 import { useCookie } from 'src/common/hooks';
 import { SignupDto } from '../dto';
 
-enum Role {
-  CUSTOMER = 'Customer',
-  ADMIN = 'Admin'
-}
-
-type User = {
-  id: number;
-  username: string;
-  email: string;
-  contact: string;
-  role: Role;
-  profilePicUrl: string;
-  createdAt: string;
-  lastUpdatedAt: string;
-  password: never;
-};
+import { type User } from '@common/types';
+import { Role } from '@common/enum';
 
 type Token = Jwt & {
   encoded: string;

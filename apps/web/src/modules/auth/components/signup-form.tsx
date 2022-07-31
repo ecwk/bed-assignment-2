@@ -22,12 +22,14 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { isValidNumberForRegion } from 'libphonenumber-js';
 import { AiOutlineCheck } from 'react-icons/ai';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
+import { useAxiosInterceptor } from '@common/hooks';
 import { useAuth } from '@modules/auth';
 import { COUNTRIES } from '@common/constants';
 import { Country } from '@common/types';
+import { isEmpty } from 'lodash';
 
 type SignupFormData = {
   username: string;
@@ -39,7 +41,7 @@ type SignupFormData = {
 
 type SignupFormProps = FlexProps & {};
 
-export const SignupForm = (props: FlexProps) => {
+export const SignupForm = (props: SignupFormProps) => {
   const { signup } = useAuth();
   const router = useRouter();
   const [country, setCountry] = useState<Country>(
@@ -48,50 +50,22 @@ export const SignupForm = (props: FlexProps) => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    reset,
+    formState: { errors, isDirty, dirtyFields }
   } = useForm<SignupFormData>({
     resolver: yupResolver(signupSchema(country))
   });
   const toast = useToast();
+  const { error, validationErrors, clearErrors } =
+    useAxiosInterceptor<SignupFormData>();
 
   const signupMutation = useMutation(
     ({ confirmPassword, ...rest }: SignupFormData) => {
       return signup(rest);
     },
     {
-      onError: (err) => {
-        if (err instanceof AxiosError) {
-          const status = err.response?.status as number;
-          const data = err.response?.data;
-          let title: string, description: string;
-          if ([400, 422].includes(status) && data.error instanceof Array) {
-            title = data.message;
-            const errors = data.error;
-            errors.forEach((err_: string) => {
-              toast({
-                title: title,
-                description: err_,
-                status: 'error',
-                duration: 10000,
-                isClosable: true,
-                position: 'top'
-              });
-            });
-          } else {
-            title = data.error || data.message;
-            description = data.error ? data.message : undefined;
-            toast({
-              title: title,
-              description: description,
-              status: 'error',
-              duration: 10000,
-              isClosable: true,
-              position: 'top'
-            });
-          }
-        } else {
-          console.error(err);
-        }
+      onMutate: (data) => {
+        reset(data);
       },
       onSuccess: () => {
         setTimeout(() => {
@@ -100,9 +74,14 @@ export const SignupForm = (props: FlexProps) => {
       }
     }
   );
-  const onSubmit = handleSubmit((signupFormData) =>
-    signupMutation.mutate(signupFormData)
-  );
+  const onSubmit = handleSubmit((signupFormData) => {
+    if (isDirty) {
+      clearErrors();
+    }
+    if (isEmpty(validationErrors)) {
+      signupMutation.mutate(signupFormData);
+    }
+  });
 
   const colorModeButton = useColorModeValue(
     'lightModeButton',
@@ -111,7 +90,11 @@ export const SignupForm = (props: FlexProps) => {
 
   return (
     <Flex as="form" flexDir="column" gap={5} onSubmit={onSubmit} {...props}>
-      <FormControl isInvalid={!!errors.email}>
+      <FormControl
+        isInvalid={
+          !!errors.email || (!!validationErrors?.email && !dirtyFields?.email)
+        }
+      >
         <FormHelperText mt={0}>Email</FormHelperText>
         <InputGroup>
           <Input {...register('email')} type="email" placeholder="Email" />
@@ -119,14 +102,25 @@ export const SignupForm = (props: FlexProps) => {
         {errors.email && (
           <FormErrorMessage>{errors.email.message}</FormErrorMessage>
         )}
+        {validationErrors?.email && !dirtyFields?.email && (
+          <FormErrorMessage>{validationErrors?.email}</FormErrorMessage>
+        )}
       </FormControl>
-      <FormControl isInvalid={!!errors.username}>
+      <FormControl
+        isInvalid={
+          !!errors.username ||
+          (!!validationErrors?.username && !dirtyFields?.username)
+        }
+      >
         <FormHelperText mt={0}>Username</FormHelperText>
         <InputGroup>
           <Input {...register('username')} type="text" placeholder="Username" />
         </InputGroup>
         {errors.username && (
           <FormErrorMessage>{errors.username.message}</FormErrorMessage>
+        )}
+        {!!validationErrors?.username && !dirtyFields?.username && (
+          <FormErrorMessage>{validationErrors?.username}</FormErrorMessage>
         )}
       </FormControl>
       <Flex gap={2}>
@@ -192,7 +186,12 @@ export const SignupForm = (props: FlexProps) => {
             ))}
           </Select>
         </FormControl>
-        <FormControl isInvalid={!!errors.contact}>
+        <FormControl
+          isInvalid={
+            !!errors.contact ||
+            (!!validationErrors?.contact && !dirtyFields?.contact)
+          }
+        >
           <FormHelperText mt={0}>Contact</FormHelperText>
           <InputGroup>
             <InputLeftAddon
@@ -209,6 +208,9 @@ export const SignupForm = (props: FlexProps) => {
           </InputGroup>
           {errors.contact && (
             <FormErrorMessage>{errors.contact.message}</FormErrorMessage>
+          )}
+          {!!validationErrors?.contact && !dirtyFields?.contact && (
+            <FormErrorMessage>{validationErrors?.contact}</FormErrorMessage>
           )}
         </FormControl>
       </Flex>
@@ -235,6 +237,10 @@ export const signupSchema = (country: Country) =>
     email: yup.string().email().max(255).required(),
     contact: yup
       .string()
+      .transform((contact: string) => {
+        const transform = contact.replace(/.+(?=\s)/g, '');
+        return transform.trim();
+      })
       .test(
         'isValidCountryContact',
         `Contact must be valid in ${country.name}`,

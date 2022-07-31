@@ -6,7 +6,6 @@ export { CartMenu } from './cart-menu';
 export { UserMenu } from './user-menu';
 export { CustomBreadcrumb } from './custom-breadcrumb';
 export { ProfileAvatar } from './profile-avatar';
-export { AxiosErrorHandler } from './axios-error-handler';
 export { MantineProviderWrapper } from './mantine-provider-wrapper';
 export { Loadpage } from './loadpage';
 export * from './ui';

@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   Redirects,
   Navbar,
-  AxiosErrorHandler,
   MantineProviderWrapper,
   Loadpage
 } from '@common/components';
@@ -27,7 +26,6 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Loadpage>
                 <CartProvider>
                   <Redirects />
-                  <AxiosErrorHandler />
                   <Navbar />
                   <Component {...pageProps} />
                 </CartProvider>
