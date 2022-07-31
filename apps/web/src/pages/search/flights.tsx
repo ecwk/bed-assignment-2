@@ -60,10 +60,6 @@ const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
     lg: 6
   }) as number;
 
-  useEffect(() => {
-    console.log(breakpoint);
-  }, [breakpoint]);
-
   return (
     <Flex justifyContent="center" my="80px">
       <Flex
