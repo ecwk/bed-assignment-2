@@ -8,11 +8,9 @@ import {
 import jwt, { Jwt } from 'jsonwebtoken';
 import { client } from '@config/axios';
 
-import { useCookie } from 'src/common/hooks';
-import { SignupDto } from '../dto';
-
+import { SignupDto } from '@modules/auth';
+import { useCookie } from '@common/hooks';
 import { type User } from '@common/types';
-import { Role } from '@common/enum';
 
 type Token = Jwt & {
   encoded: string;
@@ -23,6 +21,7 @@ interface AuthContextInterface {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   signup: (signupDto: SignupDto) => Promise<void>;
+  isLoading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextInterface>(
@@ -33,6 +32,20 @@ const useAuthProvider = (): AuthContextInterface => {
   const [cookieToken, setCookieToken] = useCookie<string | null>('token');
   const [token, setToken] = useState<Token | null | undefined>(undefined);
   const [user, setUser] = useState<User | null | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // when fetch token from storage or after loginm, and before user is set
+    if (cookieToken) {
+      if (!user) {
+        setIsLoading(true);
+      } else if (user) {
+        setIsLoading(false);
+      }
+    } else {
+      setIsLoading(false);
+    }
+  }, [cookieToken, user]);
 
   useEffect(() => {
     setToken(() => {
@@ -100,7 +113,7 @@ const useAuthProvider = (): AuthContextInterface => {
     await client.post<SignupResponse>('/auth/signup', signupDto);
   };
 
-  return { user, token, login, logout, signup };
+  return { user, token, login, logout, signup, isLoading };
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

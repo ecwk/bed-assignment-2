@@ -3,21 +3,18 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '@modules/auth';
 
-const protectedRoutes = ['/dashboard'];
+const protectedRoutes = ['/dashboard', /\/settings\/.*/];
 
 export const Redirects = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
     const path = router.pathname;
 
-    if (user !== undefined) {
-      if (!user && protectedRoutes.includes(path)) {
+    if (!isLoading) {
+      if (!user && protectedRoutes.some((route) => path.match(route))) {
         router.push('/signup');
-      } else if (user && '/login' === path) {
-        router.push('/search')
-      } else {
       }
     }
   }, [user, router, router.pathname]);
