@@ -17,30 +17,32 @@ export const editProfileSchema = (mobileCode: string) => {
         }
         return value;
       })
-      .min(3)
-      .max(20),
+      .min(3, 'At least 3 characters')
+      .max(20, 'Cannot exceed 20 characters'),
     email: yup
       .string()
-      .nullable()
       .transform((value) => {
         if (value === '') {
           return undefined;
         }
         return value;
       })
-      .email()
+      .email('Invalid email')
       .max(255),
     contact: yup
       .string()
       .transform((value: string) => {
-        if (value.includes(mobileCode) || value === '') {
+        const mobileCode_ = value.match(/^\+[\d-]+(?=\s)/);
+        if (value === '') {
           return undefined;
+        } else if (mobileCode_) {
+          return value;
         }
         return `${country?.mobileCode} ${value?.trim()}`;
       })
       .test(
         'isValidCountryContact',
-        `Contact must be valid in ${country?.name}`,
+        `Invalid ${country?.name} phone number`,
         (value) => {
           const number = value?.replace(mobileCode, '').trim();
           if (value && number && country) {
@@ -58,28 +60,23 @@ export const editProfileSchema = (mobileCode: string) => {
         return value;
       })
       .matches(/(?=.*[a-z]).*/, {
-        message: 'Password must contain at least 1 lowercase letter'
+        message: 'At least 1 lowercase letter'
       })
       .matches(/(?=.*[A-Z]).*/, {
-        message: 'Password must contain at least 1 uppercase letter'
+        message: 'At least 1 uppercase letter'
       })
       .matches(/(?=.*[0-9]).*/, {
-        message: 'Password must contain at least 1 number'
+        message: 'At least 1 number'
       })
       .matches(/(?=.*[!@#$%^&*]).*/, {
-        message: 'Password must contain at least 1 special character (!@#$%^&*)'
+        message: 'At least 1 special character (!@#$%^&*)'
       })
-      .test(
-        'minimumLength',
-        'Password must containt at least 8 characters',
-        (value) => {
-          if (value) {
-            return value.length >= 8;
-          }
-          return true;
+      .test('minimumLength', 'At least 8 characters', (value) => {
+        if (value) {
+          return value.length >= 8;
         }
-      )
-      .notRequired(),
+        return true;
+      }),
     confirmPassword: yup
       .string()
       .transform((value) => {
@@ -88,7 +85,7 @@ export const editProfileSchema = (mobileCode: string) => {
         }
         return value;
       })
-      .test('confirmPassword', 'Passwords must match', (value, ctx) => {
+      .test('confirmPassword', "Doesn't must match", (value, ctx) => {
         const password = ctx.parent.password;
         if (password) {
           return value === password;

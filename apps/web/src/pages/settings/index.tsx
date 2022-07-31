@@ -6,10 +6,6 @@ import {
   Heading,
   StackProps,
   Divider,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
   BoxProps,
   Img,
   useColorModeValue,
@@ -17,13 +13,11 @@ import {
 } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-import { ChevronRightIcon } from '@chakra-ui/icons';
-
-import { Link, CustomBreadcrumb } from '@common/components';
-import { getMockImage } from '@common/utils';
+import { Fragment } from 'react';
 import { capitalize } from 'lodash';
-import React from 'react';
+
+import { getMockImage } from '@common/utils';
+import { Link, CustomBreadcrumb } from '@common/components';
 
 type NavigationItem = {
   name: string;
@@ -180,7 +174,7 @@ export const Sidebar = ({ ...stackProps }: SidebarProps) => {
       spacing={6}
     >
       {navigationItems.map(({ name, links }, i) => (
-        <React.Fragment key={`sidebar-${name}`}>
+        <Fragment key={`sidebar-${name}`}>
           <VStack as="nav" alignItems="flex-start">
             <Heading size="md" fontWeight="bold">
               {capitalize(name)}
@@ -192,7 +186,7 @@ export const Sidebar = ({ ...stackProps }: SidebarProps) => {
             ))}
           </VStack>
           {i !== navigationItems.length - 1 && <Divider />}
-        </React.Fragment>
+        </Fragment>
       ))}
     </VStack>
   );

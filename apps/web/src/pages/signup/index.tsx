@@ -5,8 +5,6 @@ import { SignupForm } from '@modules/auth';
 import { BackgroundVideo } from '@common/components';
 
 const Signup: NextPage = () => {
-  const textAccent = useColorModeValue('blue.200', 'brandGold.300');
-
   return (
     <Flex
       as="main"
@@ -40,18 +38,22 @@ const Signup: NextPage = () => {
         </Heading>
         <Heading as="h1" my={4} size="3xl">
           Create Your Account
-          <Text as="span" color={textAccent}>
+          <Text as="span" color="brandGold.300">
             .
           </Text>
         </Heading>
       </Box>
+
       <SignupForm
-        mt={6}
-        maxW={{
-          base: '400px',
-          md: '500px'
+        sx={{
+          mt: 6,
+          maxW: {
+            base: '400px',
+            md: '500px'
+          }
         }}
       />
+
       <BackgroundVideo />
     </Flex>
   );
