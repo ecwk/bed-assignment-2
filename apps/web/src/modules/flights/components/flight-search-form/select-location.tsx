@@ -60,7 +60,6 @@ export const SelectLocation = ({
   }, [query, debouncedQuery]);
 
   useEffect(() => {
-    console.log(query2);
     if (query2 !== debouncedQuery2) {
       setLoading2(true);
     } else if (query2 === debouncedQuery2) {
@@ -105,13 +104,7 @@ export const SelectLocation = ({
           id="flight-from"
           label="From"
           placeholder="Where are you leaving from?"
-          nothingFound={
-            debouncedQuery.length === 0
-              ? 'Type Something!'
-              : loading
-              ? 'Loading...'
-              : 'No Flights Found'
-          }
+          nothingFound={loading ? 'Loading...' : 'No Flights Found'}
           itemComponent={SelectItem}
           filter={selectFilter}
           data={airportData.filter((item) => item.value !== to)}
@@ -133,13 +126,7 @@ export const SelectLocation = ({
           id="flight-to"
           label="To"
           placeholder="Where would you like to go?"
-          nothingFound={
-            debouncedQuery2.length === 0
-              ? 'Type Something!'
-              : loading2
-              ? 'Loading...'
-              : 'No Flights Found'
-          }
+          nothingFound={loading2 ? 'Loading...' : 'No Flights Found'}
           itemComponent={SelectItem}
           filter={selectFilter2}
           data={airportData.filter((item) => item.value !== from)}
