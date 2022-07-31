@@ -1,18 +1,7 @@
 import { Box, useColorMode } from '@chakra-ui/react';
 
-import { useLoadpage } from '@common/hooks';
-
 export const BackgroundVideo = () => {
   const { colorMode } = useColorMode();
-  const { setIsLoading } = useLoadpage();
-
-  const onLoadStartVideo = () => {
-    setIsLoading(true);
-  };
-
-  const onLoadedDataVideo = () => {
-    setIsLoading(false);
-  };
 
   return (
     <>
@@ -44,8 +33,6 @@ export const BackgroundVideo = () => {
           minW="100%"
           minH="100%"
           objectFit="cover"
-          onLoadStart={onLoadStartVideo}
-          onLoadedData={onLoadedDataVideo}
         >
           <source
             src="https://cdn.cnoside.dev/bed-assignment-2.deploy.cnoside.dev/background-dark.mp4"
@@ -67,8 +54,6 @@ export const BackgroundVideo = () => {
           minW="100%"
           minH="100%"
           objectFit="cover"
-          onLoadStart={onLoadStartVideo}
-          onLoadedData={onLoadedDataVideo}
         >
           <source
             src="https://cdn.cnoside.dev/bed-assignment-2.deploy.cnoside.dev/background-light.mp4"

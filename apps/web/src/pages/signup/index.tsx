@@ -16,18 +16,8 @@ import { useLoadpage } from '@common/hooks';
 import { BackgroundVideo } from '@common/components';
 
 const Signup: NextPage = () => {
-  const { colorMode } = useColorMode();
-  const { setIsLoading } = useLoadpage();
-
   const textAccent = useColorModeValue('blue.200', 'brandGold.300');
 
-  const onLoadStartVideo = () => {
-    setIsLoading(true);
-  };
-
-  const onLoadedDataVideo = () => {
-    setIsLoading(false);
-  };
 
   return (
     <Flex
