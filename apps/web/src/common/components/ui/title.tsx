@@ -14,4 +14,3 @@ export function Title({ as = 'h1', title, subtitle, ...boxProps }: TitleProps) {
     </Box>
   );
 }
-

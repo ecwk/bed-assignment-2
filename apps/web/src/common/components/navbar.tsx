@@ -104,16 +104,10 @@ export const Navbar = () => {
         </Flex>
       ) : (
         <HStack gap={3}>
-          <NextLink href="/login" passHref>
-            <Button as={Link} variant="outline" colorScheme="gray">
-              Login
-            </Button>
-          </NextLink>
-          <NextLink href="/signup" passHref>
-            <Button as={Link} href="/signup" colorScheme="gray">
-              Sign Up
-            </Button>
-          </NextLink>
+          <ButtonLink href="/login" variant="outline">
+            Login
+          </ButtonLink>
+          <ButtonLink href="/signup">Sign Up</ButtonLink>
         </HStack>
       )}
     </Flex>

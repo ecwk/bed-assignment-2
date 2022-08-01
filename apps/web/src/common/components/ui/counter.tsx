@@ -1,8 +1,8 @@
-import { Flex, FlexProps, IconButton, Text } from '@chakra-ui/react';
 import { type Dispatch, type SetStateAction } from 'react';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
+import { Flex, FlexProps, IconButton, Text } from '@chakra-ui/react';
 
-type CounterProps = FlexProps & {
+export type CounterProps = FlexProps & {
   value: number;
   setValue: Dispatch<SetStateAction<number>>;
   min: number;

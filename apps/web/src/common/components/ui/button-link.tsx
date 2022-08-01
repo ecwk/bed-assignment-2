@@ -1,7 +1,7 @@
 import NextLink, { type LinkProps as NextLinkProps } from 'next/link';
 import { Button, Link, type ButtonProps } from '@chakra-ui/react';
 
-type Props = ButtonProps & {
+export type ButtonLinkProps = ButtonProps & {
   href: string;
   children?: React.ReactNode;
   nextLinkProps?: Omit<NextLinkProps, 'href'>;
@@ -12,7 +12,7 @@ export const ButtonLink = ({
   children,
   nextLinkProps,
   ...buttonProps
-}: Props) => {
+}: ButtonLinkProps) => {
   return (
     <NextLink href={href} passHref {...nextLinkProps}>
       <Button

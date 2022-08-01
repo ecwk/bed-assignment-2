@@ -9,6 +9,12 @@ import {
   Button,
   useColorMode
 } from '@chakra-ui/react';
+import {
+  MdArrowDropUp,
+  MdArrowDropDown,
+  MdExitToApp,
+  MdSpaceDashboard
+} from 'react-icons/md';
 import NextLink from 'next/link';
 import { useAuth } from '@modules/auth';
 import { useCart } from '@common/hooks';
@@ -18,10 +24,9 @@ import { BiSupport } from 'react-icons/bi';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { SettingsIcon, CalendarIcon } from '@chakra-ui/icons';
-import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
 
 import { Role } from '@common/enum';
-import { ProfileAvatar, Hide } from '@common/components';
+import { ProfileAvatar, Hide, Link } from '@common/components';
 
 export const UserMenu = () => {
   const { user, logout } = useAuth();
@@ -56,41 +61,54 @@ export const UserMenu = () => {
 
           <MenuList p={3} borderRadius="2xl">
             <Hide above="md">
+              <Link href="/search">
+                <MenuItem
+                  borderRadius="xl"
+                  minH="45px"
+                  ml="2px"
+                  icon={<CalendarIcon />}
+                  iconSpacing="15px"
+                >
+                  Book A Flight
+                </MenuItem>
+              </Link>
+            </Hide>
+
+            <Link href="/settings/account/profile">
               <MenuItem
                 borderRadius="xl"
                 minH="45px"
-                ml="2px"
-                icon={<CalendarIcon />}
-                iconSpacing="15px"
+                icon={<BiUser size="20px" />}
+                iconSpacing="10px"
               >
-                <NextLink href="/search">Book A Flight</NextLink>
+                Profile
               </MenuItem>
-            </Hide>
-
-            <MenuItem
-              borderRadius="xl"
-              minH="45px"
-              icon={<BiUser size="20px" />}
-              iconSpacing="10px"
-            >
-              <NextLink href="/settings/account/profile">Profile</NextLink>
-            </MenuItem>
+            </Link>
 
             <Hide hide={user?.role !== Role.ADMIN}>
-              <MenuItem borderRadius="xl" minH="45px">
-                <NextLink href="/dashboard">Dashboard</NextLink>
-              </MenuItem>
+              <Link href="/dashboard">
+                <MenuItem
+                  borderRadius="xl"
+                  minH="45px"
+                  ml="1px"
+                  icon={<MdSpaceDashboard size="18px" />}
+                >
+                  Dashboard
+                </MenuItem>
+              </Link>
             </Hide>
 
             <Hide above="lg">
-              <MenuItem
-                borderRadius="xl"
-                minH="45px"
-                ml="-1px"
-                icon={<AiOutlineShoppingCart size="20px" />}
-              >
-                <NextLink href="/cart">{`Cart (${cart.length})`}</NextLink>
-              </MenuItem>
+              <Link href="/cart">
+                <MenuItem
+                  borderRadius="xl"
+                  minH="45px"
+                  ml="-1px"
+                  icon={<AiOutlineShoppingCart size="20px" />}
+                >
+                  Cart ({cart.length})
+                </MenuItem>
+              </Link>
             </Hide>
 
             <Hide above="lg">
@@ -106,13 +124,15 @@ export const UserMenu = () => {
                 Notifications
               </MenuItem>
 
-              <MenuItem
-                borderRadius="xl"
-                minH="45px"
-                icon={<BiSupport size="18px" />}
-              >
-                <NextLink href="#"> Support</NextLink>
-              </MenuItem>
+              <Link href="#support">
+                <MenuItem
+                  borderRadius="xl"
+                  minH="45px"
+                  icon={<BiSupport size="18px" />}
+                >
+                  Support
+                </MenuItem>
+              </Link>
             </Hide>
 
             <MenuDivider />
@@ -136,15 +156,17 @@ export const UserMenu = () => {
               </MenuItem>
             </Hide>
 
-            <MenuItem
-              borderRadius="xl"
-              minH="45px"
-              ml="2px"
-              icon={<SettingsIcon fontSize="16px" />}
-              iconSpacing="13px"
-            >
-              <NextLink href="/settings">Settings</NextLink>
-            </MenuItem>
+            <Link href="/settings">
+              <MenuItem
+                borderRadius="xl"
+                minH="45px"
+                ml="2px"
+                icon={<SettingsIcon fontSize="16px" />}
+                iconSpacing="13px"
+              >
+                Settings
+              </MenuItem>
+            </Link>
 
             <MenuItem
               onClick={logout}
