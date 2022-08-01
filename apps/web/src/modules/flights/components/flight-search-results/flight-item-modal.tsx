@@ -77,9 +77,10 @@ export const FlightItemModal = ({
         <ModalBody>
           <Flex flexDir="column">
             <Image
-              fit="cover"
+              objectFit="cover"
+              objectPosition="top"
               w="100%"
-              h="300px"
+              h="400px"
               borderRadius="lg"
               src={src}
               alt="flight booking"

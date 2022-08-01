@@ -147,7 +147,10 @@ export const FlightItem = ({
           <Box className="item-details" flexGrow="1" mt={4}>
             {/* <Heading size="md">{originAirport.name}</Heading> */}
             <Heading size="md">
-              {flight.aircraftName} ({flight.flightCode})
+              {flight.aircraftName}
+            </Heading>
+            <Heading size="md">
+              ({flight.flightCode})
             </Heading>
             <Text>{dayjs(departureDate).format('ddd, DD MMM YYYY')}</Text>
             <Text color="gray">

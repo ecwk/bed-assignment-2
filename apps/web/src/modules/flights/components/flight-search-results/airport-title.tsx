@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
-import { BiLinkExternal } from 'react-icons/bi';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 import { Airport } from '@common/types';
 
@@ -41,8 +41,8 @@ export const AirportTitle = ({
         <NextLink href={`/airports/${airportId}`} passHref>
           <Link display="flex" alignItems="center" justifyContent="flex-start">
             <Text flexShrink={-1}>{name}</Text>
-            <Box ml={1} mt={2} flexGrow={100}>
-              <BiLinkExternal size="16px" />
+            <Box ml={2} mt={-1} flexGrow={100}>
+              <ExternalLinkIcon fontSize="xl"/>
             </Box>
           </Link>
         </NextLink>

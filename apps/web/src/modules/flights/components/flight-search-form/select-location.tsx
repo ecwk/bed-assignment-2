@@ -86,7 +86,7 @@ export const SelectLocation = ({
     if (query || query === '') {
       setQuery2(query);
     }
-    if (loading) {
+    if (loading2) {
       return false;
     }
     return (

@@ -2,7 +2,7 @@ import { Box, Heading, Text, type BoxProps } from '@chakra-ui/react';
 
 export type TitleProps = BoxProps & {
   as?: string;
-  title: string;
+  title?: string;
   subtitle?: string;
 };
 

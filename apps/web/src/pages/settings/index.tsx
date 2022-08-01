@@ -9,18 +9,21 @@ import {
   BoxProps,
   Img,
   useColorModeValue,
-  GridProps
+  GridProps,
+  Text
 } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import NextLink from 'next/link';
 import { Fragment } from 'react';
 import { capitalize } from 'lodash';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 
-import { getMockImage } from '@common/utils';
-import { Link, CustomBreadcrumb } from '@common/components';
+import { Link, CustomBreadcrumb, Title } from '@common/components';
 
 type NavigationItem = {
   name: string;
+  href: string;
   links: {
     name: string;
     src: string;
@@ -28,39 +31,58 @@ type NavigationItem = {
   }[];
 };
 
-const navigationItems: NavigationItem[] = [
+export const navigationItems: NavigationItem[] = [
   {
     name: 'Account',
+    href: '/settings/account',
+
     links: [
-      { name: 'Profile', src: getMockImage(), href: '/settings/profile' },
+      {
+        name: 'Profile',
+        src: '/images/personal-information.svg',
+        href: '/settings/account/profile'
+      },
       {
         name: 'Preferences',
-        src: getMockImage(),
-        href: '/settings/preferences'
+        src: '/images/selection.svg',
+        href: '/settings/account/preferences'
       },
-      { name: 'Privacy', src: getMockImage(), href: '/settings/privacy' },
-      { name: 'Orders', src: getMockImage(), href: '/settings/orders' }
+      {
+        name: 'Privacy',
+        src: '/images/personal-information.svg',
+        href: '/settings/account/privacy'
+      },
+      {
+        name: 'Bookings',
+        src: '/images/personal-information.svg',
+        href: '/settings/account/bookings'
+      }
     ]
   },
   {
     name: 'Billing',
+    href: '/settings/billing',
     links: [
-      { name: 'Payment', src: getMockImage(), href: '/settings/payment' },
       {
-        name: 'Subscriptions',
-        src: getMockImage(),
-        href: '/settings/subscriptions'
+        name: 'Payment',
+        src: '/images/personal-information.svg',
+        href: '/settings/billing/payment'
       },
-      { name: 'Discounts', src: getMockImage(), href: '/settings/discounts' }
+      {
+        name: 'Discounts',
+        src: '/images/personal-information.svg',
+        href: '/settings/billing/discounts'
+      }
     ]
   },
   {
     name: 'Others',
+    href: '/settings/others',
     links: [
       {
         name: 'Notifications',
-        src: getMockImage(),
-        href: '/settings/notifications'
+        src: '/images/personal-information.svg',
+        href: '/settings/others/notifications'
       }
     ]
   }
@@ -68,24 +90,27 @@ const navigationItems: NavigationItem[] = [
 
 type SettingsProps = {};
 
+// TODO: Create a reusable card component for the following
+
 const Settings: NextPage<SettingsProps> = () => {
   return (
-    <GridContainer maxW="1200px">
-      <Title />
+    <Main>
       <Sidebar />
-      <Section>
-        <Heading as="h1" size="xl">
-          Settings
-        </Heading>
+      <Section
+        title="Settings"
+        subtitle="Change your application settings here"
+      >
         {navigationItems.map(({ name, links }, index) => (
           <Box key={`navigation-item-${index}`}>
-            <Heading mt={10} mb={2} as="h2" size="md">
+            <Heading mb={2} as="h2" size="md">
               {name}
             </Heading>
             <Grid gridTemplateColumns="1fr 1fr 1fr" gap={5}>
               {links.map(({ name, src, href }, index) => (
                 <NextLink key={`navigation-item-link-${index}`} href={href}>
                   <Flex
+                    as={motion.div}
+                    whileHover={{ scale: 1.05 }}
                     flexDir="column"
                     border="1px solid"
                     borderRadius="lg"
@@ -99,6 +124,7 @@ const Settings: NextPage<SettingsProps> = () => {
                       borderTopRadius="lg"
                       objectFit="cover"
                       h="200px"
+                      backgroundColor="gray.400"
                     />
                     <Box p={4}>
                       <Heading as="h3" size="sm" fontWeight="semibold">
@@ -112,35 +138,30 @@ const Settings: NextPage<SettingsProps> = () => {
           </Box>
         ))}
       </Section>
-    </GridContainer>
+    </Main>
   );
 };
 
-export type GridContainerProps = GridProps & {
+export type MainProps = GridProps & {
   children?: React.ReactNode;
 };
 
-export const GridContainer = ({
-  children,
-  ...gridProps
-}: GridContainerProps) => {
+export const Main = ({ children, ...gridProps }: MainProps) => {
   return (
     <Grid
       as="main"
-      my="40px"
+      my="80px"
       justifyContent="center"
       gridTemplateAreas={`
-        "title title"
-        "sidebar section"
-        `}
-      gridTemplateColumns="200px 1fr"
-      gridRowGap={6}
+          "sidebar section"
+          `}
+      gridTemplateColumns="250px 1fr"
       gridColumnGap={5}
       px={{
         base: 4,
         sm: 5
       }}
-      maxW="1500px"
+      maxW="1200px"
       w="100%"
       mx="auto"
       {...gridProps}
@@ -150,39 +171,50 @@ export const GridContainer = ({
   );
 };
 
-export type TitleProps = BoxProps & {};
-
-export const Title = ({ ...boxProps }: TitleProps) => {
-  return (
-    <Box as="header" gridArea="title" {...boxProps}>
-      <CustomBreadcrumb />
-    </Box>
-  );
-};
-
 type SidebarProps = StackProps & {
   children?: React.ReactNode;
 };
 
 export const Sidebar = ({ ...stackProps }: SidebarProps) => {
+  const backgroundColor = useColorModeValue(
+    'brandPaleBlue.100',
+    'brandPaleBlue.700'
+  );
+
   return (
     <VStack
       as="aside"
       gridArea="sidebar"
-      {...stackProps}
       alignItems="flex-start"
       spacing={6}
+      backgroundColor={backgroundColor}
+      borderRadius="lg"
+      py={8}
+      px={6}
+      h="max-content"
+      {...stackProps}
     >
-      {navigationItems.map(({ name, links }, i) => (
+      <Heading as="h3" size="md" pl={1}>
+        <Link href="/settings">Settings</Link>
+      </Heading>
+      {navigationItems.map(({ name, href, links }, i) => (
         <Fragment key={`sidebar-${name}`}>
-          <VStack as="nav" alignItems="flex-start">
-            <Heading size="md" fontWeight="bold">
+          <VStack as="nav" pl={3} alignItems="flex-start">
+            <Link href={href} fontSize="md" fontWeight="bold" color="gray.400">
               {capitalize(name)}
-            </Heading>
+            </Link>
+
             {links.map(({ name, href }, j) => (
-              <Link color="gray.300" href={href} key={`sidebar-link-${name}`}>
-                {capitalize(name)}
-              </Link>
+              <motion.div
+                key={`sidebar-link-${name}`}
+                whileHover={{
+                  x: 2
+                }}
+              >
+                <Link color="gray.300" pl={2} href={href} fontSize="sm">
+                  {capitalize(name)}
+                </Link>
+              </motion.div>
             ))}
           </VStack>
           {i !== navigationItems.length - 1 && <Divider />}
@@ -192,28 +224,55 @@ export const Sidebar = ({ ...stackProps }: SidebarProps) => {
   );
 };
 
-type SectionProps = StackProps & {
+type SectionProps = BoxProps & {
+  title?: string;
+  subtitle?: string;
   children?: React.ReactNode;
 };
 
-export const Section = ({ children, ...stackProps }: SectionProps) => {
+export const Section = ({
+  title,
+  subtitle,
+  children,
+  ...boxProps
+}: SectionProps) => {
+  const router = useRouter();
+
   const backgroundColor = useColorModeValue(
     'brandPaleBlue.100',
     'brandPaleBlue.700'
   );
 
   return (
-    <Flex
-      as="section"
+    <Grid
+      as={motion.section}
+      gridTemplateAreas={`
+          "header"
+          "content"
+        `}
+      gridRowGap={10}
       gridArea="section"
-      flexDir="column"
-      backgroundColor={backgroundColor}
-      borderRadius="xl"
       p={10}
-      {...stackProps}
+      h="max-content"
+      backgroundColor={backgroundColor}
+      borderRadius="lg"
+      key={router.pathname}
+      variants={{
+        hidden: { opacity: 0, x: -200, y: 0 },
+        enter: { opacity: 1, x: 0, y: 0 }
+      }}
+      initial="hidden"
+      animate="enter"
+      transition={{ type: 'linear' }}
     >
-      {children}
-    </Flex>
+      <Box gridArea="header">
+        <CustomBreadcrumb />
+        <Title mt={2} title={title} subtitle={subtitle} />
+      </Box>
+      <Box gridArea="content" {...boxProps}>
+        {children}
+      </Box>
+    </Grid>
   );
 };
 

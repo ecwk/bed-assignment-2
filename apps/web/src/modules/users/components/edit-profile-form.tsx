@@ -18,7 +18,6 @@ import {
 } from '@common/components';
 import { sleep } from '@common/utils';
 import { useAuth } from '@modules/auth';
-import { type User } from '@common/types';
 import { usersApiClient, editProfileSchema } from '@modules/users';
 
 type EditProfileFormData = {
@@ -29,13 +28,10 @@ type EditProfileFormData = {
   confirmPassword: string;
 };
 
-export type EditProfileFormProps = Partial<FormProps> & {
-  user?: User | null;
-};
+export type EditProfileFormProps = Partial<FormProps> & {};
 
 export function EditProfileForm({
   id,
-  user,
   sx,
   ...formProps
 }: EditProfileFormProps) {
@@ -43,7 +39,7 @@ export function EditProfileForm({
   const methods = useForm<EditProfileFormData>({
     resolver: yupResolver(editProfileSchema(mobileCode))
   });
-  const { isLoading } = useAuth();
+  const { isLoading, user } = useAuth();
   const router = useRouter();
 
   const editMutation = useMutation(
