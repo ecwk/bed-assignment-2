@@ -49,7 +49,7 @@ export const navigationItems: NavigationItem[] = [
       },
       {
         name: 'Privacy',
-        src: '/images/personal-information.svg',
+        src: '/images/security.svg',
         href: '/settings/account/privacy'
       },
       {
@@ -105,7 +105,7 @@ const Settings: NextPage<SettingsProps> = () => {
             <Heading mb={2} as="h2" size="md">
               {name}
             </Heading>
-            <Grid gridTemplateColumns="1fr 1fr 1fr" gap={5}>
+            <Grid mt={5} gridTemplateColumns="1fr 1fr 1fr" gap={5}>
               {links.map(({ name, src, href }, index) => (
                 <NextLink key={`navigation-item-link-${index}`} href={href}>
                   <Flex
@@ -124,7 +124,7 @@ const Settings: NextPage<SettingsProps> = () => {
                       borderTopRadius="lg"
                       objectFit="cover"
                       h="200px"
-                      backgroundColor="gray.400"
+                      backgroundColor="gray.500"
                     />
                     <Box p={4}>
                       <Heading as="h3" size="sm" fontWeight="semibold">

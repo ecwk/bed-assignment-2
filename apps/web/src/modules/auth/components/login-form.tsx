@@ -1,3 +1,4 @@
+import { random } from 'lodash';
 import { useRouter } from 'next/router';
 import { Text } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
@@ -33,11 +34,11 @@ export const LoginForm = ({ sx, ...formProps }: LoginFormProps) => {
     },
     {
       onMutate: async () => {
-        await sleep(2000);
+        await sleep(random(500, 3000));
       },
       onSuccess: () => {
         setTimeout(() => {
-          router.push('/settings/profile');
+          router.push('/dashboard');
         }, 1000);
       }
     }

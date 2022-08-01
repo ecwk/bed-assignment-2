@@ -40,10 +40,8 @@ export const AirportTitle = ({
       <Heading size="lg" position="relative">
         <NextLink href={`/airports/${airportId}`} passHref>
           <Link display="flex" alignItems="center" justifyContent="flex-start">
-            <Text flexShrink={-1}>{name}</Text>
-            <Box ml={2} mt={-1} flexGrow={100}>
-              <ExternalLinkIcon fontSize="xl"/>
-            </Box>
+            {name}
+            <ExternalLinkIcon fontSize="xl" ml={2} />
           </Link>
         </NextLink>
       </Heading>

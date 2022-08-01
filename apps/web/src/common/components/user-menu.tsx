@@ -7,20 +7,32 @@ import {
   MenuItem,
   MenuDivider,
   Button,
-  Avatar,
-  useColorMode,
-  Link
+  useColorMode
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useAuth } from '@modules/auth';
 import { useCart } from '@common/hooks';
+import { BiUser } from 'react-icons/bi';
+import { VscBell } from 'react-icons/vsc';
+import { BiSupport } from 'react-icons/bi';
+import { IoMdSunny, IoMdMoon } from 'react-icons/io';
+import { AiOutlineShoppingCart } from 'react-icons/ai';
+import { SettingsIcon, CalendarIcon } from '@chakra-ui/icons';
 import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
 
-import { ProfileAvatar } from '@common/components';
+import { Role } from '@common/enum';
+import { ProfileAvatar, Hide } from '@common/components';
 
 export const UserMenu = () => {
   const { user, logout } = useAuth();
   const { cart } = useCart();
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  const allowNotifications = () => {
+    if ('Notification' in window) {
+      return Notification.requestPermission();
+    }
+  };
 
   return (
     <Menu>
@@ -41,92 +53,104 @@ export const UserMenu = () => {
               {isOpen ? <MdArrowDropUp /> : <MdArrowDropDown />}
             </Flex>
           </MenuButton>
+
           <MenuList p={3} borderRadius="2xl">
-            <NextLink href="/search" passHref>
+            <Hide above="md">
               <MenuItem
                 borderRadius="xl"
                 minH="45px"
-                display={{
-                  base: 'block',
-                  md: 'none'
-                }}
+                ml="2px"
+                icon={<CalendarIcon />}
+                iconSpacing="15px"
               >
-                Book A Flight
+                <NextLink href="/search">Book A Flight</NextLink>
               </MenuItem>
-            </NextLink>
-            <NextLink href="/settings/profile" passHref>
-              <MenuItem borderRadius="xl" minH="45px">
-                Profile
-              </MenuItem>
-            </NextLink>
-            <NextLink href="/dashboard" passHref>
-              <MenuItem borderRadius="xl" minH="45px">
-                Dashboard
-              </MenuItem>
-            </NextLink>
-            <NextLink href="/cart" passHref>
-              <MenuItem
-                borderRadius="xl"
-                minH="45px"
-                display={{
-                  base: 'block',
-                  md: 'none'
-                }}
-              >
-                Cart ({cart.length})
-              </MenuItem>
-            </NextLink>
-            <MenuDivider
-              display={{
-                base: 'block',
-                lg: 'none'
-              }}
-            />
+            </Hide>
+
             <MenuItem
               borderRadius="xl"
               minH="45px"
-              onClick={() => {
-                if ('Notification' in window) {
-                  Notification.requestPermission();
-                }
-              }}
-              display={{
-                base: 'block',
-                lg: 'none'
-              }}
+              icon={<BiUser size="20px" />}
+              iconSpacing="10px"
             >
-              {'Notification' in window
-                ? Notification.permission === 'granted'
-                  ? 'Notifications'
-                  : 'Enable Notifications'
-                : 'Notifications'}
+              <NextLink href="/settings/account/profile">Profile</NextLink>
             </MenuItem>
-            <NextLink href="#" passHref>
+
+            <Hide hide={user?.role !== Role.ADMIN}>
+              <MenuItem borderRadius="xl" minH="45px">
+                <NextLink href="/dashboard">Dashboard</NextLink>
+              </MenuItem>
+            </Hide>
+
+            <Hide above="lg">
               <MenuItem
                 borderRadius="xl"
                 minH="45px"
-                display={{
-                  base: 'block',
-                  lg: 'none'
-                }}
+                ml="-1px"
+                icon={<AiOutlineShoppingCart size="20px" />}
               >
-                Support
+                <NextLink href="/cart">{`Cart (${cart.length})`}</NextLink>
               </MenuItem>
-            </NextLink>
+            </Hide>
+
+            <Hide above="lg">
+              <MenuDivider />
+
+              <MenuItem
+                borderRadius="xl"
+                minH="45px"
+                onClick={allowNotifications}
+                icon={<VscBell size="20px" />}
+                iconSpacing="10px"
+              >
+                Notifications
+              </MenuItem>
+
+              <MenuItem
+                borderRadius="xl"
+                minH="45px"
+                icon={<BiSupport size="18px" />}
+              >
+                <NextLink href="#"> Support</NextLink>
+              </MenuItem>
+            </Hide>
+
             <MenuDivider />
-            <NextLink href="/settings" passHref>
-              <MenuItem borderRadius="xl" minH="45px">
-                Settings
+
+            <Hide above="md">
+              <MenuItem
+                borderRadius="xl"
+                minH="45px"
+                ml="2px"
+                icon={
+                  colorMode === 'light' ? (
+                    <IoMdMoon size="16px" />
+                  ) : (
+                    <IoMdSunny size="16px" />
+                  )
+                }
+                iconSpacing="12px"
+                onClick={toggleColorMode}
+              >
+                {colorMode === 'dark' ? 'Light Mode' : 'Dark Mode'}
               </MenuItem>
-            </NextLink>
+            </Hide>
+
             <MenuItem
+              borderRadius="xl"
+              minH="45px"
+              ml="2px"
+              icon={<SettingsIcon fontSize="16px" />}
+              iconSpacing="13px"
+            >
+              <NextLink href="/settings">Settings</NextLink>
+            </MenuItem>
+
+            <MenuItem
+              onClick={logout}
               borderRadius="xl"
               minH="45px"
               icon={<MdExitToApp size="20px" />}
-              onClick={() => {
-                logout();
-              }}
-              fontWeight="500"
               color="#EB5757"
               _hover={{
                 backgroundColor: '#eb575726'

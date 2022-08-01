@@ -6,47 +6,28 @@ import {
   MenuList,
   IconButton,
   HStack,
-  useColorMode,
   Box,
   MenuGroup,
-  Heading,
-  MenuProps
+  Heading
 } from '@chakra-ui/react';
-import { VscBell } from 'react-icons/vsc';
-import { BiSupport } from 'react-icons/bi';
-import { Indicator } from '@mantine/core';
-import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import {
   AiOutlineShoppingCart,
   AiFillDelete,
   AiOutlinePlus,
   AiOutlineMinus
 } from 'react-icons/ai';
-import { MdArrowDropUp, MdArrowDropDown, MdExitToApp } from 'react-icons/md';
+import { Indicator } from '@mantine/core';
 
-import { Logo } from './';
-import NextLink from 'next/link';
-import { useAuth } from '@modules/auth';
 import { useCart } from '@common/hooks';
-import { NAVBAR_HEIGHT } from '@common/constants';
 import { Link } from '@common/components';
-import { useState } from 'react';
-import { type CartItem } from '@common/types';
 
 type CartMenuProps = {
   display?: Record<string, string>;
 };
 
 export const CartMenu = ({ display }: CartMenuProps) => {
-  const { user, logout } = useAuth();
-  const { colorMode, toggleColorMode } = useColorMode();
-  const {
-    cart,
-    addToCart,
-    increaseQuantity,
-    decreaseQuantity,
-    removeFromCart
-  } = useCart();
+  const { cart, increaseQuantity, decreaseQuantity, removeFromCart } =
+    useCart();
 
   return (
     <Menu>

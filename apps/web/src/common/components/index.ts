@@ -9,5 +9,6 @@ export { ProfileAvatar } from './profile-avatar';
 export { MantineProviderWrapper } from './mantine-provider-wrapper';
 export { Loadpage } from './loadpage';
 export { AnimationWrapper } from './animation-wrapper';
+export { ToggleDark } from './toggle-dark';
 export * from './ui';
 export * from './form';

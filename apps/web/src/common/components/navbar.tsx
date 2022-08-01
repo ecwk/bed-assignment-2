@@ -6,32 +6,30 @@ import {
   IconButton,
   HStack,
   Link,
-  useColorMode,
-  useColorModeValue,
-  Input,
-  Box
+  Input
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { VscBell } from 'react-icons/vsc';
 import { BiSupport } from 'react-icons/bi';
-import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 
+import {
+  Logo,
+  CartMenu,
+  UserMenu,
+  ToggleDark,
+  Hide,
+  ButtonLink
+} from '@common/components';
 import { useAuth } from '@modules/auth';
 import { NAVBAR_HEIGHT } from '@common/constants';
-import { Logo, CartMenu, UserMenu } from '@common/components';
 
 export const Navbar = () => {
   const { user } = useAuth();
-  const { colorMode, toggleColorMode } = useColorMode();
 
-  const colorModeButton = useColorModeValue(
-    'lightModeButton',
-    'darkModeButton'
-  );
-
-  const display = {
-    base: 'none',
-    lg: 'flex'
+  const allowNotifications = () => {
+    if ('Notification' in window) {
+      return Notification.requestPermission();
+    }
   };
 
   return (
@@ -55,76 +53,53 @@ export const Navbar = () => {
           <Logo size={0.6} />
         </Link>
       </NextLink>
-      <Input
-        placeholder="search"
-        maxW="350px"
-        display={{
-          base: 'none',
-          md: 'block'
-        }}
-      />
-      <Spacer
-        display={{
-          base: 'none',
-          md: 'block'
-        }}
-      />
-      <HStack spacing={4}>
-        <IconButton
-          variant="outline"
-          icon={colorMode === 'light' ? <IoMdMoon /> : <IoMdSunny />}
-          aria-label="Toggle dark mode"
-          onClick={toggleColorMode}
-          display={{
-            base: 'none',
-            md: 'flex'
-          }}
-        />
-        <NextLink href="/search" passHref>
-          <Button
-            as={Link}
-            layerStyle={colorModeButton}
-            display={{
-              base: 'none',
-              md: 'flex'
-            }}
-          >
+
+      <Hide below="md">
+        <Input placeholder="search" maxW="350px" />
+      </Hide>
+
+      <Hide below="md">
+        <Spacer w="0px" />
+      </Hide>
+
+      <Hide below="md">
+        <HStack spacing={4}>
+          <ToggleDark />
+
+          <ButtonLink href="/search" colorScheme="brandGold">
             Book A Flight
-          </Button>
-        </NextLink>
-        <IconButton
-          aria-label="Contact support"
-          display={display}
-          icon={<BiSupport />}
-          variant="ghost"
-          size="md"
-          ml={4}
-        />
-        <IconButton
-          aria-label="Notifications"
-          display={display}
-          icon={<VscBell />}
-          variant="ghost"
-          size="md"
-          ml={4}
-          onClick={() => {
-            if (Notification) {
-              Notification.requestPermission();
-            }
-          }}
-        />
-      </HStack>
-      <Divider orientation="vertical" display={display} />
+          </ButtonLink>
+
+          <Hide below="lg">
+            <IconButton
+              aria-label="Contact support"
+              icon={<BiSupport />}
+              variant="ghost"
+              size="md"
+              ml={4}
+            />
+
+            <IconButton
+              aria-label="Notifications"
+              icon={<VscBell />}
+              variant="ghost"
+              size="md"
+              ml={4}
+              onClick={allowNotifications}
+            />
+          </Hide>
+        </HStack>
+      </Hide>
+
+      <Hide below="md">
+        <Divider orientation="vertical" />
+      </Hide>
+
       {user ? (
         <Flex gap={6}>
-          <Box
-            display={{
-              base: 'none',
-              md: 'block'
-            }}
-          >
+          <Hide below="lg">
             <CartMenu />
-          </Box>
+          </Hide>
           <UserMenu />
         </Flex>
       ) : (

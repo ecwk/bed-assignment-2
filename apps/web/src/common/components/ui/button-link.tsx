@@ -15,7 +15,15 @@ export const ButtonLink = ({
 }: Props) => {
   return (
     <NextLink href={href} passHref {...nextLinkProps}>
-      <Button as={Link} {...buttonProps}>
+      <Button
+        sx={{
+          ':hover': {
+            textDecoration: 'none'
+          }
+        }}
+        as={Link}
+        {...buttonProps}
+      >
         {children}
       </Button>
     </NextLink>

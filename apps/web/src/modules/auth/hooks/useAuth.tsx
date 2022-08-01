@@ -5,9 +5,10 @@ import {
   ReactNode,
   useEffect
 } from 'react';
-import jwt, { Jwt } from 'jsonwebtoken';
 import { client } from '@config/axios';
+import jwt, { Jwt } from 'jsonwebtoken';
 
+import { Role } from '@common/enum';
 import { SignupDto } from '@modules/auth';
 import { useCookie } from '@common/hooks';
 import { type User } from '@common/types';
@@ -22,6 +23,7 @@ interface AuthContextInterface {
   logout: () => Promise<void>;
   signup: (signupDto: SignupDto) => Promise<void>;
   isLoading: boolean;
+  isAdmin: boolean;
 }
 
 export const AuthContext = createContext<AuthContextInterface>(
@@ -113,7 +115,9 @@ const useAuthProvider = (): AuthContextInterface => {
     await client.post<SignupResponse>('/auth/signup', signupDto);
   };
 
-  return { user, token, login, logout, signup, isLoading };
+  const isAdmin = user?.role === Role.ADMIN;
+
+  return { user, token, login, logout, signup, isLoading, isAdmin };
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
