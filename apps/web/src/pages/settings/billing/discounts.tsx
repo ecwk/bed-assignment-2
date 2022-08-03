@@ -1,21 +1,22 @@
 import { NextPage } from 'next';
+import { Text } from '@chakra-ui/react';
 
-import { Main, Sidebar, Section } from '../index';
+import { Main, Title } from '@common/components';
 
-type DiscountsProps = {};
-
-const Discounts: NextPage<DiscountsProps> = () => {
+const Discounts: NextPage = () => {
   return (
-    <Main>
-      <Sidebar />
-      <Section title="Discounts" subtitle="View and manage your discounts here">
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Modi
-          blanditiis asperiores, iusto eligendi voluptas omnis provident esse
-          sit perferendis ea a ipsam ut sequi impedit illum? Adipisci quos dicta
-          quisquam?
-        </p>
-      </Section>
+    <Main maxW="1000px" w="100%">
+      <Title
+        mt={10}
+        title="Discounts"
+        subtitle="View and manage your discounts here"
+      />
+      <Text mt={5}>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis sit earum
+        delectus quam consequuntur soluta facere assumenda? Reiciendis
+        molestias, voluptates provident sint veritatis magnam voluptatibus nemo
+        voluptatum omnis, magni adipisci!
+      </Text>
     </Main>
   );
 };

@@ -1,21 +1,22 @@
 import { NextPage } from 'next';
+import { Text } from '@chakra-ui/react';
 
-import { Main, Sidebar, Section } from '../index';
+import { Main, Title } from '@common/components';
 
-type BookingsProps = {};
-
-const Bookings: NextPage<BookingsProps> = ({}) => {
+const Bookings: NextPage = () => {
   return (
-    <Main>
-      <Sidebar />
-      <Section title="Bookings" subtitle="Manage your bookings here">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem
-          rem quod dolores doloribus voluptate at nobis similique vel officia.
-          Repellat, iure voluptas optio perspiciatis officia laborum
-          necessitatibus amet tenetur quae.
-        </p>
-      </Section>
+    <Main maxW="1000px" w="100%">
+      <Title
+        mt={10}
+        title="Bookings"
+        subtitle="View and manage your bookings here"
+      />
+      <Text mt={5}>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consequuntur
+        at a pariatur tenetur! Velit vero explicabo dolorem perspiciatis
+        ratione. Reiciendis quisquam quam animi facilis quos illum in doloremque
+        voluptates labore!
+      </Text>
     </Main>
   );
 };

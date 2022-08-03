@@ -1,21 +1,22 @@
 import { NextPage } from 'next';
+import { Text } from '@chakra-ui/react';
 
-import { Main, Sidebar, Section } from '../index';
+import { Main, Title } from '@common/components';
 
-type PrivacyProps = {};
-
-const Privacy: NextPage<PrivacyProps> = ({}) => {
+const Privacy: NextPage = () => {
   return (
-    <Main>
-      <Sidebar />
-      <Section title="Privacy" subtitle="Manage your privacy settings here">
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque
-          molestias tenetur fugit placeat temporibus expedita unde voluptatum in
-          voluptate, voluptates soluta qui dignissimos odit dolorum aliquid
-          praesentium quidem recusandae ab!
-        </p>
-      </Section>
+    <Main maxW="1000px" w="100%">
+      <Title
+        mt={10}
+        title="Privacy"
+        subtitle="View and edit your privacy settings here"
+      />
+      <Text mt={5}>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Inventore
+        nihil minima perspiciatis soluta quod architecto ad praesentium quae
+        eaque sunt, accusamus sequi excepturi id quidem obcaecati voluptas
+        tempore expedita temporibus!
+      </Text>
     </Main>
   );
 };

@@ -1,20 +1,19 @@
 import { NextPage } from 'next';
 
 import { EditProfileForm } from '@modules/users';
-import { Main, Sidebar, Section } from '../index';
+import { Main, Title } from '@common/components';
 
 type ProfileProps = {};
 
 const Profile: NextPage<ProfileProps> = () => {
   return (
-    <Main>
-      <Sidebar />
-      <Section
+    <Main maxW="1000px" w="100%">
+      <Title
+        mt={10}
         title="Profile"
-        subtitle="Some information will be exposed publicly"
-      >
-        <EditProfileForm />
-      </Section>
+        subtitle="View and edit your profile here"
+      />
+      <EditProfileForm mt={5} />
     </Main>
   );
 };

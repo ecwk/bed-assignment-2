@@ -1,62 +1,85 @@
-import { NextPage } from 'next';
-import NextLink from 'next/link';
-import { Flex, Img, Box, Heading, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Grid,
+  GridItem,
+  Img,
+  Text,
+  useColorModeValue
+} from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { capitalize } from 'lodash';
+import { type NextPage } from 'next';
 
-import { Main, Sidebar, Section, navigationItems } from '../index';
+import { Main, Title, Link } from '@common/components';
+import { SETTINGS_ITEMS } from '@common/constants';
 
-type BillingProps = {};
-
-const billingItems = navigationItems.find(
+const billingItems = SETTINGS_ITEMS.find(
   ({ name }) => name.toLowerCase() === 'billing'
 );
 
-const Billing: NextPage<BillingProps> = ({}) => {
+const Billing: NextPage = () => {
+  const itemBorderColor = useColorModeValue('brandGray.200', 'brandGray.600');
+
   return (
-    <Main>
-      <Sidebar />
-      <Section
+    <Main maxW="1200px" w="100%" mx="auto">
+      <Title
+        mt={10}
+        mb={5}
         title="Billing"
-        subtitle="Manage your billing here"
-        display="flex"
-        flexDir="column"
-        gap={5}
-      >
+        subtitle="Manage your billing settings here"
+      />
+      <Grid gap={5}>
         {billingItems?.links.map(({ name, src, href }, i) => (
-          <NextLink key={`navigation-item-link-${i}`} href={href}>
-            <Flex
-              as={motion.div}
-              whileHover={{ scale: 1.05 }}
+          <GridItem
+            as={motion.li}
+            whileHover={{
+              y: -5
+            }}
+            _hover={{
+              p: {
+                color: 'brandGold.300'
+              },
+              img: {
+                backgroundColor: 'brandGray.300'
+              }
+            }}
+            key={`${name}-${i}`}
+          >
+            <Link
+              display="flex"
               flexDir="column"
               border="1px solid"
-              borderRadius="lg"
-              borderColor="gray.600"
-              background="gray.900"
-              cursor="pointer"
+              borderColor={itemBorderColor}
+              borderRadius="xl"
+              href={href}
             >
               <Img
+                h="200px"
+                objectFit="contain"
+                borderTopRadius="xl"
+                backgroundColor="brandGray.50"
                 src={src}
                 alt={name}
-                borderTopRadius="lg"
-                objectFit="cover"
-                h="300px"
-                backgroundColor="gray.400"
               />
-              <Box p={4}>
-                <Heading
-                  as="h3"
-                  size="sm"
+              <Flex
+                flexDir="column"
+                backgroundColor="brandGray.900"
+                borderBottomRadius="xl"
+                p={4}
+              >
+                <Text
+                  color="brandGray.50"
+                  fontSize="lg"
                   fontWeight="semibold"
-                  color="gray.200"
+                  mr={2}
                 >
-                  {capitalize(name)}
-                </Heading>
-              </Box>
-            </Flex>
-          </NextLink>
+                  {name}
+                </Text>
+              </Flex>
+            </Link>
+          </GridItem>
         ))}
-      </Section>
+      </Grid>
     </Main>
   );
 };
