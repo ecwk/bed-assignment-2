@@ -10,7 +10,7 @@ import {
   FormErrorMessage,
   type InputGroupProps
 } from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon, LockIcon } from '@chakra-ui/icons';
+import { ViewIcon, ViewOffIcon, LockIcon, WarningTwoIcon } from '@chakra-ui/icons';
 
 import { useFormContext } from 'react-hook-form';
 import { useState } from 'react';
@@ -72,9 +72,17 @@ export function PasswordInput({
           </InputRightElement>
         )}
       </InputGroup>
-      {error && <FormErrorMessage>{error?.message}</FormErrorMessage>}
+      {error && (
+        <FormErrorMessage>
+          <WarningTwoIcon mr={2} />
+          {error?.message}
+        </FormErrorMessage>
+      )}
       {!isDirty && errorRes?.statusCode === 401 && (
-        <FormErrorMessage>{errorRes?.error}</FormErrorMessage>
+        <FormErrorMessage>
+          <WarningTwoIcon mr={2} />
+          {errorRes?.error}
+        </FormErrorMessage>
       )}
     </FormControl>
   );

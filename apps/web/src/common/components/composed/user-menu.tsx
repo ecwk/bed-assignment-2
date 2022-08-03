@@ -7,7 +7,8 @@ import {
   MenuItem,
   MenuDivider,
   Button,
-  useColorMode
+  useColorMode,
+  useColorModeValue
 } from '@chakra-ui/react';
 import {
   MdArrowDropUp,
@@ -15,7 +16,6 @@ import {
   MdExitToApp,
   MdSpaceDashboard
 } from 'react-icons/md';
-import NextLink from 'next/link';
 import { useAuth } from '@modules/auth';
 import { useCart } from '@common/hooks';
 import { BiUser } from 'react-icons/bi';
@@ -23,7 +23,12 @@ import { VscBell } from 'react-icons/vsc';
 import { BiSupport } from 'react-icons/bi';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
-import { SettingsIcon, CalendarIcon } from '@chakra-ui/icons';
+import {
+  SettingsIcon,
+  CalendarIcon,
+  LockIcon,
+  ChevronRightIcon
+} from '@chakra-ui/icons';
 
 import { Role } from '@common/enum';
 import { ProfileAvatar, Hide, Link } from '@common/components';
@@ -39,8 +44,10 @@ export const UserMenu = () => {
     }
   };
 
+  const backgroundColor = useColorModeValue('brandGray.100', 'brandGray.800');
+
   return (
-    <Menu>
+    <Menu offset={[200, -20]}>
       {({ isOpen }) => (
         <>
           <MenuButton
@@ -49,19 +56,21 @@ export const UserMenu = () => {
             colorScheme="gray"
             fontSize="12px"
             fontWeight="700"
+            w="100%"
+            h="60px"
           >
-            <Flex alignItems="center" gap={2}>
-              <ProfileAvatar user={user} size="sm" />
-              <Text as="span" ml={2} mr={1} verticalAlign="middle">
+            <Flex alignItems="center" justifyContent="space-between" gap={5}>
+              <ProfileAvatar user={user} borderRadius="md" w="40px" h="40px" />
+              <Text mr="auto" fontSize="md" fontWeight="Normal">
                 {user?.username}
               </Text>
-              {isOpen ? <MdArrowDropUp /> : <MdArrowDropDown />}
+              <ChevronRightIcon fontSize="20px" />
             </Flex>
           </MenuButton>
 
-          <MenuList p={3} borderRadius="2xl">
+          <MenuList p={3} borderRadius="xl" backgroundColor={backgroundColor}>
             <Hide above="md">
-              <Link href="/search">
+              <Link href="/search?type=flight">
                 <MenuItem
                   borderRadius="xl"
                   minH="45px"
@@ -85,75 +94,28 @@ export const UserMenu = () => {
               </MenuItem>
             </Link>
 
+            <Link href="/dashboard">
+              <MenuItem
+                borderRadius="xl"
+                minH="45px"
+                ml="1px"
+                icon={<MdSpaceDashboard size="18px" />}
+              >
+                Dashboard
+              </MenuItem>
+            </Link>
+
             <Hide hide={user?.role !== Role.ADMIN}>
-              <Link href="/dashboard">
+              <Link href="/admin/dashboard">
                 <MenuItem
                   borderRadius="xl"
                   minH="45px"
-                  ml="1px"
-                  icon={<MdSpaceDashboard size="18px" />}
+                  ml="3px"
+                  icon={<LockIcon fontSize="15px" />}
                 >
-                  Dashboard
+                  Admin
                 </MenuItem>
               </Link>
-            </Hide>
-
-            <Hide above="lg">
-              <Link href="/cart">
-                <MenuItem
-                  borderRadius="xl"
-                  minH="45px"
-                  ml="-1px"
-                  icon={<AiOutlineShoppingCart size="20px" />}
-                >
-                  Cart ({cart.length})
-                </MenuItem>
-              </Link>
-            </Hide>
-
-            <Hide above="lg">
-              <MenuDivider />
-
-              <MenuItem
-                borderRadius="xl"
-                minH="45px"
-                onClick={allowNotifications}
-                icon={<VscBell size="20px" />}
-                iconSpacing="10px"
-              >
-                Notifications
-              </MenuItem>
-
-              <Link href="#support">
-                <MenuItem
-                  borderRadius="xl"
-                  minH="45px"
-                  icon={<BiSupport size="18px" />}
-                >
-                  Support
-                </MenuItem>
-              </Link>
-            </Hide>
-
-            <MenuDivider />
-
-            <Hide above="md">
-              <MenuItem
-                borderRadius="xl"
-                minH="45px"
-                ml="2px"
-                icon={
-                  colorMode === 'light' ? (
-                    <IoMdMoon size="16px" />
-                  ) : (
-                    <IoMdSunny size="16px" />
-                  )
-                }
-                iconSpacing="12px"
-                onClick={toggleColorMode}
-              >
-                {colorMode === 'dark' ? 'Light Mode' : 'Dark Mode'}
-              </MenuItem>
             </Hide>
 
             <Link href="/settings">
@@ -167,6 +129,8 @@ export const UserMenu = () => {
                 Settings
               </MenuItem>
             </Link>
+
+            <MenuDivider />
 
             <MenuItem
               onClick={logout}

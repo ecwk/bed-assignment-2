@@ -38,6 +38,7 @@ export const Counter = ({
         aria-label="Decrease Quantity"
         size={size}
         borderRightRadius="0"
+        isDisabled={value <= min}
       >
         <AiOutlineMinus />
       </IconButton>
@@ -62,6 +63,7 @@ export const Counter = ({
         aria-label="Increase Quantity"
         size={size}
         borderLeftRadius="0"
+        isDisabled={value >= max}
       >
         <AiOutlinePlus />
       </IconButton>

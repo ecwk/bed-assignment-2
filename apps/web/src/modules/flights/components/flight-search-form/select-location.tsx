@@ -9,11 +9,11 @@ import {
   Text,
   Flex,
   useTheme,
-  type FlexProps,
   FormControl,
   FormHelperText,
-  Heading
+  type FlexProps
 } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
 import { Select } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useFormContext, useWatch, useController } from 'react-hook-form';
@@ -33,13 +33,15 @@ export const SelectLocation = ({
   returnFlights,
   ...flexProps
 }: SelectLocationProps) => {
-  const [query, setQuery] = useState('');
-  const [query2, setQuery2] = useState('');
-  const [debouncedQuery] = useDebouncedValue(query, 400);
-  const [debouncedQuery2] = useDebouncedValue(query2, 400);
-  const [loading, setLoading] = useState(false);
-  const [loading2, setLoading2] = useState(false);
   const theme = useTheme();
+
+  const [query, setQuery] = useState('');
+  const [debouncedQuery] = useDebouncedValue(query, 400);
+  const [loading, setLoading] = useState(false);
+  const [query2, setQuery2] = useState('');
+  const [debouncedQuery2] = useDebouncedValue(query2, 400);
+  const [loading2, setLoading2] = useState(false);
+
   const { control } = useFormContext<FlightSearchFormData>();
   const { from, to, isTwoWay } = useWatch({ control });
   const { field: registerFrom } = useController({ control, name: 'from' });
@@ -69,9 +71,6 @@ export const SelectLocation = ({
   }, [query2, debouncedQuery2]);
 
   const selectFilter = (query: string, item: typeof airportData[0]) => {
-    if (query || query === '') {
-      setQuery(query);
-    }
     if (loading) {
       return false;
     }
@@ -83,9 +82,6 @@ export const SelectLocation = ({
   };
 
   const selectFilter2 = (query: string, item: typeof airportData[0]) => {
-    if (query || query === '') {
-      setQuery2(query);
-    }
     if (loading2) {
       return false;
     }
@@ -98,8 +94,10 @@ export const SelectLocation = ({
     );
   };
 
+  useEffect;
+
   return (
-    <Flex flexDir="column" {...flexProps} gap={2}>
+    <Flex flexDir="column" {...flexProps}>
       <FormControl>
         <Select
           id="flight-from"
@@ -109,12 +107,19 @@ export const SelectLocation = ({
           itemComponent={SelectItem}
           filter={selectFilter}
           data={airportData.filter((item) => item.value !== to)}
-          limit={10}
           searchable
+          limit={10}
           clearable
-          required
           maxDropdownHeight={200}
-          sx={{
+          size="md"
+          icon={<SearchIcon />}
+          onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setQuery(e.target.value);
+          }}
+          styles={{
+            input: {
+              backgroundColor: theme.colors.whiteAlpha[50]
+            },
             label: {
               color: theme.colors.gray[200],
               fontSize: '15px',
@@ -123,6 +128,8 @@ export const SelectLocation = ({
           }}
           {...registerFrom}
         />
+      </FormControl>
+      <FormControl>
         <Select
           id="flight-to"
           label="To"
@@ -134,15 +141,24 @@ export const SelectLocation = ({
           limit={10}
           searchable
           clearable
-          required
           maxDropdownHeight={200}
-          sx={{
-            marginTop: '10px',
+          size="md"
+          icon={<SearchIcon />}
+          onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setQuery2(e.target.value);
+          }}
+          styles={{
+            input: {
+              backgroundColor: theme.colors.whiteAlpha[50]
+            },
             label: {
               color: theme.colors.gray[200],
               fontSize: '15px',
               fontWeight: 'normal'
             }
+          }}
+          style={{
+            marginTop: theme.space[5]
           }}
           {...registerTo}
         />

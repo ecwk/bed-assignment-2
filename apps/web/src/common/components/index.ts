@@ -1,14 +1,5 @@
-export { Redirects } from './redirects';
-export { Navbar } from './navbar';
-export { Logo } from './logo';
-export { BackgroundVideo } from './background-video';
-export { CartMenu } from './cart-menu';
-export { UserMenu } from './user-menu';
-export { CustomBreadcrumb } from './custom-breadcrumb';
-export { ProfileAvatar } from './profile-avatar';
-export { MantineProviderWrapper } from './mantine-provider-wrapper';
-export { Loadpage } from './loadpage';
-export { AnimationWrapper } from './animation-wrapper';
-export { ToggleDark } from './toggle-dark';
 export * from './ui';
 export * from './form';
+export * from './layout';
+export * from './others';
+export * from './composed';

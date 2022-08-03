@@ -1,8 +1,9 @@
 import {
   Flex,
   FormControl,
+  FormErrorIcon,
+  FormErrorMessage,
   FormHelperText,
-  FormLabel,
   HStack,
   Text,
   useTheme,
@@ -12,6 +13,8 @@ import dayjs from 'dayjs';
 import { DatePicker } from '@mantine/dates';
 import { useEffect } from 'react';
 import { useFormContext, useWatch, useController } from 'react-hook-form';
+import { WarningTwoIcon } from '@chakra-ui/icons';
+import { SearchIcon, CalendarIcon } from '@chakra-ui/icons';
 
 import { type Flight } from '@common/types';
 import { type FlightSearchFormData } from './flight-search-form';
@@ -27,7 +30,11 @@ export const SelectDate = ({
   ...stackProps
 }: SelectDateProps) => {
   const theme = useTheme();
-  const { control, setValue } = useFormContext<FlightSearchFormData>();
+  const {
+    control,
+    setValue,
+    formState: { errors: formErrors }
+  } = useFormContext<FlightSearchFormData>();
   const { from, to, isTwoWay, departureDate, returnDate } = useWatch({
     control
   });
@@ -40,8 +47,12 @@ export const SelectDate = ({
     name: 'returnDate'
   });
 
+  useEffect(() => {
+    setValue('departureDate', new Date());
+  }, []);
+
   // TODO: performance issue
-  /* 
+  /*
     instead of looping through flights for every day,
     just loop through flights once and store the flight number in an array
   */
@@ -91,22 +102,22 @@ export const SelectDate = ({
           id="flight-departure-date"
           placeholder="Pick date"
           label="Depature Date"
-          required
           inputFormat="YYYY/MM/DD"
           clearable={false}
-          disabled={!from || !to}
           dropdownPosition="top"
-          defaultValue={new Date()}
+          // defaultValue={new Date()}
           minDate={new Date()}
           maxDate={dayjs(new Date()).add(1, 'year').toDate()}
           renderDay={renderDay(flights)}
-          styles={(theme) => ({
+          size="md"
+          icon={<CalendarIcon />}
+          styles={{
             day: {
               height: '45px'
-            }
-          })}
-          sx={{
-            flexGrow: 1,
+            },
+            input: {
+              backgroundColor: theme.colors.whiteAlpha[50]
+            },
             label: {
               color: theme.colors.gray[200],
               fontSize: '15px',
@@ -117,35 +128,35 @@ export const SelectDate = ({
         />
         <FormHelperText>
           Selected{' '}
-          {
-            flights?.filter((flight) =>
-              dayjs(flight.departureDate).isSame(departureDate, 'day')
-            ).length || 0
-          }{' '}
+          {flights?.filter((flight) =>
+            dayjs(flight.departureDate).isSame(departureDate, 'day')
+          ).length || 0}{' '}
           departure flights
         </FormHelperText>
       </FormControl>
 
-      <FormControl>
+      <FormControl isInvalid={!!formErrors?.returnDate}>
         <DatePicker
           id="flight-return-date"
           placeholder={isTwoWay ? 'Pick Return Date' : 'Disabled'}
           label="Return Date"
-          required
           inputFormat="YYYY/MM/DD"
           clearable={false}
-          disabled={!isTwoWay || !from || !to}
+          disabled={!isTwoWay}
           dropdownPosition="top"
           minDate={new Date()}
           maxDate={dayjs(new Date()).add(1, 'year').toDate()}
           renderDay={renderDay(returnFlights)}
-          styles={(theme) => ({
+          size="md"
+          icon={<CalendarIcon />}
+          error={!!formErrors?.returnDate}
+          styles={{
             day: {
               height: '45px'
-            }
-          })}
-          sx={{
-            flexGrow: 1,
+            },
+            input: {
+              backgroundColor: theme.colors.whiteAlpha[50]
+            },
             label: {
               color: theme.colors.gray[200],
               fontSize: '15px',
@@ -154,15 +165,22 @@ export const SelectDate = ({
           }}
           {...registerReturnDate}
         />
-        <FormHelperText>
-          {isTwoWay
-            ? `Selected ${
-                returnFlights?.filter((flight) =>
-                  dayjs(flight.departureDate).isSame(returnDate, 'date')
-                ).length || 0
-              } return flights`
-            : '-'}
-        </FormHelperText>
+        {formErrors?.returnDate ? (
+          <FormErrorMessage>
+            <WarningTwoIcon mr={2} />
+            {formErrors?.returnDate?.message}
+          </FormErrorMessage>
+        ) : (
+          <FormHelperText>
+            {isTwoWay
+              ? `Selected ${
+                  returnFlights?.filter((flight) =>
+                    dayjs(flight.departureDate).isSame(returnDate, 'date')
+                  ).length || 0
+                } return flights`
+              : '-'}
+          </FormHelperText>
+        )}
       </FormControl>
     </HStack>
   );

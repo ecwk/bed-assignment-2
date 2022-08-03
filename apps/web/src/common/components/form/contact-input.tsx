@@ -8,6 +8,7 @@ import {
   FormErrorMessage
 } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
+import { WarningTwoIcon } from '@chakra-ui/icons';
 
 import { useAxiosInterceptor } from '@common/hooks';
 
@@ -52,9 +53,17 @@ export function ContactInput({
         </InputLeftAddon>
         <Input {...register(name)} type={type} placeholder={placeholder} />
       </InputGroup>
-      {error && <FormErrorMessage>{error?.message}</FormErrorMessage>}
+      {error && (
+        <FormErrorMessage>
+          <WarningTwoIcon mr={2} />
+          {error?.message}
+        </FormErrorMessage>
+      )}
       {!isDirty && !!validationError && (
-        <FormErrorMessage>{validationError}</FormErrorMessage>
+        <FormErrorMessage>
+          <WarningTwoIcon mr={2} />
+          {validationError}
+        </FormErrorMessage>
       )}
     </FormControl>
   );

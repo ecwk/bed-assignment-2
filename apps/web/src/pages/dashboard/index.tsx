@@ -1,23 +1,32 @@
 import { NextPage } from 'next';
-import { Heading, Box, Button } from '@chakra-ui/react';
+import { Heading, Box, Button, Text } from '@chakra-ui/react';
+
+import { Main, Title } from '@common/components';
 
 const Dashboard: NextPage = () => {
   return (
-    <Box my="80px">
-      <Heading fontSize="5xl" textAlign="center" fontWeight="black">
-        Dashboard
-      </Heading>
-      <Button
-        onClick={() => {
-          if (Notification) {
-            new Notification('Hello', { body: 'Hello World' });
-          }
-        }}
-      >
-        Notify
-      </Button>
-    </Box>
+    <Main>
+      <Title
+        title="Dashboard"
+        subtitle="Everything you need to know is accessible her"
+      />
+      <Text my={5} maxW="80ch">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nobis enim,
+        molestias nesciunt deserunt recusandae iste! At nobis dolorum
+        praesentium beatae doloribus voluptatibus, vero voluptatem excepturi
+        nihil architecto exercitationem maiores inventore.
+      </Text>
+    </Main>
   );
 };
 
 export default Dashboard;
+<Button
+  onClick={() => {
+    if (Notification) {
+      new Notification('Hello', { body: 'Hello World' });
+    }
+  }}
+>
+  Notify
+</Button>;

@@ -28,9 +28,10 @@ import {
   Img,
   IconButton,
   VStack,
-  Skeleton
+  Skeleton,
+  useColorModeValue
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
@@ -41,6 +42,7 @@ import { useCart } from '@common/hooks';
 import { useAuth } from '@modules/auth';
 import { type Flight, type Airport } from '@common/types';
 import NextImage from 'next/image';
+import axios from 'axios';
 
 const getMockImage = () => {
   // random number from 500 - 600
@@ -56,6 +58,7 @@ type FlightItemProps = FlexProps & {
   isDirect: boolean;
   originAirport: Airport;
   destinationAirport: Airport;
+  list?: boolean;
 };
 
 export const FlightItem = ({
@@ -64,6 +67,7 @@ export const FlightItem = ({
   isDirect,
   originAirport,
   destinationAirport,
+  list = false,
   ...flexProps
 }: FlightItemProps) => {
   const [quantity, setQuantity] = useState(1);
@@ -85,7 +89,7 @@ export const FlightItem = ({
   const departDateTime = dayjs(departureDate);
   const arrivalDateTime = dayjs(departDateTime).add(travelTimeMs, 'ms');
 
-  const mockImage = getMockImage();
+  const mockImage = useMemo(() => getMockImage(), []);
 
   const handleClick = () => {
     if (!user) {
@@ -113,26 +117,34 @@ export const FlightItem = ({
     }
   };
 
+  const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.900');
+  const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
+  // const backgroundColor = useColorModeValue('gray.900', 'gray.900');
+
   return (
     <Flex
       key={flightId}
-      flexDir="column"
+      flexDir={list ? 'row' : 'column'}
       border="1px solid"
       borderRadius="xl"
-      borderColor="gray.600"
+      borderColor={borderColor}
       {...flexProps}
-      background="gray.900"
+      backgroundColor={backgroundColor}
+      h={list ? '300px' : undefined}
+      alignItems={list ? 'center' : undefined}
+      gap={list ? 5 : 0}
     >
       <Img
         boxSize="100%"
         borderTopRadius="xl"
         src={mockImage}
         alt="flight booking"
-        h="250px"
+        h={list ? undefined : '250px'}
+        maxW={list ? '50%' : undefined}
         objectFit="cover"
       />
       <Flex flexDir="column" p={5}>
-        <HStack mt={2}>
+        {/* <HStack mt={2} mb={4}>
           <Tag size="sm" colorScheme="blue" borderRadius="2xl">
             DISCOUNT
           </Tag>
@@ -142,16 +154,12 @@ export const FlightItem = ({
           <Tag size="sm" colorScheme="red" borderRadius="2xl">
             NEW
           </Tag>
-        </HStack>
+        </HStack> */}
         <Flex className="item-content">
-          <Box className="item-details" flexGrow="1" mt={4}>
+          <Box className="item-details" flexGrow="1">
             {/* <Heading size="md">{originAirport.name}</Heading> */}
-            <Heading size="md">
-              {flight.aircraftName}
-            </Heading>
-            <Heading size="md">
-              ({flight.flightCode})
-            </Heading>
+            <Heading size="md">{flight.aircraftName}</Heading>
+            <Heading size="md">({flight.flightCode})</Heading>
             <Text>{dayjs(departureDate).format('ddd, DD MMM YYYY')}</Text>
             <Text color="gray">
               {departDateTime.format('HH:mm a')} -{' '}
@@ -174,7 +182,7 @@ export const FlightItem = ({
               value={quantity}
               setValue={setQuantity}
               min={1}
-              max={999}
+              max={10}
             />
           </Box>
           <Flex
@@ -187,7 +195,6 @@ export const FlightItem = ({
             <IconButton
               aria-label="add to cart"
               width="max-content"
-              // colorScheme="brandGold"
               mt={2}
               size="lg"
               onClick={handleClick}

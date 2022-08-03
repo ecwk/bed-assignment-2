@@ -1,19 +1,15 @@
-import {
-  Button,
-  Grid,
-  GridItem,
-  Heading,
-  useColorModeValue
-} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, FormProvider, useWatch } from 'react-hook-form';
+import { Button, Grid, GridItem, type GridProps } from '@chakra-ui/react';
 
 import { Options } from './options';
-import { SelectDate } from './select-date';
-import { Flight, type Airport } from '@common/types';
-import { SelectLocation } from './select-location';
-import { useQuery } from '@tanstack/react-query';
 import { client } from '@config/axios';
+import { SelectDate } from './select-date';
+import { SelectLocation } from './select-location';
+import { Flight, type Airport } from '@common/types';
+import { flightSearchSchema } from '@modules/flights';
 
 export type FlightSearchFormData = {
   from: string; // airportId
@@ -24,13 +20,18 @@ export type FlightSearchFormData = {
   isDirect: boolean;
 };
 
-type FlightSearchFormProps = {
+type FlightSearchFormProps = GridProps & {
   airports: Airport[];
 };
 
-export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
+export const FlightSearchForm = ({
+  airports,
+  ...gridProps
+}: FlightSearchFormProps) => {
   const router = useRouter();
-  const methods = useForm<FlightSearchFormData>();
+  const methods = useForm<FlightSearchFormData>({
+    resolver: yupResolver(flightSearchSchema)
+  });
   const { to, from } = useWatch<FlightSearchFormData>({
     control: methods.control
   });
@@ -61,16 +62,13 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
   const onSubmit = methods.handleSubmit((formData) => {
     let url = '/search/flights?';
     Object.entries(formData).forEach(([key, value]) => {
-      url += `${key}=${value}&`;
+      if (value) {
+        url += `${key}=${value}&`;
+      }
     });
     url = url.replace(/&$/, '');
     router.push(url);
   });
-
-  const colorModeButton = useColorModeValue(
-    'lightModeButton',
-    'darkModeButton'
-  );
 
   return (
     <FormProvider {...methods}>
@@ -78,24 +76,19 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
         as="form"
         gridTemplateAreas={{
           base: `
-            "heading heading"
             "input input"
             "options options"
             "button button"
           `,
           lg: `
-            "heading heading"
             "input options"
             "button button"
           `
         }}
-        columnGap={5}
+        columnGap={10}
         onSubmit={onSubmit}
+        {...gridProps}
       >
-        <GridItem area="heading" mt={5} mb={10}>
-          <Heading w="100%">Catch Your Flight</Heading>
-        </GridItem>
-
         <GridItem area="input" display="flex" flexDir="column" gap={6}>
           <SelectLocation
             airports={airports}
@@ -117,9 +110,11 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
         <GridItem area="button">
           <Button
             type="submit"
-            isLoading={methods.formState.isSubmitted}
-            layerStyle={colorModeButton}
-            sx={sx.button}
+            isLoading={methods.formState.isSubmitSuccessful}
+            colorScheme="brandGold"
+            mt={10}
+            size="md"
+            w="100px"
           >
             Search
           </Button>
@@ -127,11 +122,4 @@ export const FlightSearchForm = ({ airports }: FlightSearchFormProps) => {
       </Grid>
     </FormProvider>
   );
-};
-
-const sx = {
-  button: {
-    mt: 16,
-    w: '100%'
-  }
 };

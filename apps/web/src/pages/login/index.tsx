@@ -18,34 +18,28 @@ import { Link } from '@chakra-ui/react';
 import { useAuth, LoginForm } from '@modules/auth';
 import { NAVBAR_HEIGHT } from '@common/constants';
 import { useLoadpage } from '@common/hooks';
-import { BackgroundVideo } from '@common/components';
+import { Main, BackgroundVideo } from '@common/components';
 
 const Login: NextPage = () => {
   return (
-    <Flex
-      as="main"
-      sx={{
-        flexDir: 'column',
-        mt: {
-          base: '80px',
-          md: '200px'
-        },
-        ml: {
-          base: '0',
-          lg: '200px'
-        },
-        mb: {
-          base: '80px',
-          md: '40px'
-        },
-        px: {
-          base: 5,
-          xl: 10
-        },
-        alignItems: {
-          base: 'center',
-          lg: 'flex-start'
-        }
+    <Main
+      display="flex"
+      flexDir="column"
+      mt={{
+        base: '80px',
+        md: '200px'
+      }}
+      ml={{
+        base: '0',
+        lg: '200px'
+      }}
+      mb={{
+        base: '80px',
+        md: '40px'
+      }}
+      alignItems={{
+        base: 'center',
+        lg: 'flex-start'
       }}
     >
       <Box as="header">
@@ -69,7 +63,7 @@ const Login: NextPage = () => {
       />
 
       <BackgroundVideo />
-    </Flex>
+    </Main>
   );
 };
 

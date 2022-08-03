@@ -17,21 +17,24 @@ import {
   AiOutlineMinus
 } from 'react-icons/ai';
 import { Indicator } from '@mantine/core';
+import React from 'react';
 
 import { useCart } from '@common/hooks';
 import { Link } from '@common/components';
+import { motion } from 'framer-motion';
 
-type CartMenuProps = {
-  display?: Record<string, string>;
-};
-
-export const CartMenu = ({ display }: CartMenuProps) => {
+export const CartMenu = React.forwardRef<any, 'div'>((props, ref) => {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart } =
     useCart();
 
   return (
     <Menu>
-      <Box display={display}>
+      <Box
+        ref={ref}
+        as={motion.div}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
         <Indicator
           label={cart.length === 0 ? '' : cart.length}
           size={cart.length === 0 ? 0 : 16}
@@ -46,14 +49,7 @@ export const CartMenu = ({ display }: CartMenuProps) => {
         </Indicator>
       </Box>
 
-      <MenuList
-        pt={4}
-        pb={6}
-        px={6}
-        borderRadius="xl"
-        minW="300px"
-        display={display}
-      >
+      <MenuList pt={4} pb={6} px={6} borderRadius="xl" minW="300px">
         <MenuGroup>
           <Box
             display="flex"
@@ -115,4 +111,4 @@ export const CartMenu = ({ display }: CartMenuProps) => {
       </MenuList>
     </Menu>
   );
-};
+});

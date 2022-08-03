@@ -2,17 +2,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-type AnimationWrapperProps = {
+export type PageTransitionProps = {
   children: React.ReactNode;
 };
 
-const excludedRoutes = [/\/settings\/.*/, '/settings', '/login', '/signup'];
+const excludedRoutes = [/\/settings.*/, '/login', '/signup'];
 
-export function AnimationWrapper({ children }: AnimationWrapperProps) {
+export function PageTransition({ children }: PageTransitionProps) {
   const router = useRouter();
 
   return (
-    <AnimatePresence initial={false} exitBeforeEnter={true}>
+    <AnimatePresence initial={false} exitBeforeEnter={false}>
       <motion.div
         className="animation-wrapper"
         variants={{

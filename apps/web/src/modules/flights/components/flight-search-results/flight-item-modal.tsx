@@ -122,14 +122,14 @@ export const FlightItemModal = ({
                 <b>Aircraft name:</b> {flight.aircraftName}
               </Text>
               <Text mt={2} color="gray.500">
-                <b>Origin airport:</b> {originAirport.name},{' '}
-                {originAirport.city} {originAirport.country}
+                <b>Origin airport:</b> {originAirport.name} -{'  '}
+                {originAirport.city}, {originAirport.country}
               </Text>
               <Text mt={2} color="gray.500">
                 <b>Description</b> {originAirport.description}
               </Text>
               <Text mt={2} color="gray.500">
-                <b>Destination airport:</b> {destinationAirport.name},{' '}
+                <b>Destination airport:</b> {destinationAirport.name} -{'  '}
                 {destinationAirport.city} {destinationAirport.country}
               </Text>
               <Text mt={2} color="gray.500">

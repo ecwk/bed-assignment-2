@@ -1,248 +1,133 @@
 import {
-  Box,
   Flex,
-  Heading,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  Select,
+  Grid,
+  Wrap,
+  FormControl,
+  FormLabel,
+  IconButton,
   Text,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  StatGroup,
-  Button,
-  Link,
-  Divider,
-  useBreakpoint,
-  useBreakpointValue
+  HStack,
+  useColorModeValue
 } from '@chakra-ui/react';
-import { Grid, GridItem } from '@chakra-ui/react';
-import { Wrap, WrapItem } from '@chakra-ui/react';
-import { AxiosError } from 'axios';
-import { GetServerSideProps, NextPage } from 'next';
-import { FaArrowRight, FaArrowDown } from 'react-icons/fa';
-import NextLink from 'next/link';
-import { BiLinkExternal } from 'react-icons/bi';
-import { Indicator } from '@mantine/core';
-import ms from 'ms';
-import { Pagination } from '@mantine/core';
-import { ChevronLeftIcon } from '@chakra-ui/icons';
+import { SearchIcon } from '@chakra-ui/icons';
+import { NextPage, type GetServerSideProps } from 'next';
+import { TbLayoutGrid, TbLayoutList } from 'react-icons/tb';
 
 import { server } from '@config/axios';
+import { Main, Title } from '@common/components';
 import { type Flight, type Airport } from '@common/types';
-import dayjs from 'dayjs';
+import { FlightItem } from '@modules/flights';
+import { random, shuffle } from 'lodash';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
-import { getMs } from '@common/utils';
-import { AirportTitle, FlightItem } from '@modules/flights';
-import { DATE_FORMAT } from '@common/constants';
+import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 
-type FlightsSearchProps = ServerSideProps & {};
+type FlightsProps = ServerSideProps & {};
 
-const SearchFlightsResult: NextPage<FlightsSearchProps> = ({
-  flights,
+const Flights: NextPage<FlightsProps> = ({
+  flights: flightsRaw,
   returnFlights,
-  originAirport,
-  destinationAirport
+  originAirport: origin,
+  destinationAirport: destination
 }) => {
-  const [flightPage, setFlightPage] = useState(1);
-  const [returnFlightPage, setReturnFlightPage] = useState(1);
-  const router = useRouter();
-  const breakpoint = useBreakpoint();
-  const isTwoWay = router.query.isTwoWay === 'true';
-  const isDirect = router.query.isDirect === 'true';
-  const { departureDate, returnDate } = router.query;
-  const departureDateString =
-    typeof departureDate === 'string' ? departureDate : '';
-  const returnDateString = typeof returnDate === 'string' ? returnDate : '';
-  const itemsPerPage = useBreakpointValue({
-    base: 2,
-    md: 4,
-    lg: 6
-  }) as number;
+  const [layout, setLayout] = useState<'grid' | 'list'>('grid');
+  const methods = useForm();
+
+  const [flights, setFlights] = useState(() => {
+    return shuffle([
+      ...flightsRaw,
+      ...flightsRaw,
+      ...flightsRaw,
+      ...flightsRaw
+    ]);
+  });
+
+  const labelColor = useColorModeValue('gray.700', 'gray.300');
 
   return (
-    <Flex justifyContent="center" my="80px">
-      <Flex
-        flexDir="column"
-        maxW="1200px"
-        w="100%"
-        mx={{
-          base: 2,
-          sm: 5,
-          lg: 10
-        }}
-      >
-        <Box>
-          <NextLink href="/search">
-            <Button
-              variant="ghost"
-              leftIcon={<ChevronLeftIcon w="20px" h="20px" />}
-            >
-              Back
-            </Button>
-          </NextLink>
-        </Box>
-        <Flex
-          sx={{
-            flexDir: 'column',
-            background: 'brandPaleBlue.700',
-            borderRadius: 'xl',
-            '&>*': {
-              px: 10
-            },
-            justifyContent: 'center',
-            mt: 2
-          }}
-        >
-          <Flex
-            justifyContent="space-around"
-            my={16}
-            maxW="1200px"
-            w="100%"
-            gap={10}
-            flexDir={{ base: 'column', lg: 'row' }}
-          >
-            <AirportTitle
-              type="departure"
-              airport={originAirport}
-              airportDepatureDate={departureDateString}
-            />
-            <FaArrowRight
-              size="30px"
-              style={{
-                alignSelf: 'center',
-                display: ['lg', 'xl'].includes(breakpoint) ? 'block' : 'none'
-              }}
-            />
-            <FaArrowDown
-              size="30px"
-              style={{
-                display: ['base', 'sm', 'md'].includes(breakpoint)
-                  ? 'block'
-                  : 'none'
-              }}
-            />
-            <AirportTitle airport={destinationAirport} />
-          </Flex>
-          <Grid
-            borderTop="1px solid"
-            borderColor="gray.600"
-            gridTemplateColumns={{
-              base: '1fr',
-              md: '1fr 1fr',
-              lg: 'repeat(3, 1fr)'
-            }}
-            gridTemplateRows={'1fr 1fr'}
-            gridGap={10}
-          >
-            {flights.length > 0 ? (
-              flights
-                .slice(
-                  (flightPage - 1) * itemsPerPage,
-                  flightPage * itemsPerPage
-                )
-                .map((flight, index) => (
-                  <GridItem key={flight.flightId} mt={10}>
-                    <FlightItem
-                      flight={flight}
-                      isTwoWay={isTwoWay}
-                      isDirect={isDirect}
-                      originAirport={originAirport}
-                      destinationAirport={destinationAirport}
-                    />
-                  </GridItem>
-                ))
-            ) : (
-              <Text
-                gridColumn="1 / span 3"
-                textAlign="center"
-                fontSize="md"
-                color="gray.400"
-                my={10}
-              >
-                No flights found for the selected criteria.
-              </Text>
-            )}
-          </Grid>
-          <Pagination
-            sx={{
-              justifyContent: 'center',
-              marginTop: '20px',
-              marginBottom: '40px'
-            }}
-            page={flightPage}
-            onChange={setFlightPage}
-            total={Math.ceil(flights.length / itemsPerPage)}
-          />
-        </Flex>
-        {isTwoWay && (
-          <Flex
-            sx={{
-              flexDir: 'column',
-              background: 'brandPaleBlue.700',
-              borderRadius: 'xl',
-              '&>*': {
-                px: 10
-              },
-              justifyContent: 'center',
-              mt: 20
-            }}
-          >
-            <Flex justifyContent="space-around" my={16}>
-              <AirportTitle
-                type="departure"
-                airport={destinationAirport}
-                airportDepatureDate={returnDateString}
-              />
-              <FaArrowRight size="30px" style={{ alignSelf: 'center' }} />
-              <AirportTitle airport={originAirport} />
-            </Flex>
-            <Grid
-              borderTop="1px solid"
-              borderColor="gray.600"
-              gridTemplateColumns="repeat(3, 1fr)"
-              gridGap={10}
-            >
-              {returnFlights?.length || -1 > 0 ? (
-                returnFlights
-                  ?.slice((returnFlightPage - 1) * 3, returnFlightPage * 3)
-                  .map((flight) => (
-                    <GridItem key={flight.flightId} mt={5}>
-                      <FlightItem
-                        flight={flight}
-                        isTwoWay={isTwoWay}
-                        isDirect={isDirect}
-                        originAirport={originAirport}
-                        destinationAirport={destinationAirport}
-                      />
-                    </GridItem>
-                  ))
-              ) : (
-                <Text
-                  gridColumn="1 / span 3"
-                  textAlign="center"
-                  fontSize="md"
-                  color="gray.400"
-                  my={10}
-                >
-                  No flights found for the selected criteria.
-                </Text>
-              )}
-            </Grid>
-            <Pagination
-              sx={{
-                justifyContent: 'center',
-                marginTop: '20px',
-                marginBottom: '40px'
-              }}
-              page={returnFlightPage}
-              onChange={setReturnFlightPage}
-              total={Math.ceil(returnFlights ? returnFlights.length / 3 : 0)}
-            />
-          </Flex>
-        )}
+    <Main maxW="1200px" w="100%" mx="auto">
+      <Title mt={10} title="Flights" subtitle="Here are your search results" />
+      <Flex mt={5} alignItems="flex-end" gap={4}>
+        <FormControl>
+          <FormLabel color={labelColor}>Refine Your Search</FormLabel>
+          <InputGroup>
+            <InputLeftElement>
+              <SearchIcon />
+            </InputLeftElement>
+            <Input placeholder="Search" />
+          </InputGroup>
+        </FormControl>
+
+        <FormControl flexBasis="300px">
+          <FormLabel color={labelColor}>Aircraft</FormLabel>
+          <Select defaultValue="all">
+            <option value="boeing">Boeing</option>
+            <option value="airbus">Airbus</option>
+            <option value="others">Others</option>
+            <option value="all">All</option>
+          </Select>
+        </FormControl>
+        <FormControl flexBasis="300px">
+          <FormLabel color={labelColor}>Price</FormLabel>
+          <Select placeholder="$ 1000 - 2000" />
+        </FormControl>
       </Flex>
-    </Flex>
+      <Flex justifyContent="flex-end" alignItems="center" mt={4} gap={2}>
+        <HStack>
+          <Text color="gray.200" fontSize="sm">
+            Sort By:{' '}
+          </Text>
+          <Select
+            w="150px"
+            size="sm"
+            borderRadius="3xl"
+            defaultValue="latest"
+          >
+            <option value="latest">Latest</option>
+            <option value="highest-price">Highest Price</option>
+            <option value="lowest-price">Lowest Price</option>
+          </Select>
+        </HStack>
+        <IconButton
+          variant="ghost"
+          aria-label="grid layout"
+          icon={<TbLayoutGrid />}
+          isActive={layout === 'grid'}
+          onClick={() => setLayout('grid')}
+        />
+        <IconButton
+          variant="ghost"
+          aria-label="list layout"
+          icon={<TbLayoutList />}
+          isActive={layout === 'list'}
+          onClick={() => setLayout('list')}
+        />
+      </Flex>
+      <Grid
+        mt={10}
+        gridTemplateColumns={
+          layout === 'grid' ? 'repeat(auto-fit, minmax(300px, 1fr))' : '1fr'
+        }
+        gap={10}
+      >
+        {flights.map((flight, i) => (
+          <FlightItem
+            key={flight.flightCode + i}
+            // w={random(300, 500)}
+            flight={flight}
+            isTwoWay={true}
+            isDirect={false}
+            originAirport={origin}
+            destinationAirport={destination}
+            list={layout === 'list'}
+          />
+        ))}
+      </Grid>
+    </Main>
   );
 };
 
@@ -266,34 +151,46 @@ export const getServerSideProps: GetServerSideProps<
   ServerSideProps,
   ServerSideQueries
 > = async (ctx) => {
-  const query = ctx.query;
+  const { departureDate, returnDate, from, to, isTwoWay } = ctx.query;
+  if (
+    !(from && to && departureDate) ||
+    typeof departureDate !== 'string' ||
+    typeof from !== 'string' ||
+    typeof to !== 'string' ||
+    (returnDate && typeof returnDate !== 'string') ||
+    (isTwoWay && typeof isTwoWay !== 'string')
+  ) {
+    return {
+      redirect: {
+        destination: '/search',
+        permanent: false
+      }
+    };
+  }
 
-  const flights = (
-    await server.get(
-      `/flights/direct/${query.from}/${query.to}?date=${query.departureDate}&dateFilterType=exact`
-    )
-  ).data.flights;
-  const returnFlights =
-    query.isTwoWay === 'true'
-      ? (
-          await server.get(
-            `/flights/direct/${query.to}/${query.from}?date=${query.returnDate}&dateFilterType=exact`
-          )
-        ).data.flights
-      : null;
-  const originAirport = (await server.get(`/airports/${query.from}`)).data
-    .airport;
-  const destinationAirport = (await server.get(`/airports/${query.to}`)).data
-    .airport;
+  const departure = new Date(departureDate).toDateString();
+  const return_ = returnDate ? new Date(returnDate).toDateString() : '';
+  const isTwoWay_ = isTwoWay === 'true';
+
+  const flightsRes = await server.get(
+    `/flights/direct/${from}/${to}?date=${departure}&dateFilterType=exact`
+  );
+  const returnFlightsRes = isTwoWay_
+    ? await server.get(
+        `/flights/direct/${from}/${to}?date=${return_}&dateFilterType=exact`
+      )
+    : null;
+  const originRes = await server.get(`/airports/${from}`);
+  const destinationRes = await server.get(`/airports/${to}`);
 
   return {
     props: {
-      flights,
-      returnFlights,
-      originAirport,
-      destinationAirport
+      flights: flightsRes.data.flights,
+      returnFlights: returnFlightsRes?.data.flights ?? null,
+      originAirport: originRes.data.airport,
+      destinationAirport: destinationRes.data.airport
     }
   };
 };
 
-export default SearchFlightsResult;
+export default Flights;

@@ -50,7 +50,6 @@ export const LoginForm = ({ sx, ...formProps }: LoginFormProps) => {
 
   return (
     <Form
-      enableToast={true}
       methods={methods}
       onSubmit={onSubmit}
       sx={{ display: 'flex', flexDir: 'column', gap: 5, ...sx }}
