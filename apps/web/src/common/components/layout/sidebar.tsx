@@ -265,14 +265,18 @@ export const Sidebar = () => {
 
 const SidebarItem = ({ item }: { item: SidebarItem }) => {
   const router = useRouter();
-
-  const { name, href, icon, iconSpacing, nestedItems } = item;
+  const { isAdmin: userIsAdmin, isLoading } = useAuth();
+  const { name, href, icon, iconSpacing, nestedItems, isAdmin } = item;
 
   const isOpen = router.pathname.includes(href);
 
   const nestedItemsRender = nestedItems?.map((item, i) => {
     return <SidebarItem key={`sidebar-item-${i}`} item={item} />;
   });
+
+  if (isAdmin !== undefined && isAdmin && !isLoading && !userIsAdmin) {
+    return <></>;
+  }
 
   return (
     <Box w="100%">

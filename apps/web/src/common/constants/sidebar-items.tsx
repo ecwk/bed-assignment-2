@@ -21,6 +21,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     href: '/admin',
     icon: <MdAdminPanelSettings fontSize="20px" />,
     iconSpacing: 4,
+    isAdmin: true,
     nestedItems: [
       {
         name: 'Flights',

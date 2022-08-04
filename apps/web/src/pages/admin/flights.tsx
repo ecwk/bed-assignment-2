@@ -48,7 +48,8 @@ import {
   useDisclosure,
   Collapse,
   Checkbox,
-  VStack
+  VStack,
+  BoxProps
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { GetServerSideProps, type NextPage } from 'next';
@@ -165,7 +166,12 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
     return Math.ceil(count / (itemsPerPage || DEFAULT_VALUES.itemsPerPage));
   }, [count, itemsPerPage]);
   const flightsQuery = useQuery(['flights', { itemsPerPage, page }], (ctx) => {
-    return server.get(`/flights/?page=${page}&limit=${itemsPerPage}`, {
+    let page_ = page;
+    if (page > numberOfPages) {
+      page_ = 1;
+      setPage(1);
+    }
+    return server.get(`/flights/?page=${page_}&limit=${itemsPerPage}`, {
       signal: ctx.signal
     });
   });
@@ -320,7 +326,11 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
         </Flex>
       </Form>
 
+      <Text mt={5} textAlign="end" fontSize="sm">
+        Page {page} / {numberOfPages}
+      </Text>
       <FlightList
+        mt={1}
         flights={flights}
         filterOptions={watch}
         fields={filteredFields}
@@ -341,22 +351,24 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
   );
 };
 
-const FlightList = ({
-  fields,
-  flights,
-  filterOptions
-}: {
+type FlightListProps = BoxProps & {
   fields: Field[];
   flights: Flight[];
   filterOptions: Partial<FilterOptions>;
-}) => {
+};
+
+const FlightList = ({
+  fields,
+  flights,
+  filterOptions,
+  ...boxProps
+}: FlightListProps) => {
   const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.800');
   const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
 
   return (
-    <Box>
+    <Box {...boxProps}>
       <Grid
-        mt={10}
         p={4}
         border="1px solid"
         borderColor={borderColor}
