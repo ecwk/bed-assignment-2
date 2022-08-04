@@ -136,6 +136,9 @@ const DashboardItem = ({
 }: DashboardItemProps) => {
   const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.900');
   const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
+  const labelColor = useColorModeValue('brandGray.600', 'brandGray.200');
+  const helpColor = useColorModeValue('brandGray.500', 'brandGray.300');
+  const numberColor = useColorModeValue('brandGray.600', 'brandGray.100');
 
   return (
     <Link href={href}>
@@ -181,14 +184,14 @@ const DashboardItem = ({
         <Flex flexDir="column" justifyContent="space-between">
           {stat1 && (
             <Stat flex="none" mt={1}>
-              <StatLabel color="brandGray.200" fontWeight="normal">
+              <StatLabel color={labelColor} fontWeight="normal">
                 {stat1.stat}
               </StatLabel>
               {stat1.number && (
-                <StatNumber color="brandGray.100">{stat1.number}</StatNumber>
+                <StatNumber color={numberColor}>{stat1.number}</StatNumber>
               )}
               {stat1.helperText && (
-                <StatHelpText color="brandGray.300">
+                <StatHelpText color={helpColor}>
                   {stat1.helperText}
                 </StatHelpText>
               )}
@@ -196,14 +199,14 @@ const DashboardItem = ({
           )}
           {stat2 && (
             <Stat flex="none">
-              <StatLabel color="brandGray.200" fontWeight="normal">
+              <StatLabel color={labelColor} fontWeight="normal">
                 {stat2.stat}
               </StatLabel>
               {stat2.number && (
-                <StatNumber color="brandGray.100">{stat2.number}</StatNumber>
+                <StatNumber color={numberColor}>{stat2.number}</StatNumber>
               )}
               {stat2.helperText && (
-                <StatHelpText color="brandGray.300">
+                <StatHelpText color={helpColor}>
                   {stat2.helperText}
                 </StatHelpText>
               )}
