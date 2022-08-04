@@ -5,3 +5,4 @@ export * from './country-select';
 export * from './contact-input';
 export * from './confirm-password';
 export * from './form-button';
+export * from './select';

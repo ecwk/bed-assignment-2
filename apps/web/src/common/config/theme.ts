@@ -96,7 +96,7 @@ export const theme = extendTheme({
   styles: {
     global: (props: Record<string, any>) => ({
       body: {
-        background: mode('brandGray.100', 'brandGray.800')(props),
+        background: mode('brandGray.50', 'brandGray.800')(props),
         overflow: 'hidden'
       }
     })

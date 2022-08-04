@@ -1,7 +1,11 @@
+import {
+  MdFlight,
+  MdSpaceDashboard,
+  MdAdminPanelSettings
+} from 'react-icons/md';
 import { FaUsers } from 'react-icons/fa';
-import { MdFlight, MdSpaceDashboard } from 'react-icons/md';
-import { SettingsIcon } from '@chakra-ui/icons';
 import { RiBuilding3Fill } from 'react-icons/ri';
+import { SettingsIcon } from '@chakra-ui/icons';
 
 import { type SidebarItem } from '@common/types';
 
@@ -11,6 +15,30 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     href: '/dashboard',
     icon: <MdSpaceDashboard fontSize="20px" />,
     iconSpacing: 4
+  },
+  {
+    name: 'Admin',
+    href: '/admin',
+    icon: <MdAdminPanelSettings fontSize="20px" />,
+    iconSpacing: 4,
+    nestedItems: [
+      {
+        name: 'Flights',
+        href: '/admin/flights'
+      },
+      {
+        name: 'Airports',
+        href: '/admin/airports'
+      },
+      {
+        name: 'Users',
+        href: '/admin/users'
+      },
+      {
+        name: 'Bookings',
+        href: '/admin/bookings'
+      }
+    ]
   },
   {
     name: 'Flights',

@@ -1,4 +1,4 @@
-import { Flex, VStack, Text, type FlexProps } from '@chakra-ui/react';
+import { Flex, VStack, Text, type FlexProps, useColorModeValue } from '@chakra-ui/react';
 
 import { type User } from '@common/types';
 import { ProfileAvatar, Link } from '@common/components';
@@ -8,6 +8,9 @@ export type ProfileProps = FlexProps & {
 };
 
 export const Profile = ({ user, ...flexProps }: ProfileProps) => {
+  const textColor = useColorModeValue('brandGray.600', 'brandGray.300')
+  const linkColor = useColorModeValue('blue.500', 'blue.200')
+
   return (
     <Flex
       className="profile-details"
@@ -20,8 +23,8 @@ export const Profile = ({ user, ...flexProps }: ProfileProps) => {
         <Text fontSize="xl" fontWeight="semibold">
           {user?.username}
         </Text>
-        <Text color="gray.300">{user?.contact}</Text>
-        <Link color="blue.200" href={`mailto:${user?.email}`} underline>
+        <Text color={textColor}>{user?.contact}</Text>
+        <Link color={linkColor} href={`mailto:${user?.email}`} underline>
           {user?.email}
         </Link>
       </VStack>

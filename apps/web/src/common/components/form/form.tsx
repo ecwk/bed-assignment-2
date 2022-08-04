@@ -25,7 +25,7 @@ export function Form({
 }
 
 type FormHandlerProps = Omit<BoxProps, 'onSubmit'> & {
-  onSubmit: SubmitHandler<any>;
+  onSubmit?: SubmitHandler<any>;
   children: React.ReactNode;
 };
 
@@ -56,7 +56,7 @@ function FormHandler({ onSubmit, children, ...boxProps }: FormHandlerProps) {
   }, [validationErrors, watch()]);
 
   const onSubmitWrapper = (data: any) => {
-    if (hasFixedErrors && isDirty) {
+    if (hasFixedErrors && isDirty && onSubmit) {
       reset(data);
       onSubmit(data);
     }

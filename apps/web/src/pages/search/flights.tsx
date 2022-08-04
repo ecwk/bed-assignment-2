@@ -40,7 +40,6 @@ const Flights: NextPage<FlightsProps> = ({
   destinationAirport: destination
 }) => {
   const [layout, setLayout] = useState<'grid' | 'list'>('grid');
-  const methods = useForm();
 
   const flights = useMemo(() => {
     return shuffle([
@@ -67,7 +66,11 @@ const Flights: NextPage<FlightsProps> = ({
 
   return (
     <Main maxW="1200px" w="100%" mx="auto">
-      <Title mt={10} title="Flights" subtitle="Here are your search results" />
+      <Title
+        mt={10}
+        title="Flight Search Results"
+        subtitle="Here are your search results"
+      />
       <Flex mt={5} alignItems="flex-end" gap={4}>
         <FormControl>
           <FormLabel color={labelColor}>Refine Your Search</FormLabel>
@@ -93,6 +96,7 @@ const Flights: NextPage<FlightsProps> = ({
           <Select placeholder="$ 1000 - 2000" />
         </FormControl>
       </Flex>
+
       <Flex justifyContent="flex-end" alignItems="center" mt={4} gap={2}>
         <HStack>
           <Text color="gray.200" fontSize="sm">
@@ -148,7 +152,11 @@ const Flights: NextPage<FlightsProps> = ({
                   />
                 ))
               ) : (
-                <Text textAlign="center" fontWeight="semibold" gridColumn="1 / -1">
+                <Text
+                  textAlign="center"
+                  fontWeight="semibold"
+                  gridColumn="1 / -1"
+                >
                   No departure flights found...
                 </Text>
               )}
@@ -177,7 +185,11 @@ const Flights: NextPage<FlightsProps> = ({
                   />
                 ))
               ) : (
-                <Text textAlign="center" fontWeight="semibold" gridColumn="1 / -1">
+                <Text
+                  textAlign="center"
+                  fontWeight="semibold"
+                  gridColumn="1 / -1"
+                >
                   No return flights found...
                 </Text>
               )}

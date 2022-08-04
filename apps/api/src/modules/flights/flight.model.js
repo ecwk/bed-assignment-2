@@ -1,21 +1,25 @@
 const FlightModel = (database) => ({
   findOne: async (key, value) => {
     const [flights] = await database.query(
-      'SELECT * FROM flight WHERE ?? = ?',
+      `
+        SELECT * FROM flight
+        WHERE ?? = ?
+
+      `,
       [key, value]
     );
     return flights[0];
   },
-  findAll: async () => {
+  findAll: async (page = 1, limit = 100) => {
     const [flights] = await database.query(
       `
-        SELECT 
+        SELECT
           f.flight_id flightId,
           f.flight_code flightCode,
           f.departure_date departureDate,
           f.travel_time travelTime,
           f.price price,
-          f.aircraft_name aircraftName, 
+          f.aircraft_name aircraftName,
 
           o.airport_id originAirportId,
           o.name originAirportName,
@@ -34,7 +38,10 @@ const FlightModel = (database) => ({
         FROM flight AS f
           INNER JOIN airport o ON f.origin_airport_id = o.airport_id
           INNER JOIN airport d ON f.destination_airport_id = d.airport_id
-      `
+        LIMIT ?
+        OFFSET ?
+      `,
+      [limit, (page - 1) * limit]
     );
     return flights;
   },
@@ -42,7 +49,9 @@ const FlightModel = (database) => ({
     originAirportId,
     destinationAirportId,
     fromDate = '',
-    toDate = ''
+    toDate = '',
+    page = 1,
+    limit = 9999999999999
   ) => {
     const query = `
       SELECT
@@ -57,14 +66,16 @@ const FlightModel = (database) => ({
         origin_airport_id = ?
         AND destination_airport_id = ?
         ${fromDate && toDate ? `AND departure_date BETWEEN ? AND ?` : ''}
-    `;
+        `;
+    // LIMIT ?, ?;
 
-    const [flights] = await database.query(query, [
-      originAirportId,
-      destinationAirportId,
-      fromDate,
-      toDate
-    ]);
+    const args = [originAirportId, destinationAirportId];
+    if (fromDate && toDate) {
+      args.push(...[fromDate, toDate]);
+    }
+    // args.push(page * limit, limit);
+
+    const [flights] = await database.query(query, args);
     return flights;
   },
   findAllTransferFlights: async (originAirportId, destinationAirportId) => {

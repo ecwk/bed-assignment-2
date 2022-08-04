@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion';
 import { BiUser } from 'react-icons/bi';
 import { FaUsers } from 'react-icons/fa';
+import { AddIcon } from '@chakra-ui/icons';
 import { TbDiscount } from 'react-icons/tb';
 import { RiBuilding3Fill } from 'react-icons/ri';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
@@ -22,16 +23,42 @@ import { useAuth } from '@modules/auth';
 import { H2, Link, Main, Profile, Title } from '@common/components';
 
 const Dashboard: NextPage = () => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   return (
     <Main>
       <Title
         mt={10}
-        title={`Dashboard`}
+        title="Dashboard"
         subtitle="Everything you need to know can be found here"
       />
       <Profile mt={10} user={user} />
+      {isAdmin && (
+        <Grid
+          as="section"
+          mt={10}
+          gridTemplateColumns="repeat(auto-fill, minmax(350px, 1fr))"
+          gap={5}
+        >
+          <Box as="header" gridColumn="1 / -1">
+            <H2>Admin</H2>
+          </Box>
+          <DashboardItem
+            href="/admin/add/flights"
+            icon={<AddIcon fontSize="60px" />}
+            stat="Add New Flights"
+            helperText="Easy-to-use booking engine"
+            stat1={{ stat: 'Total Flights', number: 4021 }}
+          />
+          <DashboardItem
+            href="/admin/add/airports"
+            icon={<AddIcon fontSize="60px" />}
+            stat="Add New Airports"
+            helperText="Find out more about airports"
+            stat1={{ stat: 'Total Airports', number: 24 }}
+          />
+        </Grid>
+      )}
       <Grid
         as="section"
         mt={10}
@@ -77,6 +104,8 @@ const Dashboard: NextPage = () => {
           href="/settings/account/profile"
           icon={<BiUser fontSize="64px" />}
           stat="Profile"
+          stat1={{ stat: 'Last Updated', helperText: '2 days ago' }}
+          stat2={{ stat: 'Created On', helperText: '2 March 2022' }}
         />
         <DashboardItem
           icon={<MdAirplaneTicket fontSize="64px" />}
@@ -137,7 +166,7 @@ const DashboardItem = ({
   const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.900');
   const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
   const labelColor = useColorModeValue('brandGray.600', 'brandGray.200');
-  const helpColor = useColorModeValue('brandGray.500', 'brandGray.300');
+  const helpColor = useColorModeValue('black', 'brandGray.300');
   const numberColor = useColorModeValue('brandGray.600', 'brandGray.100');
 
   return (

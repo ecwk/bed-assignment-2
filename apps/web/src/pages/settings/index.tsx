@@ -30,7 +30,7 @@ const Settings: NextPage = () => {
         return (
           <Box mt={5} as="article" key={`${name}-${index}`}>
             <H2>
-              <Link href={href} underline icon>
+              <Link href={href} underline icon hoverColor>
                 {name}
               </Link>
             </H2>

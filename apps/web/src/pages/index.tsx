@@ -1,18 +1,19 @@
 import type { NextPage } from 'next';
-import { Box, Button, Center, Flex, Heading, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Heading, Img, Text } from '@chakra-ui/react';
 
 import { Main, Title, H1, H2, H3, H4, H5, H6 } from '@common/components';
 
 const Home: NextPage = () => {
   return (
     <Main>
-      <Title title="Homepage" subtitle="Welcome home, fellow human." />
+      <Title mt={10} title="Homepage" subtitle="Welcome home, fellow human." />
       <H1>Heading 1</H1>
       <H2>Heading 2</H2>
       <H3>Heading 3</H3>
       <H4>Heading 4</H4>
       <H5>Heading 5</H5>
       <H6>Heading 6</H6>
+      <Img src="/images/aircraft.svg"/>
     </Main>
   );
 

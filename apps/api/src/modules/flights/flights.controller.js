@@ -11,9 +11,23 @@ module.exports = (database) => {
   const flightModel = FlightModel(database);
 
   router.get('/', async (req, res, next) => {
+    const page =
+      Number(req.query.page) >= 1 ? Number(req.query.page) : undefined;
+    const limit =
+      Number(req.query.limit) >= 1 ? Number(req.query.limit) : undefined;
+
     try {
-      const flights = await flightModel.findAll();
+      const flights = await flightModel.findAll(page, limit);
       res.json({ flights });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/count', async (req, res, next) => {
+    try {
+      const flights = await flightModel.findAll(1, 999999999);
+      res.json({ count: flights.length });
     } catch (err) {
       next(err);
     }
@@ -53,13 +67,18 @@ module.exports = (database) => {
           .format(DATE_FORMAT);
       }
 
+      const page = Number(req.query.page) >= 1 ? Number(req.query.page) : 1;
+      const limit = Number(req.query.limit) >= 1 ? Number(req.query.limit) : 50;
+
       try {
         const { originAirportId, destinationAirportId } = req.params;
         const flights = await flightModel.findDirectFlights(
           originAirportId,
           destinationAirportId,
           dateFrom,
-          dateTo
+          dateTo,
+          page,
+          limit
         );
         res.status(200).json({ flights });
       } catch (err) {
