@@ -6,7 +6,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import NextLink, { type LinkProps as NextLinkProps } from 'next/link';
 
 export type LinkProps = ChakraLinkProps & {
-  href: string;
+  href?: string;
   children?: React.ReactNode;
   nextLinkProps?: Omit<NextLinkProps, 'href'>;
   underline?: boolean;
@@ -16,7 +16,7 @@ export type LinkProps = ChakraLinkProps & {
 };
 
 export const Link = ({
-  href,
+  href = '#',
   children,
   nextLinkProps,
   underline = false,

@@ -99,7 +99,7 @@ type Field = {
 const fields: Field[] = [
   {
     name: 'id',
-    width: '100px'
+    width: '75px'
   },
   {
     name: 'code',
@@ -119,9 +119,6 @@ const fields: Field[] = [
   }
 ];
 
-const PAGE_DEFAULT = 1;
-const LIMIT_DEFAULT = 10;
-
 type FilterOptions = {
   itemsPerPage: number;
   id: boolean;
@@ -131,11 +128,22 @@ type FilterOptions = {
   price: boolean;
 };
 
+// const LIMIT_DEFAULT = 10;
+
+const PAGE_DEFAULT = 1;
+const DEFAULT_VALUES: FilterOptions = {
+  itemsPerPage: 5,
+  id: true,
+  code: true,
+  origin: true,
+  destination: true,
+  price: true
+};
+
 type AdminManageFlightsProps = ServerSideProps;
 
 const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
   const router = useRouter();
-  const [layout, setLayout] = useState<'grid' | 'list'>('grid');
   const [page, setPage] = useState<number>(() => {
     const page = router.query.page;
     if (typeof page === 'string') {
@@ -144,51 +152,35 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
     return PAGE_DEFAULT;
   });
 
-  const labelColor = useColorModeValue('gray.700', 'gray.300');
-
   const methods = useForm<FilterOptions>({
-    defaultValues: {
-      itemsPerPage: LIMIT_DEFAULT,
-      id: true,
-      code: true,
-      origin: true,
-      destination: true,
-      price: true
-    }
+    defaultValues: DEFAULT_VALUES
   });
   const watch = useWatch<FilterOptions>({
     control: methods.control
   });
   const [debouncedWatch] = useDebouncedValue(watch, 500);
-  const { id, code, origin, destination, price } = watch;
-  const { itemsPerPage } = debouncedWatch;
+  const { itemsPerPage } = watch;
 
+  const numberOfPages = useMemo(() => {
+    return Math.ceil(count / (itemsPerPage || DEFAULT_VALUES.itemsPerPage));
+  }, [count, itemsPerPage]);
   const flightsQuery = useQuery(['flights', { itemsPerPage, page }], (ctx) => {
     return server.get(`/flights/?page=${page}&limit=${itemsPerPage}`, {
       signal: ctx.signal
     });
   });
-  const numberOfPages = useMemo(() => {
-    return Math.ceil(count / (itemsPerPage || LIMIT_DEFAULT));
-  }, [count, itemsPerPage]);
 
-  const flights: Flight[] = flightsQuery.data?.data?.flights;
-
-  const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.800');
-  const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
-
-  const [filteredFields, setFilteredFields] = useState<Field[]>(fields);
-
-  useEffect(() => {
-    const filteredFields = fields.filter((field) => {
+  const filteredFields = useMemo(() => {
+    return fields.filter((field) => {
       if (watch?.[field.name as keyof FilterOptions]) {
         return true;
       }
     });
-    setFilteredFields(filteredFields);
   }, [watch]);
 
-  const gotoRef = useRef<HTMLInputElement>(null);
+  const flights: Flight[] = flightsQuery.data?.data?.flights;
+  const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.800');
+  const labelColor = useColorModeValue('gray.700', 'gray.300');
 
   return (
     <Main maxW="1200px" w="100%" mx="auto">
@@ -328,6 +320,41 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
         </Flex>
       </Form>
 
+      <FlightList
+        flights={flights}
+        filterOptions={watch}
+        fields={filteredFields}
+      />
+      <Divider my={10} />
+      <Flex justifyContent="center" alignItems="center">
+        <Pagination
+          spacing={10}
+          total={numberOfPages}
+          page={page}
+          onChange={(page) => setPage(page)}
+          siblings={2}
+          boundaries={2}
+        />
+        <GoToPageInput numberOfPages={numberOfPages} setPage={setPage} />
+      </Flex>
+    </Main>
+  );
+};
+
+const FlightList = ({
+  fields,
+  flights,
+  filterOptions
+}: {
+  fields: Field[];
+  flights: Flight[];
+  filterOptions: Partial<FilterOptions>;
+}) => {
+  const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.800');
+  const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
+
+  return (
+    <Box>
       <Grid
         mt={10}
         p={4}
@@ -335,12 +362,13 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
         borderColor={borderColor}
         borderTopRadius="lg"
         backgroundColor="brandGray.900"
-        gridTemplateColumns={filteredFields
+        gridTemplateColumns={fields
           .filter(({ width }) => width)
           .map(({ width }) => width)
           .join(' ')}
+        gridColumnGap={4}
       >
-        {filteredFields.map(({ name }) => (
+        {fields.map(({ name }) => (
           <Text
             key={`field-${name}`}
             fontWeight="semibold"
@@ -357,62 +385,26 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
         borderColor={borderColor}
         backgroundColor={backgroundColor}
         borderBottomRadius="lg"
-        gridTemplateColumns={filteredFields
+        gridTemplateColumns={fields
           .filter(({ width }) => width)
           .map(({ width }) => width)
           .join(' ')}
         gridRowGap={4}
+        gridColumnGap={4}
       >
         {flights
           ? flights.map((flight, i) => (
               <FlightListItem
                 key={`flightId-${flight.flightId}`}
                 flight={flight}
-                filterOptions={watch}
+                filterOptions={filterOptions}
               />
             ))
-          : [...new Array(itemsPerPage)].map((_, i) => (
+          : [...Array(5).keys()].map((_, i) => (
               <Skeleton gridColumn="1 / -1" key={`skeleton-${i}`} h="41px" />
             ))}
       </Grid>
-      <Divider my={10} />
-      <Flex justifyContent="center" alignItems="center">
-        <Pagination
-          spacing={10}
-          total={numberOfPages}
-          page={page}
-          onChange={(page) => setPage(page)}
-          siblings={2}
-          boundaries={2}
-        />
-        <Flex ml={5}>
-          <Input
-            borderRightRadius="none"
-            w="100px"
-            placeholder="Page no."
-            ref={gotoRef}
-            size="sm"
-          />
-          <Button
-            colorScheme="brandGold"
-            borderLeftRadius="none"
-            size="sm"
-            onClick={() => {
-              const value: string | undefined = gotoRef?.current?.value;
-              if (
-                /^\d+$/.test(value || '') &&
-                Number(value) > 0 &&
-                Number(value) <= numberOfPages
-              ) {
-                setPage(Number(value));
-              }
-            }}
-          >
-            Go To
-          </Button>
-        </Flex>
-      </Flex>
-    </Main>
+    </Box>
   );
 };
 
@@ -430,10 +422,12 @@ const FlightListItem = ({
     originAirportName,
     originAirportCountry,
     originAirportCity,
+    originAirportDescription,
     destinationAirportId,
     destinationAirportName,
     destinationAirportCountry,
     destinationAirportCity,
+    destinationAirportDescription,
     price
   } = flight;
   const [show1, setShow1] = useState(false);
@@ -466,9 +460,10 @@ const FlightListItem = ({
             <b>Country</b>: {originAirportCountry}
             <br />
             <b>City</b>: {originAirportCity}
+            <br />
+            <b>Description</b>: {originAirportDescription}
           </Collapse>
           <Link
-            href="#"
             onClick={handleShow1}
             color={showColor}
             fontSize="sm"
@@ -489,6 +484,8 @@ const FlightListItem = ({
             <b>Country</b>: {destinationAirportCountry}
             <br />
             <b>City</b>: {destinationAirportCity}
+            <br />
+            <b>Description</b>: {destinationAirportDescription}
           </Collapse>
           <Link
             href="#"
@@ -507,13 +504,48 @@ const FlightListItem = ({
   );
 };
 
-type ServerSideProps = {
-  count: number;
+type GoToPageInputProps = {
+  numberOfPages: number;
+  setPage: (page: number) => void;
 };
 
-type ServerSideQueries = {
-  page: string;
-  limit: string;
+const GoToPageInput = ({ numberOfPages, setPage }: GoToPageInputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <Flex ml={5}>
+      <Input
+        borderRightRadius="none"
+        w="100px"
+        placeholder="Page no."
+        ref={inputRef}
+        size="sm"
+        borderLeftRadius="md"
+        min={0}
+      />
+      <Button
+        colorScheme="brandGold"
+        borderLeftRadius="none"
+        size="sm"
+        onClick={() => {
+          const value: string | undefined = inputRef?.current?.value;
+          if (
+            /^\d+$/.test(value || '') &&
+            Number(value) > 0 &&
+            Number(value) <= numberOfPages
+          ) {
+            setPage(Number(value));
+          }
+        }}
+      >
+        Go To
+      </Button>
+    </Flex>
+  );
+};
+
+type ServerSideProps = {
+  count: number;
 };
 
 export const getServerSideProps: GetServerSideProps<
