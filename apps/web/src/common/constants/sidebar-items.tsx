@@ -1,5 +1,5 @@
 import { FaUsers } from 'react-icons/fa';
-import { MdFlight } from 'react-icons/md';
+import { MdFlight, MdSpaceDashboard } from 'react-icons/md';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { RiBuilding3Fill } from 'react-icons/ri';
 
@@ -7,27 +7,33 @@ import { type SidebarItem } from '@common/types';
 
 export const SIDEBAR_ITEMS: SidebarItem[] = [
   {
-    icon: <MdFlight fontSize="20px" />,
+    name: 'Dashboard',
+    href: '/dashboard',
+    icon: <MdSpaceDashboard fontSize="20px" />,
+    iconSpacing: 4
+  },
+  {
     name: 'Flights',
     href: '/search?type=flight',
+    icon: <MdFlight fontSize="20px" />,
     iconSpacing: 4
   },
   {
-    icon: <RiBuilding3Fill fontSize="20px" />,
     name: 'Airports',
     href: '/search?type=airport',
+    icon: <RiBuilding3Fill fontSize="20px" />,
     iconSpacing: 4
   },
   {
-    icon: <FaUsers fontSize="20px" />,
     name: 'Users',
     href: '/search?type=user',
+    icon: <FaUsers fontSize="20px" />,
     iconSpacing: 4
   },
   {
-    icon: <SettingsIcon />,
     name: 'Settings',
     href: '/settings',
+    icon: <SettingsIcon />,
     iconSpacing: 4,
     nestedItems: [
       {

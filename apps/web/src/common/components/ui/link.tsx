@@ -11,6 +11,8 @@ export type LinkProps = ChakraLinkProps & {
   nextLinkProps?: Omit<NextLinkProps, 'href'>;
   underline?: boolean;
   icon?: boolean;
+  hoverColor?: boolean;
+  hoverAnimation?: 'underline' | 'highlight';
 };
 
 export const Link = ({
@@ -19,18 +21,23 @@ export const Link = ({
   nextLinkProps,
   underline = false,
   icon = false,
+  hoverColor = false,
+  hoverAnimation,
   ...linkProps
 }: LinkProps) => {
+  const isUnderline = hoverAnimation === 'underline';
+  const isBoxShadow = hoverAnimation === 'highlight';
+
   return (
     <NextLink href={href} passHref {...nextLinkProps}>
       <ChakraLink
         sx={{
           ':hover': {
-            color: 'brandGold.300',
-            textDecoration: underline ? 'underline' : 'none'
+            color: hoverColor ? 'brandGold.300' : 'none',
+            textDecoration: underline ? 'underline' : 'none',
           },
           ':hover > svg': {
-            color: 'brandGold.300'
+            color: hoverColor ? 'brandGold.300' : 'none'
           }
         }}
         {...linkProps}

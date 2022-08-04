@@ -1,4 +1,8 @@
-import { Heading, type HeadingProps as Props } from '@chakra-ui/react';
+import {
+  Heading,
+  useColorModeValue,
+  type HeadingProps as Props
+} from '@chakra-ui/react';
 
 export type HeadingProps = Props;
 
@@ -19,11 +23,20 @@ export const H2 = ({ children, ...headingProps }: HeadingProps) => {
 };
 
 export const H3 = ({ children }: HeadingProps) => {
-  return <Heading as="h3">{children}</Heading>;
+  return (
+    <Heading as="h3" size="md">
+      {children}
+    </Heading>
+  );
 };
 
 export const H4 = ({ children }: HeadingProps) => {
-  return <Heading as="h4">{children}</Heading>;
+  const color = useColorModeValue('brandGray.600', 'brandGray.400');
+  return (
+    <Heading as="h4" fontWeight="normal" size="sm" color={color}>
+      {children}
+    </Heading>
+  );
 };
 
 export const H5 = ({ children }: HeadingProps) => {
