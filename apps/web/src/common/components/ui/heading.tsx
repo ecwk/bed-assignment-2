@@ -10,8 +10,12 @@ export const H1 = ({ children }: HeadingProps) => {
   );
 };
 
-export const H2 = ({ children }: HeadingProps) => {
-  return <Heading as="h2">{children}</Heading>;
+export const H2 = ({ children, ...headingProps }: HeadingProps) => {
+  return (
+    <Heading as="h2" size="lg" fontWeight="semibold" {...headingProps}>
+      {children}
+    </Heading>
+  );
 };
 
 export const H3 = ({ children }: HeadingProps) => {

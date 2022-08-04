@@ -29,7 +29,7 @@ const Others: NextPage = () => {
         subtitle="Manage other settings here"
       />
       <Grid gap={5}>
-        {othersItems?.links.map(({ name, src, href }, i) => (
+        {othersItems?.links?.map(({ name, src, href }, i) => (
           <GridItem
             as={motion.li}
             whileHover={{

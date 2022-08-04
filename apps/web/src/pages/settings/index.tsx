@@ -40,7 +40,7 @@ const Settings: NextPage = () => {
               gap={5}
               as="ul"
             >
-              {links.map(({ name, src, href }, i) => (
+              {links?.map(({ name, src, href }, i) => (
                 <GridItem
                   as={motion.li}
                   whileHover={{

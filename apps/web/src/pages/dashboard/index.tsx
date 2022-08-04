@@ -1,4 +1,4 @@
-import { NextPage } from 'next';
+import { type NextPage } from 'next';
 import { Heading, Box, Button, Text } from '@chakra-ui/react';
 
 import { Main, Title } from '@common/components';
@@ -7,6 +7,7 @@ const Dashboard: NextPage = () => {
   return (
     <Main>
       <Title
+        mt={10}
         title="Dashboard"
         subtitle="Everything you need to know is accessible her"
       />

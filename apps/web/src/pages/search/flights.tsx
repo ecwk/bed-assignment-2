@@ -11,7 +11,12 @@ import {
   IconButton,
   Text,
   HStack,
-  useColorModeValue
+  useColorModeValue,
+  Tabs,
+  Tab,
+  TabList,
+  TabPanels,
+  TabPanel
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import { NextPage, type GetServerSideProps } from 'next';
@@ -24,27 +29,39 @@ import { FlightItem } from '@modules/flights';
 import { random, shuffle } from 'lodash';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 type FlightsProps = ServerSideProps & {};
 
 const Flights: NextPage<FlightsProps> = ({
   flights: flightsRaw,
-  returnFlights,
+  returnFlights: returnFlightsRaw,
   originAirport: origin,
   destinationAirport: destination
 }) => {
   const [layout, setLayout] = useState<'grid' | 'list'>('grid');
   const methods = useForm();
 
-  const [flights, setFlights] = useState(() => {
+  const flights = useMemo(() => {
     return shuffle([
       ...flightsRaw,
       ...flightsRaw,
       ...flightsRaw,
       ...flightsRaw
     ]);
-  });
+  }, []);
+
+  const returnFlights = useMemo(() => {
+    if (returnFlightsRaw) {
+      return shuffle([
+        ...returnFlightsRaw,
+        ...returnFlightsRaw,
+        ...returnFlightsRaw,
+        ...returnFlightsRaw
+      ]);
+    }
+    return [];
+  }, []);
 
   const labelColor = useColorModeValue('gray.700', 'gray.300');
 
@@ -81,12 +98,7 @@ const Flights: NextPage<FlightsProps> = ({
           <Text color="gray.200" fontSize="sm">
             Sort By:{' '}
           </Text>
-          <Select
-            w="150px"
-            size="sm"
-            borderRadius="3xl"
-            defaultValue="latest"
-          >
+          <Select w="150px" size="sm" borderRadius="3xl" defaultValue="latest">
             <option value="latest">Latest</option>
             <option value="highest-price">Highest Price</option>
             <option value="lowest-price">Lowest Price</option>
@@ -107,26 +119,72 @@ const Flights: NextPage<FlightsProps> = ({
           onClick={() => setLayout('list')}
         />
       </Flex>
-      <Grid
-        mt={10}
-        gridTemplateColumns={
-          layout === 'grid' ? 'repeat(auto-fit, minmax(300px, 1fr))' : '1fr'
-        }
-        gap={10}
-      >
-        {flights.map((flight, i) => (
-          <FlightItem
-            key={flight.flightCode + i}
-            // w={random(300, 500)}
-            flight={flight}
-            isTwoWay={true}
-            isDirect={false}
-            originAirport={origin}
-            destinationAirport={destination}
-            list={layout === 'list'}
-          />
-        ))}
-      </Grid>
+      <Tabs>
+        <TabList>
+          <Tab>Departure</Tab>
+          <Tab>Return</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <Grid
+              mt={10}
+              gridTemplateColumns={
+                layout === 'grid'
+                  ? 'repeat(auto-fill, minmax(300px, 1fr))'
+                  : '1fr'
+              }
+              gap={10}
+            >
+              {flights.length > 0 ? (
+                flights.map((flight, i) => (
+                  <FlightItem
+                    key={flight.flightCode + i}
+                    flight={flight}
+                    isTwoWay={true}
+                    isDirect={false}
+                    originAirport={origin}
+                    destinationAirport={destination}
+                    list={layout === 'list'}
+                  />
+                ))
+              ) : (
+                <Text textAlign="center" fontWeight="semibold" gridColumn="1 / -1">
+                  No departure flights found...
+                </Text>
+              )}
+            </Grid>
+          </TabPanel>
+          <TabPanel>
+            <Grid
+              mt={10}
+              gridTemplateColumns={
+                layout === 'grid'
+                  ? 'repeat(auto-fill, minmax(300px, 1fr))'
+                  : '1fr'
+              }
+              gap={10}
+            >
+              {returnFlights.length > 0 ? (
+                returnFlights?.map((flight, i) => (
+                  <FlightItem
+                    key={flight.flightCode + i}
+                    flight={flight}
+                    isTwoWay={true}
+                    isDirect={false}
+                    originAirport={origin}
+                    destinationAirport={destination}
+                    list={layout === 'list'}
+                  />
+                ))
+              ) : (
+                <Text textAlign="center" fontWeight="semibold" gridColumn="1 / -1">
+                  No return flights found...
+                </Text>
+              )}
+            </Grid>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Main>
   );
 };
@@ -177,7 +235,7 @@ export const getServerSideProps: GetServerSideProps<
   );
   const returnFlightsRes = isTwoWay_
     ? await server.get(
-        `/flights/direct/${from}/${to}?date=${return_}&dateFilterType=exact`
+        `/flights/direct/${to}/${from}?date=${return_}&dateFilterType=exact`
       )
     : null;
   const originRes = await server.get(`/airports/${from}`);

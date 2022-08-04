@@ -19,6 +19,7 @@ import {
 import { sleep } from '@common/utils';
 import { useAuth } from '@modules/auth';
 import { usersApiClient, editProfileSchema } from '@modules/users';
+import { random } from 'lodash';
 
 type EditProfileFormData = {
   email: string;
@@ -48,7 +49,7 @@ export function EditProfileForm({
     },
     {
       onMutate: async () => {
-        await sleep(2000);
+        await sleep(random(500, 3000));
       },
       onSuccess: () => {
         setTimeout(() => {
@@ -70,14 +71,11 @@ export function EditProfileForm({
 
   return (
     <Form
+      display="flex"
+      flexDir="column"
+      gap={5}
       onSubmit={onSubmit}
       methods={methods}
-      sx={{
-        display: 'flex',
-        flexDir: 'column',
-        gap: 3,
-        ...sx
-      }}
       {...formProps}
     >
       <Flex className="profile-details" alignItems="center" gap={4}>

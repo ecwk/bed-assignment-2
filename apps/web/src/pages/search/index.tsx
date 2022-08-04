@@ -54,6 +54,7 @@ const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
   return (
     <Main maxW="1200px" w="100%" mx="auto">
       <Title
+        mt={10}
         title="Search"
         subtitle="Search for flights, airports and users."
       />

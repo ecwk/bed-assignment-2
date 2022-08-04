@@ -1,16 +1,15 @@
+import { useEffect, useState } from 'react';
+import { NAVBAR_HEIGHT } from '@common/constants';
 import { Box, Center, Heading, Text, Code } from '@chakra-ui/react';
 
-import { NAVBAR_HEIGHT } from '@common/constants';
-import { useEffect, useState } from 'react';
-
 function Custom404() {
-  const [url, setUrl] = useState('')
+  const [url, setUrl] = useState('');
 
   useEffect(() => {
     if (window) {
-      setUrl(window.location.pathname)
+      setUrl(window.location.pathname);
     }
-  })
+  });
 
   return (
     <Center minH={`calc(100vh - ${NAVBAR_HEIGHT})`} textAlign="center">

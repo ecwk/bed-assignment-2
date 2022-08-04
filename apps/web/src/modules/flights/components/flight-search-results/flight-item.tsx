@@ -123,6 +123,7 @@ export const FlightItem = ({
 
   return (
     <Flex
+      as="article"
       key={flightId}
       flexDir={list ? 'row' : 'column'}
       border="1px solid"

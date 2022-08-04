@@ -29,7 +29,7 @@ const Billing: NextPage = () => {
         subtitle="Manage your billing settings here"
       />
       <Grid gap={5}>
-        {billingItems?.links.map(({ name, src, href }, i) => (
+        {billingItems?.links?.map(({ name, src, href }, i) => (
           <GridItem
             as={motion.li}
             whileHover={{

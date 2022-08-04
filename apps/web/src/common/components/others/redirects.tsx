@@ -13,15 +13,16 @@ export const Redirects = () => {
   useEffect(() => {
     const path = router.pathname;
 
+    if (user && ['/login', '/register'].includes(path)) {
+      router.push('/dashboard');
+    }
+    if (user && !isAdmin && adminRoutes.some((route) => path.match(route))) {
+      router.push('/');
+    }
+
     if (!isLoading) {
       if (!user && protectedRoutes.some((route) => path.match(route))) {
         router.push('/login');
-      } else if (
-        user &&
-        !isAdmin &&
-        adminRoutes.some((route) => path.match(route))
-      ) {
-        router.push('/');
       }
     }
   }, [user, router, router.pathname]);

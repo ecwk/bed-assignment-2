@@ -26,24 +26,6 @@ import { useCart } from '@common/hooks';
 import { Link } from '@common/components';
 import { motion } from 'framer-motion';
 
-// type Props = {
-//   menuType: 'primary' | 'secondary'
-// }
-
-// // defined type using chakra ComponentWithAs
-// type MenuCompoundType = ComponentWithAs<'div', Props> & {
-//   Item?: typeof Item
-// }
-
-// export const Menu: MenuCompoundType = forwardRef(({ children, ...restProps }, ref) => {
-//   // ... do my stuff
-//   return (
-//     <Box>{children}</Box>
-//   )
-// })
-
-type CartMenuProps = {};
-
 export const CartMenu = React.forwardRef<HTMLDivElement, BoxProps>(
   (props, ref) => {
     const { cart, increaseQuantity, decreaseQuantity, removeFromCart } =

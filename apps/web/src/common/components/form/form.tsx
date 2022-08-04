@@ -34,7 +34,7 @@ function FormHandler({ onSubmit, children, ...boxProps }: FormHandlerProps) {
     handleSubmit,
     reset,
     watch,
-    formState: { dirtyFields }
+    formState: { dirtyFields, isDirty }
   } = useFormContext();
   const { clearErrors, validationErrors } = useAxiosInterceptor();
 
@@ -56,7 +56,7 @@ function FormHandler({ onSubmit, children, ...boxProps }: FormHandlerProps) {
   }, [validationErrors, watch()]);
 
   const onSubmitWrapper = (data: any) => {
-    if (hasFixedErrors) {
+    if (hasFixedErrors && isDirty) {
       reset(data);
       onSubmit(data);
     }

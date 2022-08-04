@@ -29,7 +29,7 @@ const Account: NextPage = () => {
         subtitle="Manage your account settings here"
       />
       <Grid gap={5}>
-        {accountItems?.links.map(({ name, src, href }, i) => (
+        {accountItems?.links?.map(({ name, src, href }, i) => (
           <GridItem
             as={motion.li}
             whileHover={{
