@@ -10,28 +10,42 @@ import {
   useDisclosure,
   useColorModeValue
 } from '@chakra-ui/react';
-import { H2, FormButton } from '@common/components';
+import { H2, FormButton, Hide } from '@common/components';
 
 import { CreateFlightForm, CreateFlightFormData } from '@modules/flights';
 import { useState } from 'react';
 
-export type CreateFlightModalProps = {};
+export type CreateFlightModalProps = {
+  hideButton?: boolean;
+  disclosure?: {
+    isOpen: boolean;
+    onOpen: () => void;
+    onClose: () => void;
+  };
+};
 
-export const CreateFlightModal = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export const CreateFlightModal = ({
+  disclosure,
+  hideButton
+}: CreateFlightModalProps) => {
+  const defaultDisclosure = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [previousFormState, setPreviousFormState] = useState<
     Partial<CreateFlightFormData>
   >({});
 
+  const { isOpen, onOpen, onClose } = disclosure || defaultDisclosure;
+
   const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.800');
 
   return (
     <>
-      <Button colorScheme="brandGold" onClick={onOpen}>
-        Add Flight
-      </Button>
+      <Hide hide={hideButton}>
+        <Button colorScheme="brandGold" onClick={onOpen}>
+          Add Flight
+        </Button>
+      </Hide>
 
       <Modal isOpen={isOpen} onClose={onClose} size="3xl">
         <ModalOverlay />

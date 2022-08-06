@@ -8,7 +8,9 @@ import {
   StatNumber,
   StatHelpText,
   StatArrow,
-  useColorModeValue
+  useColorModeValue,
+  useDisclosure,
+  Portal
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { BiUser } from 'react-icons/bi';
@@ -17,54 +19,113 @@ import { AddIcon } from '@chakra-ui/icons';
 import { TbDiscount } from 'react-icons/tb';
 import { RiBuilding3Fill } from 'react-icons/ri';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
-import { MdCreditCard, MdAirplaneTicket, MdFlight } from 'react-icons/md';
+import {
+  MdCreditCard,
+  MdAirplaneTicket,
+  MdFlight,
+  MdAdminPanelSettings
+} from 'react-icons/md';
 
 import { useAuth } from '@modules/auth';
-import { H2, Link, Main, Profile, Title } from '@common/components';
+import { H2, H3, Link, Main, Profile, Title } from '@common/components';
+import { CreateFlightModal } from '@modules/flights';
+import { useRef, useState } from 'react';
 
 const Dashboard: NextPage = () => {
   const { user, isAdmin } = useAuth();
+  const createFlightDisclosure = useDisclosure();
 
   return (
     <Main>
       <Title
         mt={10}
         title="Dashboard"
-        subtitle="Everything you need to know can be found here"
+        subtitle="Everything you need can be found here"
       />
       <Profile mt={10} user={user} />
       {isAdmin && (
-        <Grid
-          as="section"
-          mt={10}
-          gridTemplateColumns="repeat(auto-fill, minmax(350px, 1fr))"
-          gap={5}
-        >
+        <Flex flexDir="column" mt={10} as="section">
           <Box as="header" gridColumn="1 / -1">
             <H2>Admin</H2>
           </Box>
-          <DashboardItem
-            href="/admin/add/flights"
-            icon={<AddIcon fontSize="60px" />}
-            stat="Add New Flights"
-            helperText="Easy-to-use booking engine"
-            stat1={{ stat: 'Total Flights', number: 4021 }}
-          />
-          <DashboardItem
-            href="/admin/add/airports"
-            icon={<AddIcon fontSize="60px" />}
-            stat="Add New Airports"
-            helperText="Find out more about airports"
-            stat1={{ stat: 'Total Airports', number: 24 }}
-          />
-          <DashboardItem
-            href="/admin/add/users"
-            icon={<AddIcon fontSize="60px" />}
-            stat="Add New Users"
-            helperText="Find out more about airports"
-            stat1={{ stat: 'Total Users', number: 1239 }}
-          />
-        </Grid>
+          <H3 mt={5}>Functions</H3>
+          <Grid
+            mt={4}
+            as="section"
+            gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+            gap={5}
+          >
+            <Portal>
+              <CreateFlightModal
+                hideButton
+                disclosure={createFlightDisclosure}
+              />
+            </Portal>
+            <DashboardItem
+              onClick={createFlightDisclosure.onOpen}
+              icon={<AddIcon fontSize="30px" />}
+              stat="Add Flight"
+              h="125px"
+              fontSize="lg"
+            />
+            <DashboardItem
+              onClick={createFlightDisclosure.onOpen}
+              icon={<AddIcon fontSize="35px" />}
+              stat="Add Airport"
+              h="125px"
+              fontSize="lg"
+            />
+            <DashboardItem
+              onClick={createFlightDisclosure.onOpen}
+              icon={<AddIcon fontSize="35px" />}
+              stat="Add User"
+              h="125px"
+              fontSize="lg"
+            />
+            <DashboardItem
+              icon={<AddIcon fontSize="35px" />}
+              stat="Add Discount"
+              h="125px"
+              fontSize="lg"
+            />
+            <DashboardItem
+              onClick={createFlightDisclosure.onOpen}
+              icon={<AddIcon fontSize="35px" />}
+              stat="Add User"
+              h="125px"
+              fontSize="lg"
+            />
+          </Grid>
+          <H3 mt={5}>Services</H3>
+          <Grid
+            as="section"
+            mt={4}
+            gridTemplateColumns="repeat(auto-fill, minmax(350px, 1fr))"
+            gap={5}
+          >
+            <DashboardItem
+              href="/admin/add/flights"
+              icon={<MdAdminPanelSettings fontSize="60px" />}
+              stat="Manage Flights"
+              helperText="Easy-to-use booking engine"
+              stat1={{ stat: 'Total Flights', number: 4021 }}
+            />
+            <DashboardItem
+              href="/admin/add/airports"
+              icon={<MdAdminPanelSettings fontSize="60px" />}
+              stat="Add New Airports"
+              helperText="Find out more about airports"
+              stat1={{ stat: 'Total Airports', number: 24 }}
+            />
+            <DashboardItem
+              href="/admin/add/users"
+              icon={<MdAdminPanelSettings fontSize="60px" />}
+              stat="Add New Users"
+              helperText="Find out more about airports"
+              stat1={{ stat: 'Total Users', number: 1239 }}
+            />
+          </Grid>
+        </Flex>
       )}
       <Grid
         as="section"
@@ -73,7 +134,7 @@ const Dashboard: NextPage = () => {
         gap={5}
       >
         <Box as="header" gridColumn="1 / -1">
-          <H2>Services</H2>
+          <H2>Customer</H2>
         </Box>
         <DashboardItem
           href="/search?type=flight"
@@ -156,19 +217,25 @@ type Stat = {
 
 type DashboardItemProps = Stat & {
   href?: string;
+  onClick?: () => void;
   icon: React.ReactElement;
   stat1?: Stat;
   stat2?: Stat;
+  h?: number | string;
+  fontSize?: string;
 };
 
 const DashboardItem = ({
-  href = '#',
+  href,
   icon,
   stat,
   number,
   helperText,
   stat1,
-  stat2
+  stat2,
+  onClick,
+  h,
+  fontSize
 }: DashboardItemProps) => {
   const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.900');
   const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
@@ -177,7 +244,7 @@ const DashboardItem = ({
   const numberColor = useColorModeValue('brandGray.600', 'brandGray.100');
 
   return (
-    <Link href={href}>
+    <Link as={onClick ? 'div' : 'a'} href={href} onClick={onClick}>
       <Flex
         as={motion.article}
         justifyContent="space-between"
@@ -187,7 +254,7 @@ const DashboardItem = ({
         borderRadius="xl"
         boxShadow="3px 4px 4px rgba(0, 0, 0, 0.25)"
         p={5}
-        h="200px"
+        h={h || '200px'}
         sx={{
           svg: {
             transition: 'all 0.2s'
@@ -206,13 +273,16 @@ const DashboardItem = ({
         whileTap={{
           y: 10
         }}
+        onClick={() => {
+          console.log('hello');
+        }}
       >
         <Flex flexDir="column" justifyContent="space-between">
           {icon}
           <Stat flex="none">
             <StatNumber color="brandGray.100">{number}</StatNumber>
             <StatHelpText mb={0}>{helperText}</StatHelpText>
-            <StatLabel fontSize="2xl" fontWeight="normal">
+            <StatLabel fontSize={fontSize || '2xl'} fontWeight="normal">
               {stat}
             </StatLabel>
           </Stat>
