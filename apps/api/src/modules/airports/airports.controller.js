@@ -1,17 +1,17 @@
 const express = require('express');
 const createError = require('http-errors');
 
+const { AirportModel } = require('./airport.model');
+const { getFilterQueries } = require('../../common/utils');
 const { AirportValidationSchema } = require('./airport.validation');
 const { validateBody, protectedRoute } = require('../../common/middleware');
-const { AirportModel } = require('./airport.model');
-
 module.exports = (database) => {
   const router = express.Router();
   const airportModel = AirportModel(database);
 
   router.get('/', async (req, res, next) => {
     try {
-      const airports = await airportModel.findAll();
+      const airports = await airportModel.findAll(getFilterQueries(req));
       res.json({ airports });
     } catch (err) {
       next(err);

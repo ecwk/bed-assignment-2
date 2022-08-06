@@ -1,17 +1,39 @@
+const select = {
+  airportId: 'airport_id',
+  name: 'name',
+  country: 'country',
+  city: 'city',
+  description: 'description',
+  createdOn: 'created_on',
+  lastModifiedOn: 'last_modified_on'
+};
+
 const AirportModel = (database) => ({
-  findAll: async () => {
+  findAll: async (filters) => {
+    const { page, limit, query, exclude } = filters
+    console.log(limit)
+
     const [airports] = await database.query(
       `
         SELECT
-          a.airport_id airportId,
-          a.name name,
-          a.country country,
-          a.city city,
-          a.description description,
-          a.created_on createdOn,
-          a.last_modified_on lastModifiedOn
-        FROM airport a
-      `
+          ${Object.entries(select)
+            .map(([key, value]) => {
+              if (exclude.includes(key)) {
+                return '';
+              }
+              return `${value} as ${key}`;
+            })
+            .filter(Boolean)
+            .join(', ')}
+        FROM airport
+        WHERE
+          name REGEXP ?
+          OR city REGEXP ?
+          OR country REGEXP ?
+        LIMIT ?
+        OFFSET ?
+      `,
+      [query, query, query, limit, (page - 1) * limit]
     );
     return airports;
   },
