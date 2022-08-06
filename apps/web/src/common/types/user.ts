@@ -7,7 +7,7 @@ export type User = {
   contact: string;
   role: Role;
   profilePicUrl: string;
-  createdAt: string;
-  lastUpdatedAt: string;
+  createdOn: string;
+  lastModifiedOn: string;
   password: never;
 };

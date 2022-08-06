@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Flex, VStack, Text } from '@chakra-ui/react';
+import { Flex, VStack, Text, Box } from '@chakra-ui/react';
 
 import {
   Link,
@@ -20,6 +20,8 @@ import { sleep } from '@common/utils';
 import { useAuth } from '@modules/auth';
 import { usersApiClient, editProfileSchema } from '@modules/users';
 import { random } from 'lodash';
+import ms from 'ms';
+import dayjs from 'dayjs';
 
 type EditProfileFormData = {
   email: string;
@@ -73,24 +75,39 @@ export function EditProfileForm({
     <Form
       display="flex"
       flexDir="column"
-      gap={5}
+      // gap={5}
       onSubmit={onSubmit}
       methods={methods}
       {...formProps}
     >
       <Flex className="profile-details" alignItems="center" gap={4}>
-        <ProfileAvatar user={user} size="xl" borderRadius="lg" />
+        <ProfileAvatar user={user} size="2xl" borderRadius="lg" />
         <VStack alignItems="flex-start" spacing={0}>
-          <Text fontSize="xl" fontWeight="semibold">
+          <Text fontSize="4xl" fontWeight="semibold">
             {user?.username}
           </Text>
-          <Text color="gray.300">{user?.contact}</Text>
           <Link color="blue.200" href={`mailto:${user?.email}`}>
             {user?.email}
           </Link>
+          <Text color="gray.300">{user?.contact}</Text>
         </VStack>
       </Flex>
+      <Box mt={5} color="label-color" fontSize="sm">
+        <Text>
+          Created on:{' '}
+          {user?.createdOn ? dayjs(user.createdOn).format('D MMMM YYYY') : '-'}
+        </Text>
+        <Text color="label-color">
+          Last Updated:{' '}
+          {user?.lastModifiedOn
+            ? ms(dayjs(user?.lastModifiedOn).diff(dayjs()), {
+                long: true
+              }).replace('-', '') + ' ago'
+            : '-'}
+        </Text>
+      </Box>
       <Input
+        mt={5}
         _placeholder={{
           fontSize: '10px'
         }}
@@ -100,12 +117,13 @@ export function EditProfileForm({
         placeholder={user?.email}
       />
       <Input
+        mt={5}
         name="username"
         type="username"
         label="Username"
         placeholder={user?.username}
       />
-      <Flex sx={{ gap: 4 }}>
+      <Flex mt={5} sx={{ gap: 4 }}>
         <CountrySelect
           label="Country"
           value={mobileCode}
@@ -120,6 +138,7 @@ export function EditProfileForm({
         />
       </Flex>
       <ConfirmPassword
+        mt={5}
         password={{
           name: 'password',
           label: 'Password',
@@ -132,7 +151,7 @@ export function EditProfileForm({
         }}
       />
       <FormButton
-        mt={4}
+        mt={10}
         isLoading={editMutation.isLoading}
         isSuccess={editMutation.isSuccess}
         size="md"

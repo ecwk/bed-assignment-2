@@ -1,4 +1,5 @@
-import { type NextPage } from 'next';
+import { GetServerSideProps, type NextPage } from 'next';
+import jwt, { Jwt, JwtPayload } from 'jsonwebtoken';
 import {
   Box,
   Grid,
@@ -30,9 +31,21 @@ import { useAuth } from '@modules/auth';
 import { H2, H3, Link, Main, Profile, Title } from '@common/components';
 import { CreateFlightModal } from '@modules/flights';
 import { useRef, useState } from 'react';
+import { server } from '@config/axios';
+import { env } from '@config/env';
+import { AxiosError } from 'axios';
+import { random } from 'lodash';
+import dayjs from 'dayjs';
+import ms from 'ms';
+import { useCart } from '@common/hooks';
 
-const Dashboard: NextPage = () => {
+const Dashboard: NextPage<ServerSideProps> = ({
+  flightsCount,
+  airportsCount,
+  usersCount
+}) => {
   const { user, isAdmin } = useAuth();
+  const { cart } = useCart();
   const createFlightDisclosure = useDisclosure();
 
   return (
@@ -108,21 +121,18 @@ const Dashboard: NextPage = () => {
               icon={<MdAdminPanelSettings fontSize="60px" />}
               stat="Manage Flights"
               helperText="Easy-to-use booking engine"
-              stat1={{ stat: 'Total Flights', number: 4021 }}
             />
             <DashboardItem
               href="/admin/add/airports"
               icon={<MdAdminPanelSettings fontSize="60px" />}
-              stat="Add New Airports"
+              stat="Manage Airports"
               helperText="Find out more about airports"
-              stat1={{ stat: 'Total Airports', number: 24 }}
             />
             <DashboardItem
               href="/admin/add/users"
               icon={<MdAdminPanelSettings fontSize="60px" />}
-              stat="Add New Users"
+              stat="Manage Users"
               helperText="Find out more about airports"
-              stat1={{ stat: 'Total Users', number: 1239 }}
             />
           </Grid>
         </Flex>
@@ -141,22 +151,27 @@ const Dashboard: NextPage = () => {
           icon={<MdFlight fontSize="64px" />}
           stat="Book A Flight"
           helperText="Easy-to-use booking engine"
-          stat1={{ stat: 'Total Flights', number: 4021 }}
+          stat1={{ stat: 'Total Flights', number: flightsCount }}
         />
         <DashboardItem
           href="/search?type=airport"
           icon={<RiBuilding3Fill fontSize="64px" />}
           stat="Discover Airports"
           helperText="Find out more about airports"
-          stat1={{ stat: 'Total Airports', number: 24 }}
+          stat1={{ stat: 'Total Airports', number: airportsCount }}
         />
         <DashboardItem
           href="/search?type=user"
           icon={<FaUsers fontSize="64px" />}
           stat="Find Users"
           helperText="Real-time users lookup"
-          stat1={{ stat: 'Total Users', number: 101231 }}
-          stat2={{ stat: 'Users Online', number: 376 }}
+          stat1={{ stat: 'Total Users', number: usersCount || 0 }}
+          stat2={{
+            stat: 'Users Online',
+            number: Math.floor(
+              random(0.2 * (usersCount || 0), 0.8 * (usersCount || 0))
+            )
+          }}
         />
       </Grid>
       <Grid
@@ -172,26 +187,42 @@ const Dashboard: NextPage = () => {
           href="/settings/account/profile"
           icon={<BiUser fontSize="64px" />}
           stat="Profile"
-          stat1={{ stat: 'Last Updated', helperText: '2 days ago' }}
-          stat2={{ stat: 'Created On', helperText: '2 March 2022' }}
+          stat1={{
+            stat: 'Last Updated',
+            // x seconds ago / x minutes ago  / x days ago / x weeks ago / x months ago / x years ago
+            helperText: user?.lastModifiedOn
+              ? ms(dayjs(user?.lastModifiedOn).diff(dayjs()), {
+                  long: true
+                }).replace('-', '') + ' ago'
+              : '-'
+          }}
+          stat2={{
+            stat: 'Created On',
+            helperText: user?.createdOn
+              ? dayjs(user.createdOn).format('D MMMM YYYY')
+              : '-'
+          }}
         />
         <DashboardItem
           icon={<MdAirplaneTicket fontSize="64px" />}
           stat="Bookings"
-          stat1={{ stat: 'Upcoming Flights', number: 24 }}
-          stat2={{ stat: 'Previous Flights', number: 376 }}
+          stat1={{ stat: 'Upcoming Flights', number: 0 }}
+          stat2={{ stat: 'Previous Flights', number: 0 }}
         />
         <DashboardItem
           href="/cart"
           icon={<AiOutlineShoppingCart fontSize="64px" />}
           stat="Cart"
-          stat1={{ stat: 'Total Items', number: 6 }}
-          stat2={{ stat: 'Total Price', number: '$374.00' }}
+          stat1={{ stat: 'Total Items', number: cart.length }}
+          stat2={{
+            stat: 'Total Price',
+            number: 'SGD ' + cart.reduce((a, b) => a + b.price, 0)
+          }}
         />
         <DashboardItem
           icon={<TbDiscount fontSize="64px" />}
           stat="Discounts"
-          stat1={{ stat: 'Your Discounts', number: 3 }}
+          stat1={{ stat: 'Your Discounts', number: 0 }}
         />
         <DashboardItem
           href="/settings/billing/payment"
@@ -273,9 +304,6 @@ const DashboardItem = ({
         whileTap={{
           y: 10
         }}
-        onClick={() => {
-          console.log('hello');
-        }}
       >
         <Flex flexDir="column" justifyContent="space-between">
           {icon}
@@ -293,7 +321,7 @@ const DashboardItem = ({
               <StatLabel color={labelColor} fontWeight="normal">
                 {stat1.stat}
               </StatLabel>
-              {stat1.number && (
+              {(stat1.number || stat1.number === 0) && (
                 <StatNumber color={numberColor}>{stat1.number}</StatNumber>
               )}
               {stat1.helperText && (
@@ -308,7 +336,7 @@ const DashboardItem = ({
               <StatLabel color={labelColor} fontWeight="normal">
                 {stat2.stat}
               </StatLabel>
-              {stat2.number && (
+              {(stat2.number || stat2.number === 0) && (
                 <StatNumber color={numberColor}>{stat2.number}</StatNumber>
               )}
               {stat2.helperText && (
@@ -325,3 +353,41 @@ const DashboardItem = ({
 };
 
 export default Dashboard;
+
+type ServerSideProps = {
+  flightsCount: number;
+  airportsCount: number;
+  usersCount: number | null;
+};
+export const getServerSideProps: GetServerSideProps<ServerSideProps> = async (
+  ctx
+) => {
+  const token = ctx.req.cookies.token || '';
+  server.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  let usersCount = null;
+  try {
+    const { data } = await server.get('/users/count?limit=none');
+    usersCount = data.count;
+  } catch (err) {
+    if (err instanceof AxiosError) {
+    } else {
+      console.error(err);
+    }
+  }
+
+  const {
+    data: { count: flightsCount }
+  } = await server.get('/flights/count?limit=none');
+  const {
+    data: { count: airportsCount }
+  } = await server.get('/airports/count?limit=none');
+
+  return {
+    props: {
+      flightsCount,
+      airportsCount,
+      usersCount
+    }
+  };
+};
