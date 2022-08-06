@@ -2,7 +2,7 @@ import { useColorMode } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { MantineProvider, ColorSchemeProvider } from '@mantine/core';
 
-import { theme } from '@common/config';
+import { theme } from '@common/theme';
 
 export type ThemeProviderProps = {
   children?: React.ReactNode;

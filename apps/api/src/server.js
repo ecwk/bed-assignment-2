@@ -23,6 +23,8 @@ const startServer = async () => {
 
   // Middleware
   app.use(express.json());
+  // url encoded body parser
+  app.use(express.urlencoded({ extended: true }));
   configurePassport(database);
   app.use(passport.initialize());
   app.use(morgan('dev'));

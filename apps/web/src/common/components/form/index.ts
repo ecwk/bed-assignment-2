@@ -6,3 +6,6 @@ export * from './contact-input';
 export * from './confirm-password';
 export * from './form-button';
 export * from './select';
+export * from './control';
+export * from './date-picker';
+export * from './select-mantine';

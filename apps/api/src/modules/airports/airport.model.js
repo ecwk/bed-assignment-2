@@ -1,4 +1,4 @@
-const select = {
+const AIRPORT_SELECT = {
   airportId: 'airport_id',
   name: 'name',
   country: 'country',
@@ -10,18 +10,18 @@ const select = {
 
 const AirportModel = (database) => ({
   findAll: async (filters) => {
-    const { page, limit, query, exclude } = filters
-    console.log(limit)
+    const { page, limit, query, exclude } = filters;
+    console.log(limit);
 
     const [airports] = await database.query(
       `
         SELECT
-          ${Object.entries(select)
+          ${Object.entries(AIRPORT_SELECT)
             .map(([key, value]) => {
               if (exclude.includes(key)) {
                 return '';
               }
-              return `${value} as ${key}`;
+              return `${value} AS ${key}`;
             })
             .filter(Boolean)
             .join(', ')}
@@ -64,4 +64,4 @@ const AirportModel = (database) => ({
   }
 });
 
-module.exports = { AirportModel };
+module.exports = { AIRPORT_SELECT, AirportModel };

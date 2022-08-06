@@ -1,6 +1,7 @@
-const { AirportModel } = require('./airport.model');
+const { AirportModel, AIRPORT_SELECT } = require('./airport.model');
 
 module.exports = {
   airportsController: require('./airports.controller'),
-  AirportModel
+  AirportModel,
+  AIRPORT_SELECT
 };

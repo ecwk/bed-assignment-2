@@ -5,7 +5,9 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
-  FormErrorMessage
+  FormErrorMessage,
+  useColorModeValue,
+  FormLabelProps
 } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
 import { WarningTwoIcon } from '@chakra-ui/icons';
@@ -15,6 +17,7 @@ import { useAxiosInterceptor } from '@common/hooks';
 export type ContactInputProps = FormControlProps & {
   name: string;
   label?: string;
+  labelProps?: FormLabelProps;
   type?: string;
   placeholder?: string;
   mobileCode: string | undefined;
@@ -23,6 +26,7 @@ export type ContactInputProps = FormControlProps & {
 export function ContactInput({
   name,
   label,
+  labelProps,
   type,
   placeholder,
   mobileCode,
@@ -37,13 +41,15 @@ export function ContactInput({
   const validationError = validationErrors?.[name];
   const isDirty = dirtyFields?.[name];
 
+  const labelColor = useColorModeValue('gray.700', 'gray.300');
+
   return (
     <FormControl
       {...formControlProps}
       isInvalid={!!error || (!isDirty && !!validationError)}
     >
       {label && (
-        <FormLabel color="whiteAlpha.600" mb={0} fontWeight="normal">
+        <FormLabel color={labelColor} {...labelProps}>
           {label}
         </FormLabel>
       )}

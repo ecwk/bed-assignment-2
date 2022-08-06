@@ -1,7 +1,9 @@
 import {
   FormControl,
   FormLabel,
+  FormLabelProps,
   Select,
+  useColorModeValue,
   type FormControlProps
 } from '@chakra-ui/react';
 import { ChangeEventHandler } from 'react';
@@ -12,6 +14,7 @@ import { COUNTRIES } from '@common/constants';
 export type CountrySelectProps = FormControlProps & {
   name?: string;
   label?: string;
+  labelProps?: FormLabelProps;
   type?: string;
   placeholder?: string;
   useMobileCode?: boolean;
@@ -24,6 +27,7 @@ export type CountrySelectProps = FormControlProps & {
 export function CountrySelect({
   name,
   label,
+  labelProps,
   type,
   placeholder,
   defaultValue = COUNTRIES.find((country) => country.code === 'SG')?.mobileCode,
@@ -41,10 +45,12 @@ export function CountrySelect({
     }
   };
 
+  const labelColor = useColorModeValue('gray.700', 'gray.300');
+
   return (
     <FormControl {...formControlProps}>
       {label && (
-        <FormLabel color="whiteAlpha.600" mb={0} fontWeight="normal">
+        <FormLabel color={labelColor} {...labelProps}>
           {label}
         </FormLabel>
       )}

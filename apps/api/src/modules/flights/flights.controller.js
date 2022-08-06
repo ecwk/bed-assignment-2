@@ -1,8 +1,10 @@
 const dayjs = require('dayjs');
 const express = require('express');
+const createError = require('http-errors');
 
 const { FlightModel } = require('./flight.model');
 const { validateBody } = require('../../common/middleware');
+const { getFilterQueries } = require('../../common/utils');
 const { FlightValidationSchema } = require('./flight.validation');
 const { DATE_FORMAT } = require('../../common/constants');
 
@@ -11,13 +13,8 @@ module.exports = (database) => {
   const flightModel = FlightModel(database);
 
   router.get('/', async (req, res, next) => {
-    const page =
-      Number(req.query.page) >= 1 ? Number(req.query.page) : undefined;
-    const limit =
-      Number(req.query.limit) >= 1 ? Number(req.query.limit) : undefined;
-
     try {
-      const flights = await flightModel.findAll(page, limit);
+      const flights = await flightModel.findAll(getFilterQueries(req));
       res.json({ flights });
     } catch (err) {
       next(err);
@@ -26,8 +23,25 @@ module.exports = (database) => {
 
   router.get('/count', async (req, res, next) => {
     try {
-      const flights = await flightModel.findAll(1, 999999999);
+      const flights = await flightModel.findAll(getFilterQueries(req));
       res.json({ count: flights.length });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/:flightId', async (req, res, next) => {
+    try {
+      const flight = await flightModel.findOne(
+        'flight_id',
+        req.params.flightId,
+        getFilterQueries(req)
+      );
+      if (!flight) {
+        return next(createError(404, 'Flight not found'));
+      } else {
+        res.status(200).json({ flight });
+      }
     } catch (err) {
       next(err);
     }
@@ -114,9 +128,13 @@ module.exports = (database) => {
     async (req, res, next) => {
       try {
         const flight = req.body;
-        flight.price = flight.price.toFixed(2);
-        const flightid = await flightModel.create(flight);
-        res.status(201).json({ flightid });
+        const flightId = await flightModel.create(flight);
+        const createdFlight = await flightModel.findOne(
+          'flight_id',
+          flightId,
+          getFilterQueries(req)
+        );
+        res.status(201).json({ flight: createdFlight });
       } catch (err) {
         next(err);
       }

@@ -1,5 +1,3 @@
-import { type Airport } from './airport';
-
 export type Flight = {
   flightId: number;
   flightCode: string;

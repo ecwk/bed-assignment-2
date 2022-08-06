@@ -8,9 +8,16 @@ import {
   InputRightElement,
   IconButton,
   FormErrorMessage,
-  type InputGroupProps
+  type InputGroupProps,
+  useColorModeValue,
+  FormLabelProps
 } from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon, LockIcon, WarningTwoIcon } from '@chakra-ui/icons';
+import {
+  ViewIcon,
+  ViewOffIcon,
+  LockIcon,
+  WarningTwoIcon
+} from '@chakra-ui/icons';
 
 import { useFormContext } from 'react-hook-form';
 import { useState } from 'react';
@@ -19,6 +26,7 @@ import { useAxiosInterceptor } from '@common/hooks';
 export type PasswordInputProps = FormControlProps & {
   name: string;
   label?: string;
+  labelProps?: FormLabelProps;
   placeholder?: string;
   toggleShowPassword?: boolean;
   inputProps?: InputGroupProps;
@@ -27,6 +35,7 @@ export type PasswordInputProps = FormControlProps & {
 export function PasswordInput({
   name,
   label,
+  labelProps,
   placeholder,
   toggleShowPassword = true,
   inputProps,
@@ -41,6 +50,8 @@ export function PasswordInput({
   const error = errors[name];
   const isDirty = dirtyFields?.[name];
 
+  const labelColor = useColorModeValue('gray.700', 'gray.300');
+
   const toggleShow = () => setShow((prev) => !prev);
 
   return (
@@ -48,7 +59,7 @@ export function PasswordInput({
       {...formControlProps}
       isInvalid={!!error || (!isDirty && errorRes?.statusCode === 401)}
     >
-      <FormLabel color="whiteAlpha.600" mb={0} fontWeight="normal">
+      <FormLabel color={labelColor} {...labelProps}>
         {label}
       </FormLabel>
       <InputGroup {...inputProps}>

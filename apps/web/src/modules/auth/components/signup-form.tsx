@@ -56,6 +56,11 @@ export const SignupForm = ({ sx, ...formProps }: SignupFormProps) => {
     signupMutation.mutate(data);
   };
 
+  const labelProps = {
+    fontWeight: 'normal',
+    mb: 1
+  };
+
   return (
     <Form
       enableToast={true}
@@ -64,28 +69,38 @@ export const SignupForm = ({ sx, ...formProps }: SignupFormProps) => {
       sx={{ display: 'flex', flexDir: 'column', gap: 4, ...sx }}
       {...formProps}
     >
-      <Input name="email" type="email" label="Email" placeholder="Email" />
+      <Input
+        name="email"
+        type="email"
+        label="Email"
+        placeholder="Email"
+        labelProps={labelProps}
+      />
       <Input
         name="username"
         type="username"
         label="Username"
         placeholder="Username"
+        labelProps={labelProps}
       />
       <ConfirmPassword
         password={{
           name: 'password',
           label: 'Password',
+          labelProps: labelProps,
           placeholder: 'Password'
         }}
         confirmPassword={{
           name: 'confirmPassword',
           label: 'Confirm Password',
+          labelProps: labelProps,
           placeholder: 'Confirm Password'
         }}
       />
       <Flex sx={{ gap: 4 }}>
         <CountrySelect
           label="Country"
+          labelProps={labelProps}
           value={mobileCode}
           setValue={setMobileCode}
           useMobileCode
@@ -93,6 +108,7 @@ export const SignupForm = ({ sx, ...formProps }: SignupFormProps) => {
         <ContactInput
           name="contact"
           label="Contact"
+          labelProps={labelProps}
           mobileCode={mobileCode}
           placeholder="Contact Number"
         />

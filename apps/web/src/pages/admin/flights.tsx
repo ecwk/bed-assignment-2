@@ -28,6 +28,13 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
   MenuGroup,
   MenuOptionGroup,
   MenuItemOption,
@@ -49,13 +56,21 @@ import {
   Collapse,
   Checkbox,
   VStack,
-  BoxProps
+  BoxProps,
+  Heading,
+  FlexProps
 } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import { QueryCache, useQuery, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, type NextPage } from 'next';
-import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from '@chakra-ui/icons';
+import {
+  ArrowForwardIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  SearchIcon
+} from '@chakra-ui/icons';
 import { TbLayoutGrid, TbLayoutList } from 'react-icons/tb';
 import { capitalize, startCase, truncate } from 'lodash';
+import { DatePicker as MantineDatePicker } from '@mantine/dates';
 import { Pagination } from '@mantine/core';
 
 import {
@@ -72,6 +87,9 @@ import { server } from '@config/axios';
 import { useForm, useWatch } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import { useDebouncedValue } from '@mantine/hooks';
+import { CreateFlightModal, CreateFlightForm } from '@modules/flights';
+import { MdRefresh } from 'react-icons/md';
+import { AxiosResponse } from 'axios';
 
 const itemsPerPageOptions: SelectOption[] = [
   {
@@ -141,9 +159,18 @@ const DEFAULT_VALUES: FilterOptions = {
   price: true
 };
 
-type AdminManageFlightsProps = ServerSideProps;
+const AdminManageFlights: NextPage = () => {
+  const [search, setSearch] = useState('');
+  const [debouncedSearch] = useDebouncedValue(search, 1000);
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    if (search !== debouncedSearch) {
+      setIsLoading(true);
+    } else if (search === debouncedSearch) {
+      setIsLoading(false);
+    }
+  }, [search, debouncedSearch]);
 
-const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
   const router = useRouter();
   const [page, setPage] = useState<number>(() => {
     const page = router.query.page;
@@ -162,19 +189,50 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
   const [debouncedWatch] = useDebouncedValue(watch, 500);
   const { itemsPerPage } = watch;
 
-  const numberOfPages = useMemo(() => {
-    return Math.ceil(count / (itemsPerPage || DEFAULT_VALUES.itemsPerPage));
-  }, [count, itemsPerPage]);
-  const flightsQuery = useQuery(['flights', { itemsPerPage, page }], (ctx) => {
-    let page_ = page;
-    if (page > numberOfPages) {
-      page_ = 1;
-      setPage(1);
+  const flightsQuery = useQuery(
+    ['flights', { itemsPerPage, page, debouncedSearch }],
+    (ctx) => {
+      let page_ = page;
+      console.log('count', count);
+      console.log('numberOfPages', numberOfPages);
+      console.log('page_', page_);
+      if (page > numberOfPages) {
+        page_ = 1;
+        setPage(1);
+      }
+
+      return server.get(
+        `/flights/?page=${page_}&limit=${itemsPerPage}&q=${debouncedSearch}`,
+        {
+          signal: ctx.signal
+        }
+      );
     }
-    return server.get(`/flights/?page=${page_}&limit=${itemsPerPage}`, {
-      signal: ctx.signal
-    });
-  });
+  );
+  const countQuery = useQuery(
+    ['flights-count', { itemsPerPage, page, debouncedSearch }],
+    async (ctx) => {
+      return server.get(`/flights/count/?limit=none&q=${debouncedSearch}`, {
+        signal: ctx.signal
+      });
+    }
+  );
+
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (countQuery.data?.data?.count) {
+      setCount(countQuery.data?.data?.count);
+    }
+  }, [countQuery.data]);
+  const numberOfPages = useMemo(() => {
+    const num = Math.ceil(
+      count / (itemsPerPage || DEFAULT_VALUES.itemsPerPage)
+    );
+    if (num <= 0) {
+      return 1;
+    }
+    return num;
+  }, [count, itemsPerPage]);
 
   const filteredFields = useMemo(() => {
     return fields.filter((field) => {
@@ -187,6 +245,10 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
   const flights: Flight[] = flightsQuery.data?.data?.flights;
   const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.800');
   const labelColor = useColorModeValue('gray.700', 'gray.300');
+
+  const refresh = () => {
+    router.reload();
+  };
 
   return (
     <Main maxW="1200px" w="100%" mx="auto">
@@ -203,7 +265,11 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
               <InputLeftElement>
                 <SearchIcon />
               </InputLeftElement>
-              <Input placeholder="Search" />
+              <Input
+                placeholder="Search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </InputGroup>
           </FormControl>
 
@@ -221,6 +287,7 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
           <Text color="gray.200" fontSize="sm" mb={1}>
             Sort By:{' '}
           </Text>
+
           <ChakraSelect
             w="150px"
             size="sm"
@@ -231,6 +298,14 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
             <option value="highest-price">Highest Price</option>
             <option value="lowest-price">Lowest Price</option>
           </ChakraSelect>
+
+          <IconButton
+            aria-label="Refresh"
+            icon={<MdRefresh />}
+            size="sm"
+            variant="ghost"
+            onClick={refresh}
+          />
 
           <Spacer />
 
@@ -267,8 +342,12 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
                 <MenuList px={4} backgroundColor={backgroundColor}>
                   <VStack alignItems="flex-start">
                     {fields.map(({ name }, i) => (
-                      // @ts-ignore
-                      <Checkbox {...methods.register(name)} key={`field-${i}`}>
+                      <Checkbox
+                        // @ts-ignore
+                        {...methods.register(name)}
+                        key={`field-${i}`}
+                        disabled={name === 'id'}
+                      >
                         {capitalize(name)}
                       </Checkbox>
                     ))}
@@ -322,30 +401,51 @@ const AdminManageFlights: NextPage<AdminManageFlightsProps> = ({ count }) => {
               </>
             )}
           </Menu>
-          <Button colorScheme="brandGold">Add Flight</Button>
+          <CreateFlightModal />
         </Flex>
       </Form>
 
-      <Text mt={5} textAlign="end" fontSize="sm">
-        Page {page} / {numberOfPages}
-      </Text>
+      <Flex mt={5} fontSize="sm" color="brandGray.500" alignItems="center">
+        <Text>{count} Flights</Text>
+        <Spacer />
+        <Text>
+          Page {page} / {numberOfPages}
+        </Text>
+        <GoToPageInput numberOfPages={numberOfPages} setPage={setPage} />
+      </Flex>
+
       <FlightList
-        mt={1}
+        mt={2}
         flights={flights}
         filterOptions={watch}
         fields={filteredFields}
+        itemsPerPage={itemsPerPage || 2}
       />
+
       <Divider my={10} />
-      <Flex justifyContent="center" alignItems="center">
+
+      <Flex flexDir="column" alignItems="center" mx="auto">
         <Pagination
           spacing={10}
           total={numberOfPages}
           page={page}
           onChange={(page) => setPage(page)}
-          siblings={2}
           boundaries={2}
         />
-        <GoToPageInput numberOfPages={numberOfPages} setPage={setPage} />
+        <Flex
+          mt={5}
+          fontSize="sm"
+          color="brandGray.500"
+          alignItems="center"
+          w="100%"
+        >
+          <Text>{count} Flights</Text>
+          <Spacer />
+          <Text>
+            Page {page} / {numberOfPages}
+          </Text>
+          <GoToPageInput numberOfPages={numberOfPages} setPage={setPage} />
+        </Flex>
       </Flex>
     </Main>
   );
@@ -355,16 +455,31 @@ type FlightListProps = BoxProps & {
   fields: Field[];
   flights: Flight[];
   filterOptions: Partial<FilterOptions>;
+  itemsPerPage: number;
 };
 
 const FlightList = ({
   fields,
   flights,
   filterOptions,
+  itemsPerPage,
   ...boxProps
 }: FlightListProps) => {
   const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.800');
   const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
+
+  const skeletons = useMemo(() => {
+    const arr = [];
+    for (let i = 0; i < itemsPerPage; i++) {
+      arr.push(<Skeleton gridColumn="1 / -1" key={`skeleton-${i}`} h="65px" />);
+    }
+    return arr;
+  }, [itemsPerPage]);
+
+  const headerBackgroundColor = useColorModeValue(
+    'brandGray.700',
+    'brandGray.900'
+  );
 
   return (
     <Box {...boxProps}>
@@ -373,7 +488,7 @@ const FlightList = ({
         border="1px solid"
         borderColor={borderColor}
         borderTopRadius="lg"
-        backgroundColor="brandGray.900"
+        backgroundColor={headerBackgroundColor}
         gridTemplateColumns={fields
           .filter(({ width }) => width)
           .map(({ width }) => width)
@@ -412,9 +527,7 @@ const FlightList = ({
                 filterOptions={filterOptions}
               />
             ))
-          : [...Array(5).keys()].map((_, i) => (
-              <Skeleton gridColumn="1 / -1" key={`skeleton-${i}`} h="41px" />
-            ))}
+          : skeletons}
       </Grid>
     </Box>
   );
@@ -465,7 +578,7 @@ const FlightListItem = ({
         <Box>
           <Collapse startingHeight={20} in={show1}>
             <b>Id</b>: {originAirportId}
-            {show1 ? '' : '...'}
+            {/* {show1 ? '' : '...'} */}
             <br />
             <b>Airport</b>: {originAirportName}
             <br />
@@ -475,21 +588,23 @@ const FlightListItem = ({
             <br />
             <b>Description</b>: {originAirportDescription}
           </Collapse>
-          <Link
+          <Button
+            variant="link"
             onClick={handleShow1}
             color={showColor}
             fontSize="sm"
+            fontWeight="normal"
             _hover={{ color: showColorHover }}
           >
             {show1 ? 'View less' : 'View more'}
-          </Link>
+          </Button>
         </Box>
       )}
       {destination && (
         <Box>
           <Collapse startingHeight={20} in={show2}>
             <b>Id</b>: {destinationAirportId}
-            {show2 ? '' : '...'}
+            {/* {show2 ? '' : '...'} */}
             <br />
             <b>Airport</b>: {destinationAirportName}
             <br />
@@ -499,15 +614,16 @@ const FlightListItem = ({
             <br />
             <b>Description</b>: {destinationAirportDescription}
           </Collapse>
-          <Link
-            href="#"
+          <Button
+            variant="link"
             onClick={handleShow2}
             color={showColor}
             fontSize="sm"
+            fontWeight="normal"
             _hover={{ color: showColorHover }}
           >
             {show2 ? 'View less' : 'View more'}
-          </Link>
+          </Button>
         </Box>
       )}
       {showPrice && <Text>${price}</Text>}
@@ -516,27 +632,36 @@ const FlightListItem = ({
   );
 };
 
-type GoToPageInputProps = {
+type GoToPageInputProps = FlexProps & {
   numberOfPages: number;
   setPage: (page: number) => void;
 };
 
-const GoToPageInput = ({ numberOfPages, setPage }: GoToPageInputProps) => {
+const GoToPageInput = ({
+  numberOfPages,
+  setPage,
+  ...flexProps
+}: GoToPageInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <Flex ml={5}>
+    <Flex ml={5} {...flexProps}>
       <Input
         borderRightRadius="none"
         w="100px"
         placeholder="Page no."
+        type="number"
+        _placeholder={{
+          pl: 1
+        }}
         ref={inputRef}
         size="sm"
-        borderLeftRadius="md"
         min={0}
+        variant="flushed"
       />
-      <Button
-        colorScheme="brandGold"
+      <IconButton
+        aria-label="Go to page"
+        icon={<ArrowForwardIcon />}
         borderLeftRadius="none"
         size="sm"
         onClick={() => {
@@ -549,27 +674,9 @@ const GoToPageInput = ({ numberOfPages, setPage }: GoToPageInputProps) => {
             setPage(Number(value));
           }
         }}
-      >
-        Go To
-      </Button>
+      />
     </Flex>
   );
 };
 
-type ServerSideProps = {
-  count: number;
-};
-
-export const getServerSideProps: GetServerSideProps<
-  ServerSideProps
-> = async () => {
-  const res = await server.get('/flights/count');
-  const count = res.data.count;
-
-  return {
-    props: {
-      count
-    }
-  };
-};
 export default AdminManageFlights;

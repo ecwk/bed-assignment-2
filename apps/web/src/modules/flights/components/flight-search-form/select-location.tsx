@@ -94,8 +94,6 @@ export const SelectLocation = ({
     );
   };
 
-  useEffect;
-
   return (
     <Flex flexDir="column" {...flexProps}>
       <FormControl>

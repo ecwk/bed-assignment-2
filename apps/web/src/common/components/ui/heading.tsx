@@ -22,9 +22,9 @@ export const H2 = ({ children, ...headingProps }: HeadingProps) => {
   );
 };
 
-export const H3 = ({ children }: HeadingProps) => {
+export const H3 = ({ children, ...headingProps }: HeadingProps) => {
   return (
-    <Heading as="h3" size="md">
+    <Heading as="h3" size="md" {...headingProps}>
       {children}
     </Heading>
   );

@@ -2,7 +2,7 @@ import { ChakraProvider, useColorMode } from '@chakra-ui/react';
 import { AnimatePresence } from 'framer-motion';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { theme } from '@config/theme';
+import { theme } from '@common/theme';
 import { AuthProvider } from '@modules/auth';
 import { CartProvider, LoadpageProvider } from '@common/hooks';
 import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
@@ -20,9 +20,7 @@ export const Providers = ({ children }: ProvidersProps) => {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <LoadpageProvider>
-              <CartProvider>
-                  {children}
-              </CartProvider>
+              <CartProvider>{children}</CartProvider>
             </LoadpageProvider>
           </AuthProvider>
         </QueryClientProvider>

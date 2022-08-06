@@ -57,6 +57,13 @@ const Dashboard: NextPage = () => {
             helperText="Find out more about airports"
             stat1={{ stat: 'Total Airports', number: 24 }}
           />
+          <DashboardItem
+            href="/admin/add/users"
+            icon={<AddIcon fontSize="60px" />}
+            stat="Add New Users"
+            helperText="Find out more about airports"
+            stat1={{ stat: 'Total Users', number: 1239 }}
+          />
         </Grid>
       )}
       <Grid

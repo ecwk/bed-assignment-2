@@ -1,47 +1,97 @@
+const { AIRPORT_SELECT } = require('../airports');
+
+const FLIGHT_SELECT = {
+  flightId: 'f.flight_id',
+  flightCode: 'f.flight_code',
+  departureDate: 'f.departure_date',
+  travelTime: 'f.travel_time',
+  price: 'f.price',
+  originAirportId: 'o.airport_id',
+  originAirportName: 'o.name',
+  originAirportCountry: 'o.country',
+  originAirportCity: 'o.city',
+  originAirportDescription: 'o.description',
+  destinationAirportId: 'd.airport_id',
+  destinationAirportName: 'd.name',
+  destinationAirportCountry: 'd.country',
+  destinationAirportCity: 'd.city',
+  destinationAirportDescription: 'd.description',
+  createdOn: 'f.created_on',
+  lastModifiedOn: 'f.last_modified_on'
+};
+
 const FlightModel = (database) => ({
-  findOne: async (key, value) => {
+  findOne: async (
+    key,
+    value,
+    filters = {
+      exclude: []
+    }
+  ) => {
+    const { exclude } = filters;
+
     const [flights] = await database.query(
       `
-        SELECT * FROM flight
+        SELECT
+          ${Object.entries(FLIGHT_SELECT)
+            .map(([key, value]) => {
+              if (exclude.includes(key)) {
+                return '';
+              }
+              return `${value} AS ${key}`;
+            })
+            .filter(Boolean)
+            .join(', ')}
+        FROM flight AS f
+          INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
+          INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id
         WHERE ?? = ?
-
       `,
       [key, value]
     );
     return flights[0];
   },
-  findAll: async (page = 1, limit = 100) => {
+  findAll: async (filters) => {
+    const { page, limit, query, exclude } = filters;
     const [flights] = await database.query(
       `
         SELECT
-          f.flight_id flightId,
-          f.flight_code flightCode,
-          f.departure_date departureDate,
-          f.travel_time travelTime,
-          f.price price,
-          f.aircraft_name aircraftName,
-
-          o.airport_id originAirportId,
-          o.name originAirportName,
-          o.country originAirportCountry,
-          o.city originAirportCity,
-          o.description originAirportDescription,
-
-          d.airport_id destinationAirportId,
-          d.name destinationAirportName,
-          d.country destinationAirportCountry,
-          d.city destinationAirportCity,
-          d.description destinationAirportDescription,
-
-          f.created_on createdOn,
-          f.last_modified_on as lastModifiedOn
+          ${Object.entries(FLIGHT_SELECT)
+            .map(([key, value]) => {
+              if (exclude.includes(key)) {
+                return '';
+              }
+              return `${value} AS ${key}`;
+            })
+            .filter(Boolean)
+            .join(', ')}
         FROM flight AS f
-          INNER JOIN airport o ON f.origin_airport_id = o.airport_id
-          INNER JOIN airport d ON f.destination_airport_id = d.airport_id
+          INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
+          INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id
+        WHERE
+          f.flight_id REGEXP ?
+          OR f.flight_code REGEXP ?
+          OR o.name REGEXP ?
+          OR o.city REGEXP ?
+          OR o.country REGEXP ?
+          OR d.name REGEXP ?
+          OR d.city REGEXP ?
+          OR d.country REGEXP ?
         LIMIT ?
         OFFSET ?
       `,
-      [limit, (page - 1) * limit]
+      [
+        query,
+        query,
+        query,
+        query,
+        query,
+        query,
+        query,
+        query,
+        limit,
+        (page - 1) * limit
+      ]
     );
     return flights;
   },
@@ -110,18 +160,18 @@ const FlightModel = (database) => ({
     const results = await database.query(
       `
         INSERT INTO flight
-          (flightCode, aircraft, originAirport, destinationAirport, departureDate, travelTime, price)
+          (flight_code, aircraft_name, departure_date, travel_time, price, origin_airport_id, destination_airport_id)
         VALUES
           (?, ?, ?, ?, ?, ?, ?);
       `,
       [
         flight.flightCode,
-        flight.aircraft,
-        flight.originAirport,
-        flight.destinationAirport,
+        flight.aircraftName,
         flight.departureDate,
         flight.travelTime,
-        flight.price
+        flight.price,
+        flight.originAirportId,
+        flight.destinationAirportId
       ]
     );
     return results[0].insertId;

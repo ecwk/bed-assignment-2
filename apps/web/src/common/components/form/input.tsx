@@ -1,81 +1,54 @@
+import { useFormContext } from 'react-hook-form';
+import { type HTMLInputTypeAttribute } from 'react';
 import {
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Input as ChakraInput,
   InputGroup,
   InputLeftElement,
-  type FormControlProps,
+  InputLeftAddon,
+  useColorModeValue,
   type InputGroupProps
 } from '@chakra-ui/react';
-import { useFormContext } from 'react-hook-form';
-import { WarningTwoIcon } from '@chakra-ui/icons';
-import { useAxiosInterceptor } from '@common/hooks';
 
-export type InputProps = FormControlProps & {
-  name: string;
-  label?: string;
-  type?: string;
+import { Control, type ControlProps } from '@common/components';
+
+export type InputProps = ControlProps & {
+  type?: HTMLInputTypeAttribute;
   placeholder?: string;
   defaultValue?: string;
-  inputProps?: InputGroupProps;
   leftElement?: React.ReactNode;
+  leftAddon?: React.ReactNode;
+  inputProps?: InputGroupProps;
+  step?: string | number;
 };
 
 export function Input({
-  name,
-  label,
   type,
   placeholder,
   defaultValue,
-  inputProps,
   leftElement,
-  ...formControlProps
+  leftAddon,
+  inputProps,
+  step,
+  ...controlProps
 }: InputProps) {
-  const { error: errorRes, validationErrors } = useAxiosInterceptor();
-  const {
-    register,
-    formState: { errors, dirtyFields }
-  } = useFormContext<Record<string, unknown>>();
-  const error = errors[name];
-  const validationError = validationErrors?.[name];
-  const isDirty = dirtyFields?.[name];
+  const { register } = useFormContext<Record<string, any>>();
+
+  const focusBorderColor = useColorModeValue('brandGold.500', 'brandGold.200');
 
   return (
-    <FormControl
-      {...formControlProps}
-      isInvalid={
-        !!error ||
-        (!isDirty && !!validationError) ||
-        (!isDirty && errorRes?.statusCode === 401)
-      }
-    >
-      {label && (
-        <FormLabel color="whiteAlpha.600" mb={0} fontWeight="normal">
-          {label}
-        </FormLabel>
-      )}
+    <Control {...controlProps}>
       <InputGroup {...inputProps}>
         {leftElement && <InputLeftElement>{leftElement}</InputLeftElement>}
+        {leftAddon && <InputLeftAddon>{leftAddon}</InputLeftAddon>}
         <ChakraInput
-          {...register(name)}
+          {...register(controlProps.name)}
           type={type}
+          focusBorderColor={focusBorderColor}
           placeholder={placeholder}
           defaultValue={defaultValue}
+          step={step}
         />
       </InputGroup>
-      {error && (
-        <FormErrorMessage>
-          <WarningTwoIcon mr={2} />
-          {error?.message}
-        </FormErrorMessage>
-      )}
-      {!isDirty && !!validationError && (
-        <FormErrorMessage>
-          <WarningTwoIcon mr={2} />
-          {validationError}
-        </FormErrorMessage>
-      )}
-    </FormControl>
+    </Control>
   );
 }
