@@ -11,7 +11,6 @@ const AIRPORT_SELECT = {
 const AirportModel = (database) => ({
   findAll: async (filters) => {
     const { page, limit, query, exclude } = filters;
-    console.log(limit);
 
     const [airports] = await database.query(
       `
@@ -57,8 +56,8 @@ const AirportModel = (database) => ({
   },
   create: async (airport) => {
     const results = await database.query(
-      'INSERT INTO airport (name, country, description) VALUES (?, ?, ?)',
-      [airport.name, airport.country, airport.description]
+      'INSERT INTO airport (name, country, city, description) VALUES (?, ?, ?, ?)',
+      [airport.name, airport.country, airport.city, airport.description]
     );
     return results[0].insertId;
   }

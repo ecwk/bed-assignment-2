@@ -2,7 +2,7 @@ const dayjs = require('dayjs');
 const express = require('express');
 const createError = require('http-errors');
 
-const { FlightModel } = require('./flight.model');
+const { FlightModel, FLIGHT_SELECT } = require('./flight.model');
 const { validateBody } = require('../../common/middleware');
 const { getFilterQueries } = require('../../common/utils');
 const { FlightValidationSchema } = require('./flight.validation');
@@ -22,8 +22,11 @@ module.exports = (database) => {
   });
 
   router.get('/count', async (req, res, next) => {
+    const filterQueries = getFilterQueries(req);
+    filterQueries.exclude = Object.keys(FLIGHT_SELECT).slice(0, -1);
+
     try {
-      const flights = await flightModel.findAll(getFilterQueries(req));
+      const flights = await flightModel.findAll(filterQueries);
       res.json({ count: flights.length });
     } catch (err) {
       next(err);

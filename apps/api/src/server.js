@@ -16,6 +16,7 @@ const { usersController } = require('./modules/users');
 const { authController } = require('./modules/auth');
 const databaseConfig = require('./config/database');
 const { env } = require('./config');
+const { bindUser } = require('./common/middleware');
 
 const startServer = async () => {
   const app = express();
@@ -30,6 +31,7 @@ const startServer = async () => {
   app.use(morgan('dev'));
   app.use(fileUpload());
   app.use(cors());
+  app.use(bindUser);
 
   // Endpoints
   app.use('/public', express.static('./public'));

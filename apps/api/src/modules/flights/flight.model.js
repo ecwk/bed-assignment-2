@@ -21,36 +21,6 @@ const FLIGHT_SELECT = {
 };
 
 const FlightModel = (database) => ({
-  findOne: async (
-    key,
-    value,
-    filters = {
-      exclude: []
-    }
-  ) => {
-    const { exclude } = filters;
-
-    const [flights] = await database.query(
-      `
-        SELECT
-          ${Object.entries(FLIGHT_SELECT)
-            .map(([key, value]) => {
-              if (exclude.includes(key)) {
-                return '';
-              }
-              return `${value} AS ${key}`;
-            })
-            .filter(Boolean)
-            .join(', ')}
-        FROM flight AS f
-          INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
-          INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id
-        WHERE ?? = ?
-      `,
-      [key, value]
-    );
-    return flights[0];
-  },
   findAll: async (filters) => {
     const { page, limit, query, exclude } = filters;
     const [flights] = await database.query(
@@ -94,6 +64,36 @@ const FlightModel = (database) => ({
       ]
     );
     return flights;
+  },
+  findOne: async (
+    key,
+    value,
+    filters = {
+      exclude: []
+    }
+  ) => {
+    const { exclude } = filters;
+
+    const [flights] = await database.query(
+      `
+        SELECT
+          ${Object.entries(FLIGHT_SELECT)
+            .map(([key, value]) => {
+              if (exclude.includes(key)) {
+                return '';
+              }
+              return `${value} AS ${key}`;
+            })
+            .filter(Boolean)
+            .join(', ')}
+        FROM flight AS f
+          INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
+          INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id
+        WHERE ?? = ?
+      `,
+      [key, value]
+    );
+    return flights[0];
   },
   findDirectFlights: async (
     originAirportId,
@@ -188,4 +188,4 @@ const FlightModel = (database) => ({
   }
 });
 
-module.exports = { FlightModel };
+module.exports = { FlightModel, FLIGHT_SELECT };

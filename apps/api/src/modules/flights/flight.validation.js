@@ -3,7 +3,6 @@ const dayjs = require('dayjs');
 
 const { FlightModel } = require('./flight.model');
 const { AirportModel } = require('../airports');
-const ms = require('ms');
 
 const FlightValidationSchema = (database) => {
   const flightModel = FlightModel(database);
@@ -35,7 +34,6 @@ const FlightValidationSchema = (database) => {
         }
       })
       .transform((value) => {
-        console.log(dayjs(value).format('YYYY-MM-DD HH:mm:ss'));
         return dayjs(value).format('YYYY-MM-DD HH:mm:ss');
       })
       .required(),

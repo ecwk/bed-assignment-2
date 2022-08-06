@@ -7,7 +7,8 @@ module.exports = {
     jwt.sign(
       {
         username: user.username,
-        email: user.email
+        email: user.email,
+        role: user.role
       },
       env.JWT_SECRET,
       {

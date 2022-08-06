@@ -1,5 +1,4 @@
 function getFilterQueries(req) {
-  // if empty match all
   const query =
     typeof req.query.q === 'string'
       ? req.query.q !== ''

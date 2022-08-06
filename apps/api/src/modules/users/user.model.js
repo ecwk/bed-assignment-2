@@ -1,22 +1,41 @@
 const argon2 = require('argon2');
 const { isEmpty } = require('lodash');
 
+const USER_SELECT = {
+  userId: 'u.user_id',
+  username: 'u.username',
+  email: 'u.email',
+  contact: 'u.contact',
+  password: 'u.password',
+  role: 'u.role',
+  profilePicUrl: 'u.profile_pic_url',
+  createdOn: 'u.created_on',
+  lastModifiedOn: 'u.last_modified_on'
+};
+
 const UserModel = (database) => ({
-  findAll: async () => {
+  findAll: async (filters) => {
+    const { page, limit, query, exclude } = filters;
     const [users] = await database.query(
       `
         SELECT
-          user_id AS userId,
-          username,
-          email,
-          contact,
-          password,
-          role,
-          profile_pic_url AS profilePicUrl,
-          created_on AS createdOn,
-          last_modified_on AS lastModifiedOn
-        FROM users
-      `
+          ${Object.entries(USER_SELECT)
+            .map(([key, value]) => {
+              if (exclude.includes(key)) {
+                return '';
+              }
+              return `${value} AS ${key}`;
+            })
+            .filter(Boolean)
+            .join(', ')}
+        FROM users AS u
+        WHERE
+          u.username REGEXP ?
+          OR u.email REGEXP ?
+        LIMIT ?
+        OFFSET ?
+      `,
+      [query, query, limit, (page - 1) * limit]
     );
     return users;
   },
@@ -122,4 +141,4 @@ const UserModel = (database) => ({
   }
 });
 
-module.exports = { UserModel };
+module.exports = { UserModel, USER_SELECT };

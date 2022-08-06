@@ -5,6 +5,7 @@ const { AirportModel } = require('./airport.model');
 const { getFilterQueries } = require('../../common/utils');
 const { AirportValidationSchema } = require('./airport.validation');
 const { validateBody, protectedRoute } = require('../../common/middleware');
+const { AIRPORT_SELECT } = require('./airport.model');
 module.exports = (database) => {
   const router = express.Router();
   const airportModel = AirportModel(database);
@@ -13,6 +14,18 @@ module.exports = (database) => {
     try {
       const airports = await airportModel.findAll(getFilterQueries(req));
       res.json({ airports });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/count', async (req, res, next) => {
+    const filterQueries = getFilterQueries(req);
+    filterQueries.exclude = Object.keys(AIRPORT_SELECT).slice(0, -1);
+
+    try {
+      const airports = await airportModel.findAll(filterQueries);
+      res.json({ count: airports.length });
     } catch (err) {
       next(err);
     }
@@ -40,8 +53,13 @@ module.exports = (database) => {
     async (req, res, next) => {
       try {
         const airport = req.body;
-        await airportModel.create(airport);
-        res.status(204).send();
+        const airportId = await airportModel.create(airport);
+        const createdAirport = await airportModel.findOne(
+          'airport_id',
+          airportId,
+          getFilterQueries(req)
+        );
+        res.status(201).json({ airport: createdAirport });
       } catch (err) {
         next(err);
       }

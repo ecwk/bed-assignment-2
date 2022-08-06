@@ -3,7 +3,8 @@ const createError = require('http-errors');
 
 const { validateBody, protectedRoute } = require('../../common/middleware');
 const { UserValidationSchema } = require('./user.validation');
-const { UserModel } = require('./user.model');
+const { UserModel, USER_SELECT } = require('./user.model');
+const { getFilterQueries } = require('../../common/utils');
 
 module.exports = (database) => {
   const router = express.Router();
@@ -12,11 +13,27 @@ module.exports = (database) => {
   router.use(protectedRoute);
 
   router.get('/', async (req, res, next) => {
+    const filterQueries = getFilterQueries(req);
+    filterQueries.exclude = [
+      ...filterQueries.exclude,
+      ...(req.isAdmin ? [] : ['password'])
+    ];
+
     try {
-      const users = (await userModel.findAll()).map(
-        ({ password, ...rest }) => rest
-      );
+      const users = await userModel.findAll(filterQueries);
       res.json({ users });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/count', async (req, res, next) => {
+    const filterQueries = getFilterQueries(req);
+    filterQueries.exclude = Object.keys(USER_SELECT).slice(0, -1);
+
+    try {
+      const users = await userModel.findAll(filterQueries);
+      res.json({ count: users.length });
     } catch (err) {
       next(err);
     }
