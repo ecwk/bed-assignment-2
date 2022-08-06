@@ -16,9 +16,10 @@ const AirportValidationSchema = (database) => {
           return !airport;
         }
       )
-      .required(),
-    country: yup.string().required(),
-    description: yup.string().required()
+      .required('Required'),
+    country: yup.string().required('Required'),
+    city: yup.string().required('Required'),
+    description: yup.string().required('Required')
   });
 };
 

@@ -9,7 +9,6 @@ const protectedRoute = (req, res, next) => {
       if (err) {
         next(createError(500, err));
       } else if (!user) {
-        console.log('yo')
         return next(
           createError(405, 'You must be logged in to access this resource')
         );

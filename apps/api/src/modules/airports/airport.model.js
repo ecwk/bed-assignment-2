@@ -1,11 +1,11 @@
 const AIRPORT_SELECT = {
-  airportId: 'airport_id',
-  name: 'name',
-  country: 'country',
-  city: 'city',
-  description: 'description',
-  createdOn: 'created_on',
-  lastModifiedOn: 'last_modified_on'
+  airportId: 'a.airport_id',
+  name: 'a.name',
+  country: 'a.country',
+  city: 'a.city',
+  description: 'a.description',
+  createdOn: 'a.created_on',
+  lastModifiedOn: 'a.last_modified_on'
 };
 
 const AirportModel = (database) => ({
@@ -24,7 +24,7 @@ const AirportModel = (database) => ({
             })
             .filter(Boolean)
             .join(', ')}
-        FROM airport
+        FROM airport AS a
         WHERE
           name REGEXP ?
           OR city REGEXP ?
