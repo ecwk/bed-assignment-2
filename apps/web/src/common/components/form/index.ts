@@ -9,3 +9,4 @@ export * from './select';
 export * from './control';
 export * from './date-picker';
 export * from './select-mantine';
+export * from './text-area';

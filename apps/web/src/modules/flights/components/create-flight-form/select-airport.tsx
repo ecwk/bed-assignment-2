@@ -92,7 +92,6 @@ export const SelectAirport = ({
         filter: selectFilter,
         searchable: true,
         clearable: true,
-        contentEditable: true,
         limit: LIMIT,
         icon: <SearchIcon />,
         itemComponent: SelectItem,

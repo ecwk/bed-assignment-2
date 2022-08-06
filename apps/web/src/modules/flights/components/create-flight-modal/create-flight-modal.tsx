@@ -37,8 +37,6 @@ export const CreateFlightModal = ({
 
   const { isOpen, onOpen, onClose } = disclosure || defaultDisclosure;
 
-  const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.800');
-
   return (
     <>
       <Hide hide={hideButton}>
@@ -49,7 +47,7 @@ export const CreateFlightModal = ({
 
       <Modal isOpen={isOpen} onClose={onClose} size="3xl">
         <ModalOverlay />
-        <ModalContent backgroundColor={backgroundColor} p={4}>
+        <ModalContent backgroundColor={'modal-bg'} p={4}>
           <ModalHeader>
             <H2>Add Flight</H2>
           </ModalHeader>

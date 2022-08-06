@@ -114,6 +114,7 @@ export const SignupForm = ({ sx, ...formProps }: SignupFormProps) => {
         />
       </Flex>
       <FormButton
+        size="lg"
         mt={4}
         isLoading={signupMutation.isLoading}
         isSuccess={signupMutation.isSuccess}

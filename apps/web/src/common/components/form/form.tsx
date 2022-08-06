@@ -26,7 +26,7 @@ export function Form({
 
 type FormHandlerProps = Omit<BoxProps, 'onSubmit'> & {
   onSubmit?: SubmitHandler<any>;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 function FormHandler({ onSubmit, children, ...boxProps }: FormHandlerProps) {

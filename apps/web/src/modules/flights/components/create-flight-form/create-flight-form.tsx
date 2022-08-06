@@ -99,7 +99,7 @@ export const CreateFlightForm = ({
   }, [createMutation.isLoading, createMutation.isSuccess]);
 
   const labelProps = {
-    color: useColorModeValue('brandGray.600', 'brandGray.300'),
+    color: 'label-color',
     fontWeight: 'normal',
     mb: 1
   };

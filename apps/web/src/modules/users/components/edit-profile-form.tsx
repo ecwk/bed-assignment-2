@@ -19,7 +19,7 @@ import {
 import { sleep } from '@common/utils';
 import { useAuth } from '@modules/auth';
 import { usersApiClient, editProfileSchema } from '@modules/users';
-import { random } from 'lodash';
+import { capitalize, random } from 'lodash';
 import ms from 'ms';
 import dayjs from 'dayjs';
 
@@ -75,7 +75,6 @@ export function EditProfileForm({
     <Form
       display="flex"
       flexDir="column"
-      // gap={5}
       onSubmit={onSubmit}
       methods={methods}
       {...formProps}
@@ -84,12 +83,12 @@ export function EditProfileForm({
         <ProfileAvatar user={user} size="2xl" borderRadius="lg" />
         <VStack alignItems="flex-start" spacing={0}>
           <Text fontSize="4xl" fontWeight="semibold">
-            {user?.username}
+            {capitalize(user?.username)}
           </Text>
-          <Link color="blue.200" href={`mailto:${user?.email}`}>
+          <Link color="link-color-blue" href={`mailto:${user?.email}`}>
             {user?.email}
           </Link>
-          <Text color="gray.300">{user?.contact}</Text>
+          <Text color="label-color">{user?.contact}</Text>
         </VStack>
       </Flex>
       <Box mt={5} color="label-color" fontSize="sm">

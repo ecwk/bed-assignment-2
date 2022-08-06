@@ -11,7 +11,8 @@ import {
   StatArrow,
   useColorModeValue,
   useDisclosure,
-  Portal
+  Portal,
+  Button
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { BiUser } from 'react-icons/bi';
@@ -30,6 +31,7 @@ import {
 import { useAuth } from '@modules/auth';
 import { H2, H3, Link, Main, Profile, Title } from '@common/components';
 import { CreateFlightModal } from '@modules/flights';
+import { CreateAirportModal } from '@modules/airports';
 import { useRef, useState } from 'react';
 import { server } from '@config/axios';
 import { env } from '@config/env';
@@ -47,6 +49,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
   const { user, isAdmin } = useAuth();
   const { cart } = useCart();
   const createFlightDisclosure = useDisclosure();
+  const createAirportDisclosure = useDisclosure();
 
   return (
     <Main>
@@ -69,10 +72,8 @@ const Dashboard: NextPage<ServerSideProps> = ({
             gap={5}
           >
             <Portal>
-              <CreateFlightModal
-                hideButton
-                disclosure={createFlightDisclosure}
-              />
+              <CreateFlightModal hideButton disclosure={createFlightDisclosure} />
+              <CreateAirportModal disclosure={createAirportDisclosure} />
             </Portal>
             <DashboardItem
               onClick={createFlightDisclosure.onOpen}
@@ -82,7 +83,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
               fontSize="lg"
             />
             <DashboardItem
-              onClick={createFlightDisclosure.onOpen}
+              onClick={createAirportDisclosure.onOpen}
               icon={<AddIcon fontSize="35px" />}
               stat="Add Airport"
               h="125px"
@@ -275,7 +276,7 @@ const DashboardItem = ({
   const numberColor = useColorModeValue('brandGray.600', 'brandGray.100');
 
   return (
-    <Link as={onClick ? 'div' : 'a'} href={href} onClick={onClick}>
+    <Link as={!href ? 'div' : 'a'} href={href} onClick={onClick}>
       <Flex
         as={motion.article}
         justifyContent="space-between"

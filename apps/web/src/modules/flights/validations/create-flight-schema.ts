@@ -1,11 +1,6 @@
 import dayjs from 'dayjs';
 import * as yup from 'yup';
 
-export const createFlightSchema1 = yup.object().shape({
-  originAirportId: yup.mixed().transform(Number).required('Required'),
-  destinationAirportId: yup.mixed().transform(Number).required('Required')
-});
-
 export const createFlightSchema = yup.object().shape({
   originAirportId: yup.mixed().transform(Number).required('Required'),
   destinationAirportId: yup.mixed().transform(Number).required('Required'),

@@ -70,6 +70,7 @@ export const LoginForm = ({ sx, ...formProps }: LoginFormProps) => {
         inputProps={{ size: 'lg' }}
       />
       <FormButton
+        size="lg"
         isLoading={loginMutation.isLoading}
         isSuccess={loginMutation.isSuccess}
       >

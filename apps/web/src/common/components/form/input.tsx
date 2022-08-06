@@ -11,7 +11,7 @@ import {
 
 import { Control, type ControlProps } from '@common/components';
 
-export type InputProps = ControlProps & {
+export type InputProps<T = Record<string, string>> = ControlProps & {
   type?: HTMLInputTypeAttribute;
   placeholder?: string;
   defaultValue?: string;
@@ -19,9 +19,10 @@ export type InputProps = ControlProps & {
   leftAddon?: React.ReactNode;
   inputProps?: InputGroupProps;
   step?: string | number;
+  name: keyof T;
 };
 
-export function Input({
+export function Input<T = Record<string, string>>({
   type,
   placeholder,
   defaultValue,
@@ -29,19 +30,20 @@ export function Input({
   leftAddon,
   inputProps,
   step,
+  name,
   ...controlProps
-}: InputProps) {
+}: InputProps<T>) {
   const { register } = useFormContext<Record<string, any>>();
 
   const focusBorderColor = useColorModeValue('brandGold.500', 'brandGold.200');
 
   return (
-    <Control {...controlProps}>
+    <Control name={name} {...controlProps}>
       <InputGroup {...inputProps}>
         {leftElement && <InputLeftElement>{leftElement}</InputLeftElement>}
         {leftAddon && <InputLeftAddon>{leftAddon}</InputLeftAddon>}
         <ChakraInput
-          {...register(controlProps.name)}
+          {...register(name)}
           type={type}
           focusBorderColor={focusBorderColor}
           placeholder={placeholder}
