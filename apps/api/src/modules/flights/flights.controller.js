@@ -37,7 +37,10 @@ module.exports = (database) => {
   });
 
   router.get('/count', async (req, res, next) => {
-    const filterQueries = getFilterQueries(req);
+    const filterQueries = getFilterQueries(req, {
+      availableKeys: FLIGHT_SELECT,
+      keys: DEFAULT_KEYS
+    });
     filterQueries.exclude = Object.keys(FLIGHT_SELECT).slice(0, -1);
 
     try {
