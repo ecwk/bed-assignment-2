@@ -208,6 +208,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
           }}
         />
         <DashboardItem
+          href="/settings/account/bookings"
           icon={<MdAirplaneTicket fontSize="64px" />}
           stat="Bookings"
           // stat1={{ stat: 'Upcoming Bookings', number: bookings.upcomingCount }}
