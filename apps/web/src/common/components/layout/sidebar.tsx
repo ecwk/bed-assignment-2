@@ -13,36 +13,16 @@ import {
   Spacer,
   Text,
   Tooltip,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  useColorMode,
-  useDisclosure,
   Collapse
 } from '@chakra-ui/react';
-import {
-  SearchIcon,
-  SettingsIcon,
-  MinusIcon,
-  AddIcon,
-  ChevronRightIcon,
-  HamburgerIcon,
-  ChevronDownIcon
-} from '@chakra-ui/icons';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { BiUser, BiSupport } from 'react-icons/bi';
-import { MdFlight } from 'react-icons/md';
 import { AnimatePresence, motion, type Variants } from 'framer-motion';
-import { FaUsers } from 'react-icons/fa';
-import { IoMdSunny, IoMdMoon } from 'react-icons/io';
-import { RiBuilding3Fill } from 'react-icons/ri';
-import { VscBell } from 'react-icons/vsc';
+
+import { SearchIcon, ChevronRightIcon, HamburgerIcon } from '@chakra-ui/icons';
 
 import {
   Logo,
-  ProfileAvatar,
   ToggleDark,
   Link,
   ButtonLink,
@@ -52,10 +32,8 @@ import {
   Hide
 } from '@common/components';
 import { useAuth } from '@modules/auth';
-import { useEffect } from 'react';
-import { HIDDEN_SIDEBAR_PATHS, SIDEBAR_ITEMS } from '@common/constants';
 import { SidebarItem } from '@common/types';
-import { allowNotifications } from '@common/utils';
+import { HIDDEN_SIDEBAR_PATHS, SIDEBAR_ITEMS } from '@common/constants';
 
 const variants: Variants = {
   hidden: {
@@ -139,7 +117,7 @@ export const Sidebar = () => {
               </InputGroup>
             </Box>
 
-            <VStack as="nav" w="100%">
+            <VStack as="nav" w="100%" spacing={6}>
               {SIDEBAR_ITEMS.map((item, i) => (
                 <SidebarItem item={item} key={`sidebar-item-${i}`} />
               ))}
@@ -147,7 +125,7 @@ export const Sidebar = () => {
 
             <Spacer />
 
-            <VStack as="section" w="100%">
+            <VStack as="nav" w="100%" spacing={6}>
               <CartMenu
                 variant="button"
                 buttonProps={{ w: '100%', variant: 'ghost', iconSpacing: 5 }}
@@ -218,11 +196,6 @@ export const Sidebar = () => {
                 </Tooltip>
               </Link>
             ))}
-            {/* <VStack as="nav" w="100%">
-              {SIDEBAR_ITEMS.map((item, i) => (
-                <SidebarItem item={item} key={`sidebar-item-${i}`} />
-              ))}
-            </VStack> */}
 
             <Spacer />
 
@@ -255,12 +228,14 @@ export const Sidebar = () => {
                 />
               </Box>
             </Tooltip> */}
-            <CartMenu variant="icon" />
-            <Tooltip label="Toggle Theme" placement="right">
-              <Box as={motion.div}>
-                <ToggleDark variant="ghost" />
-              </Box>
-            </Tooltip>
+            <VStack spacing={6}>
+              <CartMenu variant="icon" />
+              <Tooltip label="Toggle Theme" placement="right">
+                <Box as={motion.div}>
+                  <ToggleDark variant="ghost" />
+                </Box>
+              </Tooltip>
+            </VStack>
 
             <Divider />
             <UserMenu variant="icon" />
