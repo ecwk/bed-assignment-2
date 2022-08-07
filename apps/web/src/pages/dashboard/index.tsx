@@ -224,6 +224,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
           }}
         />
         <DashboardItem
+          href="/settings/billing/discounts"
           icon={<TbDiscount fontSize="64px" />}
           stat="Discounts"
           stat1={{ stat: 'Your Discounts', number: 0 }}
