@@ -39,7 +39,7 @@ export const FlightSearchForm = ({
   const flightsQuery = useQuery(
     ['flights', { to, from }],
     (ctx) =>
-      client.get(`/flights/direct/${from}/${to}?dateFilterType=none`, {
+      client.get(`/flights/direct/${from}/${to}?dateFilterType=none&limit=none`, {
         signal: ctx.signal
       }),
     {
@@ -49,7 +49,7 @@ export const FlightSearchForm = ({
   const returnFlightsQuery = useQuery(
     ['returnFlights', { to, from }],
     (ctx) =>
-      client.get(`/flights/direct/${to}/${from}?dateFilterType=none`, {
+      client.get(`/flights/direct/${to}/${from}?dateFilterType=none&limit=none`, {
         signal: ctx.signal
       }),
     {

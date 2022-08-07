@@ -33,9 +33,10 @@ import {
 import { Role } from '@common/enum';
 import { ProfileAvatar, Hide, Link } from '@common/components';
 import { useRouter } from 'next/router';
+import { HIDDEN_SIDEBAR_PATHS } from '@common/constants';
 
 export const UserMenu = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const { cart } = useCart();
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -49,8 +50,12 @@ export const UserMenu = () => {
 
   const backgroundColor = useColorModeValue('brandGray.100', 'brandGray.800');
 
+  const isHiddenSidebar =
+    HIDDEN_SIDEBAR_PATHS.some((path) => path.test(router.pathname)) ||
+    (!isLoading && !user);
+
   return (
-    <Menu offset={[200, -20]}>
+    <Menu offset={!isHiddenSidebar ? [200, -20] : undefined}>
       {({ isOpen }) => (
         <>
           <MenuButton
@@ -109,7 +114,7 @@ export const UserMenu = () => {
             </Link>
 
             <Hide hide={user?.role !== Role.ADMIN}>
-              <Link href="/admin/dashboard">
+              <Link href="/admin">
                 <MenuItem
                   borderRadius="xl"
                   minH="45px"

@@ -5,6 +5,7 @@ export type Flight = {
   departureDate: string;
   travelTime: string;
   price: string;
+  imageUrl: string;
   originAirportId: number;
   originAirportName: string;
   originAirportCountry: string;

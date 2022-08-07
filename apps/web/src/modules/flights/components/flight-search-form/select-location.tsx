@@ -11,7 +11,9 @@ import {
   useTheme,
   FormControl,
   FormHelperText,
-  type FlexProps
+  type FlexProps,
+  useColorModeValue,
+  useToken
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import { Select } from '@mantine/core';
@@ -46,6 +48,8 @@ export const SelectLocation = ({
   const { from, to, isTwoWay } = useWatch({ control });
   const { field: registerFrom } = useController({ control, name: 'from' });
   const { field: registerTo } = useController({ control, name: 'to' });
+
+  const [labelColor] = useToken('colors', ['label-color']);
 
   const airportData = airports.map(({ airportId, name, country, city }) => ({
     value: String(airportId),
@@ -119,7 +123,7 @@ export const SelectLocation = ({
               backgroundColor: theme.colors.whiteAlpha[50]
             },
             label: {
-              color: theme.colors.gray[200],
+              color: labelColor,
               fontSize: '15px',
               fontWeight: 'normal'
             }
@@ -150,7 +154,7 @@ export const SelectLocation = ({
               backgroundColor: theme.colors.whiteAlpha[50]
             },
             label: {
-              color: theme.colors.gray[200],
+              color: labelColor,
               fontSize: '15px',
               fontWeight: 'normal'
             }

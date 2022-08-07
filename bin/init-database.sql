@@ -34,6 +34,7 @@ CREATE TABLE flight (
   `departure_date` VARCHAR(255) NOT NULL,
   `travel_time` VARCHAR(255) NOT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
+  `image_url` VARCHAR(255),
   `origin_airport_id` INTEGER NOT NULL,
   `destination_airport_id` INTEGER NOT NULL,
   `created_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

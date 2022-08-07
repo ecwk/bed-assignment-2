@@ -57,6 +57,7 @@ export const SignupForm = ({ sx, ...formProps }: SignupFormProps) => {
   };
 
   const labelProps = {
+    color: 'brandGray.50',
     fontWeight: 'normal',
     mb: 1
   };
@@ -84,6 +85,7 @@ export const SignupForm = ({ sx, ...formProps }: SignupFormProps) => {
         labelProps={labelProps}
       />
       <ConfirmPassword
+        iconColor="brandGray.50"
         password={{
           name: 'password',
           label: 'Password',
@@ -123,7 +125,7 @@ export const SignupForm = ({ sx, ...formProps }: SignupFormProps) => {
       </FormButton>
       <Text textAlign="center" color="whiteAlpha.800">
         Already created an account?{' '}
-        <Link href="/login" color="brandGold.300">
+        <Link href="/login" color="brandGold.300" underline>
           Login
         </Link>
         .

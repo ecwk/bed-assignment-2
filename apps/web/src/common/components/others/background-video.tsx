@@ -16,7 +16,7 @@ export const BackgroundVideo = () => {
         background={
           colorMode === 'dark'
             ? 'linear-gradient(140deg, rgba(28,28,28,1) 0%, rgba(28,28,28,0.6) 60%, #1328417f 100% )'
-            : 'linear-gradient(0deg,  #1c1c1c4b 0%, #0f0f0fb7 20%, #33656e2b 80%, #c1f8fc60 100% )'
+            : 'linear-gradient(0deg,  #1c1c1c4b 0%, #727272b7 40%, #33656e2b 65%, #e8fdff5f 100% )'
         }
       />
       {colorMode === 'dark' ? (

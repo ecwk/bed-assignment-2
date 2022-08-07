@@ -30,6 +30,7 @@ export type PasswordInputProps = FormControlProps & {
   placeholder?: string;
   toggleShowPassword?: boolean;
   inputProps?: InputGroupProps;
+  iconColor?: string;
 };
 
 export function PasswordInput({
@@ -39,6 +40,7 @@ export function PasswordInput({
   placeholder,
   toggleShowPassword = true,
   inputProps,
+  iconColor,
   ...formControlProps
 }: PasswordInputProps) {
   const { error: errorRes } = useAxiosInterceptor();
@@ -64,7 +66,7 @@ export function PasswordInput({
       </FormLabel>
       <InputGroup {...inputProps}>
         <InputLeftElement>
-          <LockIcon />
+          <LockIcon color={iconColor} />
         </InputLeftElement>
         <Input
           {...register(name)}
@@ -76,7 +78,13 @@ export function PasswordInput({
           <InputRightElement>
             <IconButton
               size="sm"
-              icon={show ? <ViewOffIcon /> : <ViewIcon />}
+              icon={
+                show ? (
+                  <ViewOffIcon  />
+                ) : (
+                  <ViewIcon />
+                )
+              }
               onClick={toggleShow}
               aria-label="Toggle password visibility"
             />

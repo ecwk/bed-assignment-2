@@ -7,6 +7,7 @@ import {
   HStack,
   Text,
   useTheme,
+  useToken,
   type StackProps
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
@@ -95,6 +96,8 @@ export const SelectDate = ({
     );
   };
 
+  const [labelColor] = useToken('colors', ['label-color']);
+
   return (
     <HStack spacing={5} {...stackProps} alignItems="flex-start">
       <FormControl>
@@ -119,7 +122,7 @@ export const SelectDate = ({
               backgroundColor: theme.colors.whiteAlpha[50]
             },
             label: {
-              color: theme.colors.gray[200],
+              color: labelColor,
               fontSize: '15px',
               fontWeight: 'normal'
             }
@@ -158,7 +161,7 @@ export const SelectDate = ({
               backgroundColor: theme.colors.whiteAlpha[50]
             },
             label: {
-              color: theme.colors.gray[200],
+              color: labelColor,
               fontSize: '15px',
               fontWeight: 'normal'
             }

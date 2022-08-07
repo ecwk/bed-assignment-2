@@ -67,12 +67,13 @@ export const LoginForm = ({ sx, ...formProps }: LoginFormProps) => {
         name="email"
         type="email"
         placeholder="Email"
-        leftElement={<AtSignIcon />}
+        leftElement={<AtSignIcon color="brandGray.50" />}
       />
       <PasswordInput
         name="password"
         placeholder="Password"
         inputProps={{ size: 'lg' }}
+        iconColor="brandGray.50"
       />
       <FormButton
         size="lg"

@@ -72,7 +72,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
             gap={5}
           >
             <Portal>
-              <CreateFlightModal hideButton disclosure={createFlightDisclosure} />
+              <CreateFlightModal disclosure={createFlightDisclosure} />
               <CreateAirportModal disclosure={createAirportDisclosure} />
             </Portal>
             <DashboardItem
@@ -102,13 +102,6 @@ const Dashboard: NextPage<ServerSideProps> = ({
               h="125px"
               fontSize="lg"
             />
-            <DashboardItem
-              onClick={createFlightDisclosure.onOpen}
-              icon={<AddIcon fontSize="35px" />}
-              stat="Add User"
-              h="125px"
-              fontSize="lg"
-            />
           </Grid>
           <H3 mt={5}>Services</H3>
           <Grid
@@ -121,19 +114,25 @@ const Dashboard: NextPage<ServerSideProps> = ({
               href="/admin/flights"
               icon={<MdAdminPanelSettings fontSize="60px" />}
               stat="Manage Flights"
-              helperText="Easy-to-use booking engine"
+              helperText="View, edit, and delete Flights"
             />
             <DashboardItem
               href="/admin/airports"
               icon={<MdAdminPanelSettings fontSize="60px" />}
               stat="Manage Airports"
-              helperText="Find out more about airports"
+              helperText="View, edit, and delete Airports"
             />
             <DashboardItem
               href="/admin/users"
               icon={<MdAdminPanelSettings fontSize="60px" />}
               stat="Manage Users"
-              helperText="Find out more about airports"
+              helperText="View, edit, and delete Users"
+            />
+            <DashboardItem
+              href="/admin/bookings"
+              icon={<MdAdminPanelSettings fontSize="60px" />}
+              stat="Manage Bookings"
+              helperText="View, edit, and delete Bookings"
             />
           </Grid>
         </Flex>
@@ -207,8 +206,8 @@ const Dashboard: NextPage<ServerSideProps> = ({
         <DashboardItem
           icon={<MdAirplaneTicket fontSize="64px" />}
           stat="Bookings"
-          stat1={{ stat: 'Upcoming Flights', number: 0 }}
-          stat2={{ stat: 'Previous Flights', number: 0 }}
+          stat1={{ stat: 'Upcoming Bookings', number: 0 }}
+          stat2={{ stat: 'Previous Bookings', number: 0 }}
         />
         <DashboardItem
           href="/cart"

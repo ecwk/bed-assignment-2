@@ -16,19 +16,12 @@ export const Options = ({ ...boxProps }: FlightSearchFormProps) => {
 
   return (
     <Box {...boxProps}>
-      <FormLabel color="gray.200" fontSize="15px" fontWeight="normal">
+      <FormLabel fontSize="15px" fontWeight="normal">
         Options
       </FormLabel>
       <VStack alignItems="start" spacing={5}>
-        <Checkbox {...register('isTwoWay')} color="gray.200">
-          Two-Way Flight
-        </Checkbox>
-        <Checkbox
-          {...register('isDirect')}
-          color="gray.200"
-          defaultChecked
-          isDisabled
-        >
+        <Checkbox {...register('isTwoWay')}>Two-Way Flight</Checkbox>
+        <Checkbox {...register('isDirect')} defaultChecked isDisabled>
           Direct Flight
         </Checkbox>
       </VStack>

@@ -9,7 +9,8 @@ import {
   Box,
   Heading,
   Text,
-  Input
+  Input,
+  useColorModeValue
 } from '@chakra-ui/react';
 
 import { server } from '@config/axios';
@@ -51,6 +52,8 @@ const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
 
   const handleIndex = (index: number) => setIndex(index);
 
+  const tabHeadingColor = useColorModeValue('brandGray.700', 'gray.400');
+
   return (
     <Main maxW="1200px" w="100%" mx="auto">
       <Title
@@ -77,7 +80,7 @@ const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
             <Heading as="h2" mt={5} size="lg" fontWeight="semibold">
               Catch Your Flight
             </Heading>
-            <Text mt={2} color="gray.400">
+            <Text mt={2} color={tabHeadingColor}>
               Find your next flight using our powerful search engine.
             </Text>
             <FlightSearchForm mt={10} airports={airports || []} />
@@ -86,7 +89,7 @@ const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
             <Heading as="h2" mt={5} size="lg" fontWeight="semibold">
               Discover New Airports
             </Heading>
-            <Text mt={2} color="gray.400">
+            <Text mt={2} color={tabHeadingColor}>
               Find out more about the world's airports.
             </Text>
           </TabPanel>
@@ -94,7 +97,7 @@ const BookFlight: NextPage<BookFlightProps> = ({ airports }) => {
             <Heading as="h2" mt={5} size="lg" fontWeight="semibold">
               Look Up Users
             </Heading>
-            <Text mt={2} color="gray.400">
+            <Text mt={2} color={tabHeadingColor}>
               Find out more information on other users.
             </Text>
           </TabPanel>
@@ -113,7 +116,7 @@ export const getServerSideProps: GetServerSideProps<
 > = async () => {
   let airports: Airport[] | null;
   try {
-    const res = await server.get('/airports');
+    const res = await server.get('/airports?limit=none');
     airports = res.data?.airports ?? null;
   } catch (err) {
     if (!(err instanceof AxiosError)) {

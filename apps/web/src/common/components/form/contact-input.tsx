@@ -42,6 +42,7 @@ export function ContactInput({
   const isDirty = dirtyFields?.[name];
 
   const labelColor = useColorModeValue('gray.700', 'gray.300');
+  const addonColor = useColorModeValue('gray.700', 'whiteAlpha.600');
 
   return (
     <FormControl
@@ -54,7 +55,7 @@ export function ContactInput({
         </FormLabel>
       )}
       <InputGroup>
-        <InputLeftAddon maxW="100px" color="whiteAlpha.600">
+        <InputLeftAddon maxW="100px" color={addonColor}>
           {mobileCode}
         </InputLeftAddon>
         <Input {...register(name)} type={type} placeholder={placeholder} />

@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Box, Heading, Text, useColorModeValue } from '@chakra-ui/react';
 
 import { LoginForm } from '@modules/auth';
 import { Main, BackgroundVideo } from '@common/components';
@@ -12,7 +12,8 @@ const Login: NextPage = () => {
         flexDir="column"
         mt={{
           base: '80px',
-          md: '200px'
+          md: '150px',
+          xl: '200px'
         }}
         ml={{
           base: '0',
@@ -28,10 +29,10 @@ const Login: NextPage = () => {
         }}
       >
         <Box as="header">
-          <Heading as="h2" size="md" color="brand">
+          <Heading as="h2" size="md" color="brandGray.50">
             LOGIN
           </Heading>
-          <Heading as="h1" my={4} size="3xl">
+          <Heading as="h1" my={4} size="3xl" color="brandGray.50">
             Welcome back
             <Text as="span" color="brandGold.300">
               .

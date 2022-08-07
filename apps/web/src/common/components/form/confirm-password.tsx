@@ -3,6 +3,7 @@ import { Flex, FlexProps, FormLabelProps } from '@chakra-ui/react';
 import { PasswordInput } from './password-input';
 
 export type ConfirmPasswordProps = FlexProps & {
+  iconColor?: string;
   password: {
     name: string;
     label?: string;
@@ -18,6 +19,7 @@ export type ConfirmPasswordProps = FlexProps & {
 };
 
 export function ConfirmPassword({
+  iconColor,
   password,
   confirmPassword,
   ...flexProps
@@ -43,6 +45,7 @@ export function ConfirmPassword({
         labelProps={password.labelProps}
         placeholder={password.placeholder}
         toggleShowPassword={false}
+        iconColor={iconColor}
       />
       <PasswordInput
         name={confirmPassword.name}
@@ -50,6 +53,7 @@ export function ConfirmPassword({
         labelProps={confirmPassword.labelProps}
         placeholder={confirmPassword.placeholder}
         toggleShowPassword={false}
+        iconColor={iconColor}
       />
     </Flex>
   );

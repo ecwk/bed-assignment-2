@@ -41,8 +41,6 @@ import { Counter } from '@common/components';
 import { useCart } from '@common/hooks';
 import { useAuth } from '@modules/auth';
 import { type Flight, type Airport } from '@common/types';
-import NextImage from 'next/image';
-import axios from 'axios';
 
 const getMockImage = () => {
   // random number from 500 - 600
@@ -50,7 +48,6 @@ const getMockImage = () => {
 
   return `https://random.imagecdn.app/${random}/${random}`;
 };
-// const mockImage = 'https://random.imagecdn.app/500/500';
 
 type FlightItemProps = FlexProps & {
   flight: Flight;
@@ -122,6 +119,11 @@ export const FlightItem = ({
   const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
   // const backgroundColor = useColorModeValue('gray.900', 'gray.900');
 
+  if (flight?.imageUrl) {
+    console.log(flight?.flightCode);
+    console.log(flight?.imageUrl);
+  }
+
   return (
     <Flex
       as="article"
@@ -139,7 +141,7 @@ export const FlightItem = ({
       <Img
         boxSize="100%"
         borderTopRadius="xl"
-        src={mockImage}
+        src={flight?.imageUrl || mockImage}
         alt="flight booking"
         h={list ? undefined : '250px'}
         maxW={list ? '50%' : undefined}

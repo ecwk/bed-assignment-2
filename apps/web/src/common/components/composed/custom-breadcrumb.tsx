@@ -4,7 +4,8 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
   Heading,
-  Text
+  Text,
+  useColorModeValue
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { capitalize } from 'lodash';
@@ -17,6 +18,8 @@ import { Link } from '@common/components';
 export const CustomBreadcrumb = () => {
   const router = useRouter();
   const paths = router.pathname.split('/').filter((path) => path !== '');
+
+  const color = useColorModeValue('brandGold.500', 'brandGold.200');
 
   return (
     <Breadcrumb
@@ -46,7 +49,7 @@ export const CustomBreadcrumb = () => {
         <BreadcrumbItem
           key={`breadcrumb-${i}`}
           fontWeight={i === paths.length - 1 ? 'bold' : 'normal'}
-          color={i === paths.length - 1 ? 'brandGold.200' : undefined}
+          color={i === paths.length - 1 ? color : undefined}
         >
           <Link
             href={
