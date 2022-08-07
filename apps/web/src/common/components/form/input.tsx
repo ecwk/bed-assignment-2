@@ -20,6 +20,7 @@ export type InputProps<T = Record<string, string>> = ControlProps & {
   inputProps?: InputGroupProps;
   step?: string | number;
   name: keyof T;
+  autoComplete?: string;
 };
 
 export function Input<T = Record<string, string>>({
@@ -31,6 +32,7 @@ export function Input<T = Record<string, string>>({
   inputProps,
   step,
   name,
+  autoComplete,
   ...controlProps
 }: InputProps<T>) {
   const { register } = useFormContext<Record<string, any>>();
@@ -49,6 +51,7 @@ export function Input<T = Record<string, string>>({
           placeholder={placeholder}
           defaultValue={defaultValue}
           step={step}
+          autoComplete={autoComplete}
         />
       </InputGroup>
     </Control>

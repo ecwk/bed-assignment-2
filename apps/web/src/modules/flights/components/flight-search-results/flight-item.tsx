@@ -1,39 +1,20 @@
 import dayjs from 'dayjs';
 import {
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  FormLabel,
-  FormControl,
   useToast,
-  Image,
   Heading,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
   Flex,
   Text,
   Button,
   FlexProps,
   Box,
-  Tag,
-  HStack,
   Img,
   IconButton,
-  VStack,
-  Skeleton,
-  useColorModeValue
+  useColorModeValue,
+  Portal
 } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { getMs } from '@common/utils';
 import { FlightItemModal } from './flight-item-modal';
@@ -94,35 +75,42 @@ export const FlightItem = ({
       setGoBack(true);
     } else {
       onClose();
-      toast({
-        title: 'Added to cart',
-        description: `${flightCode} - $${Number(price).toFixed(
-          2
-        )} x ${quantity}`,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom-right'
-      });
-      addToCart({
-        id: `flightId-${flightId}`,
+
+      const isSuccess = addToCart({
+        id: String(flightId),
         name: `SP Air Ticket - ${flightCode}`,
         description: `Flight from ${originAirport.name} to ${destinationAirport.name}`,
         quantity: quantity,
         price: parseInt(price, 10),
         image: mockImage
       });
+      if (isSuccess) {
+        toast({
+          title: 'Added to cart',
+          description: `${flightCode} - $${Number(price).toFixed(
+            2
+          )} x ${quantity}`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom-right'
+        });
+      } else {
+        toast({
+          title: 'Cart is full',
+          description: 'Cannot add more than 10 items',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'bottom-right'
+        });
+      }
     }
   };
 
-  const backgroundColor = useColorModeValue('brandGray.50', 'brandGray.900');
+  const backgroundColor = useColorModeValue('white', 'brandGray.900');
   const borderColor = useColorModeValue('brandGray.200', 'brandGray.700');
   // const backgroundColor = useColorModeValue('gray.900', 'gray.900');
-
-  if (flight?.imageUrl) {
-    console.log(flight?.flightCode);
-    console.log(flight?.imageUrl);
-  }
 
   return (
     <Flex
@@ -135,7 +123,8 @@ export const FlightItem = ({
       {...flexProps}
       backgroundColor={backgroundColor}
       h={list ? '300px' : undefined}
-      alignItems={list ? 'center' : undefined}
+      alignItems={list ? 'center' : 'unset'}
+      justifyContent={list ? 'space-between' : 'unset'}
       gap={list ? 5 : 0}
     >
       <Img
@@ -147,7 +136,12 @@ export const FlightItem = ({
         maxW={list ? '50%' : undefined}
         objectFit="cover"
       />
-      <Flex flexDir="column" p={5}>
+      <Flex
+        flexDir="column"
+        p={5}
+        mr={list ? 5 : 'unset'}
+        w={list ? '100%' : 'unset'}
+      >
         {/* <HStack mt={2} mb={4}>
           <Tag size="sm" colorScheme="blue" borderRadius="2xl">
             DISCOUNT
@@ -222,19 +216,21 @@ export const FlightItem = ({
           </Flex>
         </Flex>
       </Flex>
-      <FlightItemModal
-        isOpen={isOpen}
-        onClose={onClose}
-        addToCart={handleClick}
-        quantity={quantity}
-        setQuantity={setQuantity}
-        flight={flight}
-        isTwoWay={isTwoWay}
-        isDirect={isDirect}
-        originAirport={originAirport}
-        destinationAirport={destinationAirport}
-        src={mockImage}
-      />
+      <Portal>
+        <FlightItemModal
+          isOpen={isOpen}
+          onClose={onClose}
+          addToCart={handleClick}
+          quantity={quantity}
+          setQuantity={setQuantity}
+          flight={flight}
+          isTwoWay={isTwoWay}
+          isDirect={isDirect}
+          originAirport={originAirport}
+          destinationAirport={destinationAirport}
+          src={mockImage}
+        />
+      </Portal>
     </Flex>
   );
 };

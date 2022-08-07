@@ -210,7 +210,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
         <DashboardItem
           icon={<MdAirplaneTicket fontSize="64px" />}
           stat="Bookings"
-          stat1={{ stat: 'Upcoming Bookings', number: bookings.upcomingCount }}
+          // stat1={{ stat: 'Upcoming Bookings', number: bookings.upcomingCount }}
           stat2={{ stat: 'Total Bookings', number: bookings.totalCount }}
         />
         <DashboardItem

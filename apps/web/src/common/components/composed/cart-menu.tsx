@@ -50,6 +50,7 @@ export const CartMenu = React.forwardRef<HTMLDivElement, CartMenuProps>(
 
     return (
       <Menu
+        placement="top-start"
         offset={
           !isHiddenSidebar && variant === 'button'
             ? [200, -20]
@@ -102,6 +103,16 @@ export const CartMenu = React.forwardRef<HTMLDivElement, CartMenuProps>(
           borderRadius="xl"
           minW="300px"
           backgroundColor="modal-bg"
+          maxH="400px"
+          overflowY="auto"
+          //  hidescroolbar
+          sx={{
+            '-ms-overflow-style': 'none',
+            'scrollbar-width': 'none',
+            '::-webkit-scrollbar': {
+              display: 'none'
+            }
+          }}
         >
           <MenuGroup>
             <Box
@@ -117,7 +128,13 @@ export const CartMenu = React.forwardRef<HTMLDivElement, CartMenuProps>(
                   ({cart.length})
                 </Text>
               </Heading>
-              <Link href="/cart" fontSize="sm" color="blue.300" mb="3px">
+              <Link
+                href="/cart"
+                fontSize="sm"
+                color="link-color-blue"
+                mb="3px"
+                underline
+              >
                 View All
               </Link>
             </Box>
@@ -126,7 +143,9 @@ export const CartMenu = React.forwardRef<HTMLDivElement, CartMenuProps>(
                 <Heading size="md">
                   {name} <Text as="span">x {quantity}</Text>
                 </Heading>
-                <Text color="gray.400">${(price * quantity).toFixed(2)}</Text>
+                <Text color="label-color">
+                  ${(price * quantity).toFixed(2)}
+                </Text>
                 <Flex justifyContent="space-between" alignItems="center" mt={4}>
                   <HStack spacing={2}>
                     <IconButton

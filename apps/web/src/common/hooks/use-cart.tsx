@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
 
 interface CartContext {
   cart: CartItem[];
-  addToCart: (item: CartItem) => void;
+  addToCart: (item: CartItem) => boolean;
   increaseQuantity: (itemId: string, increment?: number) => void;
   decreaseQuantity: (itemId: string, decrement?: number) => void;
   removeFromCart: (itemId: string) => void;
@@ -21,6 +21,8 @@ interface CartContext {
 }
 
 export const CartContext = createContext<CartContext>({} as CartContext);
+
+const MAX_QUANTITY = 10;
 
 const useCartProvider = (): CartContext => {
   const router = useRouter();
@@ -30,18 +32,20 @@ const useCartProvider = (): CartContext => {
   });
 
   const addToCart = (item: CartItem) => {
-    setCart((prevCart) => {
-      // check if item id already exists then increment
-      const itemIndex = prevCart.findIndex(
-        (prevItem) => prevItem.id === item.id
-      );
-      if (itemIndex !== -1) {
+    const existingItem = cart.find(({ id }) => id === item.id);
+    const existingItemIndex = cart.findIndex(({ id }) => id === item.id);
+    if (item.quantity + (existingItem?.quantity || 0) > MAX_QUANTITY) {
+      return false;
+    } else if (existingItem) {
+      setCart((prevCart) => {
         const newCart = JSON.parse(JSON.stringify(prevCart));
-        newCart[itemIndex].quantity += item.quantity;
+        newCart[existingItemIndex].quantity += item.quantity;
         return newCart;
-      }
-      return [...prevCart, item];
-    });
+      });
+    } else {
+      setCart([...cart, item]);
+    }
+    return true;
   };
   const increaseQuantity = (itemId: string, increment: number = 1) => {
     setCart((prevCart) => {

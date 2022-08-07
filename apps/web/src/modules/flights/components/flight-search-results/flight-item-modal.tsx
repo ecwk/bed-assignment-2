@@ -71,7 +71,7 @@ export const FlightItemModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="3xl">
       <ModalOverlay />
-      <ModalContent px={5} pt={10} backgroundColor="gray.900">
+      <ModalContent px={5} pt={10} backgroundColor="modal-bg">
         <ModalCloseButton />
 
         <ModalBody>
@@ -146,7 +146,7 @@ export const FlightItemModal = ({
               value={quantity}
               setValue={setQuantity}
               min={1}
-              max={99}
+              max={10}
               maxW="150px"
               w="100%"
             />

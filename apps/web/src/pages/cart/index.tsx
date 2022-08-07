@@ -9,36 +9,39 @@ import {
   IconButton,
   VStack,
   Grid,
-  HStack
+  HStack,
+  useDisclosure,
+  Portal
 } from '@chakra-ui/react';
 import { type NextPage } from 'next';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai';
 
 import { useCart } from '@common/hooks';
-import { ButtonLink } from '@common/components';
+import { ButtonLink, Main, Title } from '@common/components';
+import { CheckoutModalForm } from '@modules/bookings';
 
 type CartProps = {};
 
 const Cart: NextPage<CartProps> = () => {
   return (
-    <Flex
-      my="80px"
-      flexDir={{
-        base: 'column',
-        lg: 'row'
-      }}
-      maxW="1500px"
-      mx="auto"
-      gap={10}
-      px={{
-        base: 4,
-        sm: 5,
-        xl: 10
-      }}
-    >
-      <CartList />
-      <Summary />
-    </Flex>
+    <Main>
+      <Title
+        mt={10}
+        title="Your Cart"
+        subtitle="All your added bookings can be found here"
+      />
+      <Flex
+        mt={10}
+        flexDir={{
+          base: 'column',
+          lg: 'row'
+        }}
+        gap={10}
+      >
+        <CartList />
+        <Summary />
+      </Flex>
+    </Main>
   );
 };
 
@@ -50,10 +53,10 @@ function CartList() {
     <Flex
       flexGrow={1}
       flexDir="column"
-      background="brandPaleBlue.700"
+      background="modal-bg"
       borderRadius="xl"
       px={10}
-      py={5}
+      // py={5}
       justifyContent="center"
     >
       {cart.length === 0 ? (
@@ -65,7 +68,7 @@ function CartList() {
           gridTemplateColumns="2fr repeat(3, max-content)"
           alignItems="center"
           columnGap={5}
-          pt={5}
+          pt={10}
         >
           <Heading
             size="xs"
@@ -116,8 +119,8 @@ function CartList() {
                 <Flex
                   key={`checkout-item-${index}`}
                   py={6}
-                  borderTop={index === 0 ? 'none' : '1px solid'}
-                  borderColor="gray.700"
+                  // borderTop={index === 0 ? 'none' : '1px solid'}
+                  // borderColor="gray.700"
                   alignItems="center"
                   gap={5}
                   gridColumn={{
@@ -143,7 +146,7 @@ function CartList() {
                   <VStack alignItems="flex-start" spacing={3}>
                     <Box>
                       <Heading size="md">{name}</Heading>
-                      <Text mt={1} color="gray.300" fontSize="sm">
+                      <Text mt={1} color="label-color" fontSize="sm">
                         {description}.
                       </Text>
                     </Box>
@@ -276,9 +279,11 @@ function Summary() {
   }, 0);
   const taxes = subtotal * 0.07;
 
+  const checkoutDisclosure = useDisclosure();
+
   return (
     <Flex
-      background="brandPaleBlue.700"
+      background="modal-bg"
       borderRadius="xl"
       flexBasis={{
         base: 0,
@@ -287,7 +292,7 @@ function Summary() {
       p={10}
       flexDir="column"
       justifyContent="space-between"
-      // maxH="400px"
+      maxH="350px"
     >
       <Box>
         <Heading>Checkout</Heading>
@@ -302,51 +307,32 @@ function Summary() {
           <Flex justifyContent="space-between" gap={5}>
             <Text>
               <b>Taxes</b>{' '}
-              <Text as="span" color="gray.400" gap={5} whiteSpace="nowrap">
+              <Text as="span" color="label-color" gap={5} whiteSpace="nowrap">
                 (GST 7%)
               </Text>
             </Text>
             <Text>${taxes.toFixed(2)}</Text>
           </Flex>
-          <Flex justifyContent="space-between" gap={5}>
-            <Text>
-              <b>Shipping</b>
-            </Text>
-            <Text textAlign="end" whiteSpace="nowrap">
-              Calculated at checkout
-            </Text>
-          </Flex>
         </Flex>
         <Divider />
         <Flex justifyContent="space-between" mt={4} gap={5}>
           <Text fontWeight="bold">Total</Text>
-          <Text>${(subtotal + taxes).toFixed(2)} + Shipping</Text>
+          <Text>SGD {(subtotal + taxes).toFixed(2)}</Text>
         </Flex>
       </Box>
-      <ButtonLink
-        href={cart.length > 0 ? '/checkout' : '#'}
+      <Button
         mt={10}
         colorScheme="brandGold"
         disabled={cart.length === 0}
-        py={5}
-        // h="max-content"
+        onClick={checkoutDisclosure.onOpen}
       >
         Checkout
-      </ButtonLink>
+      </Button>
+      <Portal>
+        <CheckoutModalForm disclosure={checkoutDisclosure} />
+      </Portal>
     </Flex>
   );
 }
-
-const sx = {
-  container: {
-    my: '80px',
-    maxW: '1000px',
-    w: '100%',
-    p: 10,
-    mx: 'auto',
-    background: 'brandPaleBlue.700',
-    borderRadius: 'xl'
-  }
-};
 
 export default Cart;
