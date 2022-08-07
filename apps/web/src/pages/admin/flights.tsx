@@ -4,17 +4,11 @@ import {
   InputLeftElement,
   Input,
   Grid,
-  Wrap,
   FormControl,
   FormLabel,
   IconButton,
   Text,
   HStack,
-  Tabs,
-  Tab,
-  TabList,
-  TabPanels,
-  TabPanel,
   useColorModeValue,
   Button,
   Spacer,
@@ -28,82 +22,39 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   MenuGroup,
-  MenuOptionGroup,
-  MenuItemOption,
   Box,
   InputLeftAddon,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
   Select as ChakraSelect,
   Divider,
   Skeleton,
-  useDisclosure,
   Collapse,
   Checkbox,
   VStack,
   BoxProps,
-  Heading,
-  FlexProps,
-  InputRightElement,
-  Tag,
-  TagLabel,
-  TagLeftIcon,
-  TagRightIcon,
-  TagCloseButton,
-  Portal,
-  useToken
+  FlexProps
 } from '@chakra-ui/react';
-import { QueryCache, useQuery, useQueryClient } from '@tanstack/react-query';
-import { GetServerSideProps, type NextPage } from 'next';
 import {
-  AddIcon,
   ArrowForwardIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  MinusIcon,
   SearchIcon
 } from '@chakra-ui/icons';
-import { TbLayoutGrid, TbLayoutList } from 'react-icons/tb';
-import { capitalize, startCase, truncate } from 'lodash';
-import { DatePicker as MantineDatePicker } from '@mantine/dates';
-import { MultiSelect, Pagination, SelectItem } from '@mantine/core';
-
-import {
-  Main,
-  Title,
-  Form,
-  Select,
-  SelectOption,
-  Link
-} from '@common/components';
+import dayjs from 'dayjs';
+import { type NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { MdRefresh } from 'react-icons/md';
+import { Pagination } from '@mantine/core';
+import { capitalize, startCase } from 'lodash';
+import { useQuery } from '@tanstack/react-query';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useForm, useWatch } from 'react-hook-form';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+
 import { Flight } from '@common/types';
 import { server } from '@config/axios';
-import { useForm, useWatch } from 'react-hook-form';
-import { useRouter } from 'next/router';
-import { useDebouncedValue } from '@mantine/hooks';
-import {
-  CreateFlightModal,
-  CreateFlightForm,
-  SearchFlightKeySelect
-} from '@modules/flights';
-import { MdRefresh } from 'react-icons/md';
-import { AxiosResponse } from 'axios';
+import { CreateFlightModal, SearchFlightKeySelect } from '@modules/flights';
+import { Main, Title, Form, Select, SelectOption } from '@common/components';
 
 const itemsPerPageOptions: SelectOption[] = [
   {
@@ -153,6 +104,14 @@ const fields: Field[] = [
   {
     name: 'price',
     width: '100px'
+  },
+  {
+    name: 'date',
+    width: '100px'
+  },
+  {
+    name: 'time',
+    width: '125px'
   }
 ];
 
@@ -164,6 +123,8 @@ type FilterOptions = {
   origin: boolean;
   destination: boolean;
   price: boolean;
+  date: boolean;
+  time: boolean;
 };
 
 const PAGE_DEFAULT = 1;
@@ -175,20 +136,14 @@ const DEFAULT_VALUES: FilterOptions = {
   code: true,
   origin: true,
   destination: true,
-  price: true
+  price: true,
+  date: true,
+  time: true
 };
 
 const AdminManageFlights: NextPage = () => {
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 1000);
-  const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    if (search !== debouncedSearch) {
-      setIsLoading(true);
-    } else if (search === debouncedSearch) {
-      setIsLoading(false);
-    }
-  }, [search, debouncedSearch]);
 
   const router = useRouter();
   const [page, setPage] = useState<number>(() => {
@@ -585,7 +540,9 @@ const FlightListItem = ({
     destinationAirportCountry,
     destinationAirportCity,
     destinationAirportDescription,
-    price
+    price,
+    departureDate,
+    travelTime
   } = flight;
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
@@ -599,7 +556,9 @@ const FlightListItem = ({
     origin,
     aircraft,
     destination,
-    price: showPrice
+    price: showPrice,
+    date,
+    time
   } = filterOptions;
 
   const showColor = useColorModeValue('brandGold.600', 'brandGold.50');
@@ -666,6 +625,14 @@ const FlightListItem = ({
         </Box>
       )}
       {showPrice && <Text>${price}</Text>}
+      {date && (
+        <Text>
+          {dayjs(departureDate).format('D MMM YYYY')}
+          <br />
+          {dayjs(departureDate).format('H.mm a')}
+        </Text>
+      )}
+      {time && <Text>{travelTime}</Text>}
       <Divider gridColumn="1 / -1" />
     </React.Fragment>
   );
