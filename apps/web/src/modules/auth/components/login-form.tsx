@@ -84,7 +84,7 @@ export const LoginForm = ({ sx, ...formProps }: LoginFormProps) => {
       </FormButton>
       <Text textAlign="center" color="whiteAlpha.800">
         Don't have an account yet?{' '}
-        <Link href="/signup" color="brandGold.300">
+        <Link href="/signup" color="brandGold.300" underline>
           Sign Up
         </Link>
         .

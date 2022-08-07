@@ -90,7 +90,6 @@ const Dashboard: NextPage<ServerSideProps> = ({
               fontSize="lg"
             />
             <DashboardItem
-              onClick={createFlightDisclosure.onOpen}
               icon={<AddIcon fontSize="35px" />}
               stat="Add User"
               h="125px"

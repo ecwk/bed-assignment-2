@@ -11,7 +11,10 @@ import {
   Heading,
   BoxProps,
   MenuProps,
-  ComponentWithAs
+  ComponentWithAs,
+  Button,
+  ButtonProps,
+  Tooltip
 } from '@chakra-ui/react';
 import {
   AiOutlineShoppingCart,
@@ -26,32 +29,60 @@ import { useCart } from '@common/hooks';
 import { Link } from '@common/components';
 import { motion } from 'framer-motion';
 
-export const CartMenu = React.forwardRef<HTMLDivElement, BoxProps>(
-  (props, ref) => {
+export type CartMenuProps = BoxProps & {
+  type?: 'button' | 'icon';
+  buttonProps?: ButtonProps;
+};
+
+export const CartMenu = React.forwardRef<HTMLDivElement, CartMenuProps>(
+  ({ type = 'button', buttonProps }, ref) => {
     const { cart, increaseQuantity, decreaseQuantity, removeFromCart } =
       useCart();
 
     return (
       <Menu>
-        <Box
-          as={motion.div}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          ref={ref}
-        >
-          <Indicator
-            label={cart.length === 0 ? '' : cart.length}
-            size={cart.length === 0 ? 0 : 16}
-            color="red"
+        {type === 'button' ? (
+          <MenuButton
+            as={Button}
+            leftIcon={
+              <Indicator
+                label={cart.length === 0 ? '' : cart.length}
+                size={cart.length === 0 ? 0 : 16}
+                color="red"
+                offset={-10}
+              >
+                <AiOutlineShoppingCart size="20px" />
+              </Indicator>
+            }
+            {...buttonProps}
           >
-            <MenuButton
-              as={IconButton}
-              variant="ghost"
-              icon={<AiOutlineShoppingCart size="20px" />}
-              aria-label="Shopping Cart"
-            />
-          </Indicator>
-        </Box>
+            <Text mr="auto" w="max-content">
+              Shopping Cart
+            </Text>
+          </MenuButton>
+        ) : (
+          <Tooltip label="Cart" placement="right">
+            <Box
+              as={motion.div}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              ref={ref}
+            >
+              <Indicator
+                label={cart.length === 0 ? '' : cart.length}
+                size={cart.length === 0 ? 0 : 16}
+                color="red"
+              >
+                <MenuButton
+                  as={IconButton}
+                  variant="ghost"
+                  icon={<AiOutlineShoppingCart size="20px" />}
+                  aria-label="Shopping Cart"
+                />
+              </Indicator>
+            </Box>
+          </Tooltip>
+        )}
 
         <MenuList pt={4} pb={6} px={6} borderRadius="xl" minW="300px">
           <MenuGroup>

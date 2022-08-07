@@ -148,12 +148,15 @@ export const Sidebar = () => {
             <Spacer />
 
             <VStack as="section" w="100%">
+              <CartMenu
+                buttonProps={{ w: '100%', variant: 'ghost', iconSpacing: 5 }}
+              />
               <ToggleColorButton w="100%" variant="ghost" iconSpacing={5} />
             </VStack>
 
             <Divider />
 
-            <UserMenu />
+            <UserMenu variant="button" />
           </Flex>
         ) : (
           <Flex
@@ -199,7 +202,7 @@ export const Sidebar = () => {
               />
             </Tooltip>
 
-            {/* {sidebarNavItems.map(({ name, icon, href }) => (
+            {SIDEBAR_ITEMS.map(({ name, icon, href }) => (
               <Link key={name} href={href}>
                 <Tooltip label={name} placement="right">
                   <IconButton
@@ -213,11 +216,16 @@ export const Sidebar = () => {
                   />
                 </Tooltip>
               </Link>
-            ))} */}
+            ))}
+            {/* <VStack as="nav" w="100%">
+              {SIDEBAR_ITEMS.map((item, i) => (
+                <SidebarItem item={item} key={`sidebar-item-${i}`} />
+              ))}
+            </VStack> */}
 
             <Spacer />
 
-            <Tooltip label="contact support" placement="right">
+            {/* <Tooltip label="contact support" placement="right">
               <Box
                 as={motion.div}
                 whileHover={{ scale: 1.1 }}
@@ -245,10 +253,8 @@ export const Sidebar = () => {
                   onClick={allowNotifications}
                 />
               </Box>
-            </Tooltip>
-            <Tooltip label="Cart" placement="right">
-              <CartMenu />
-            </Tooltip>
+            </Tooltip> */}
+            <CartMenu type="icon" />
             <Tooltip label="Toggle Theme" placement="right">
               <Box as={motion.div}>
                 <ToggleDark variant="ghost" />
@@ -256,6 +262,7 @@ export const Sidebar = () => {
             </Tooltip>
 
             <Divider />
+            <UserMenu variant="icon" />
           </Flex>
         )}
       </Hide>
