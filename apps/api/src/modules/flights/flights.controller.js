@@ -116,9 +116,6 @@ module.exports = (database) => {
           .format(DATE_FORMAT);
       }
 
-      const page = Number(req.query.page) >= 1 ? Number(req.query.page) : 1;
-      const limit = Number(req.query.limit) >= 1 ? Number(req.query.limit) : 50;
-
       try {
         const { originAirportId, destinationAirportId } = req.params;
         const flights = await flightModel.findDirectFlights(
@@ -126,9 +123,12 @@ module.exports = (database) => {
           destinationAirportId,
           dateFrom,
           dateTo,
-          page,
-          limit
+          getFilterQueries(req, {
+            availableKeys: FLIGHT_SELECT,
+            keys: DEFAULT_KEYS
+          })
         );
+        console.log(flights);
         res.status(200).json({ flights });
       } catch (err) {
         next(err);

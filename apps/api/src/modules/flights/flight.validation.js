@@ -51,7 +51,6 @@ const FlightValidationSchema = (database) => {
         return !!airport;
       })
       .required(),
-
     travelTime: yup
       .string()
       .matches(/^\d{1,2} hours \d{1,2} mins$/, {
@@ -67,7 +66,17 @@ const FlightValidationSchema = (database) => {
         'Less than 1,000,000',
         (value) => Number(value) < 1000000
       )
-      .transform((value) => Number(value).toFixed(2))
+      .transform((value) => Number(value).toFixed(2)),
+    imageUrl: yup
+      .string()
+      .nullable()
+      .url()
+      .transform((value) => {
+        if (value) {
+          return value;
+        }
+        return null;
+      })
   });
 };
 

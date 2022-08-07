@@ -9,6 +9,7 @@ const FLIGHT_SELECT = {
   departureDate: 'f.departure_date',
   travelTime: 'f.travel_time',
   price: 'f.price',
+  imageUrl: 'f.image_url',
   originAirportId: 'o.airport_id',
   originAirportName: 'o.name',
   originAirportCountry: 'o.country',
@@ -131,32 +132,53 @@ const FlightModel = (database) => ({
     destinationAirportId,
     fromDate = '',
     toDate = '',
-    page = 1,
-    limit = 9999999999999
+    filters
   ) => {
-    const query = `
+    const { page, limit, query, exclude, include, keys } = filters;
+
+    const sqlQuery = `
       SELECT
-        flight_id flightId,
-        flight_code flightCode,
-        departure_date departureDate,
-        travel_time travelTime,
-        aircraft_name aircraftName,
-        price price
-      FROM flight
+      ${
+        isEmpty(include)
+          ? Object.entries(FLIGHT_SELECT)
+              .map(([key, value]) => {
+                if (exclude.includes(key)) {
+                  return '';
+                }
+                return `${value} AS ${key}`;
+              })
+              .filter(Boolean)
+              .join(', ')
+          : include.map((key) => `${FLIGHT_SELECT[key]} AS ${key}`).join(', ')
+      }
+      FROM flight AS f
+        INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
+        INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id
       WHERE
-        origin_airport_id = ?
-        AND destination_airport_id = ?
+        (${Object.entries(FLIGHT_SELECT)
+          .map(([key, value]) => {
+            if (keys.includes(key)) {
+              return `${value} REGEXP ?`;
+            }
+            return '';
+          })
+          .filter(Boolean)
+          .join(' OR ')})
+        AND (f.origin_airport_id = ? AND f.destination_airport_id = ?)
         ${fromDate && toDate ? `AND departure_date BETWEEN ? AND ?` : ''}
-        `;
-    // LIMIT ?, ?;
-
-    const args = [originAirportId, destinationAirportId];
+      LIMIT ?
+      OFFSET ?
+      `;
+    const values = [...Array(keys.length)].map(() => query);
+    values.push(originAirportId);
+    values.push(destinationAirportId);
     if (fromDate && toDate) {
-      args.push(...[fromDate, toDate]);
+      values.push(...[fromDate, toDate]);
     }
-    // args.push(page * limit, limit);
+    values.push(limit);
+    values.push((page - 1) * limit);
 
-    const [flights] = await database.query(query, args);
+    const [flights] = await database.query(sqlQuery, values);
     return flights;
   },
   findAllTransferFlights: async (originAirportId, destinationAirportId) => {
@@ -191,9 +213,9 @@ const FlightModel = (database) => ({
     const results = await database.query(
       `
         INSERT INTO flight
-          (flight_code, aircraft_name, departure_date, travel_time, price, origin_airport_id, destination_airport_id)
+          (flight_code, aircraft_name, departure_date, travel_time, price, image_url, origin_airport_id, destination_airport_id)
         VALUES
-          (?, ?, ?, ?, ?, ?, ?);
+          (?, ?, ?, ?, ?, ?, ?, ?);
       `,
       [
         flight.flightCode,
@@ -201,6 +223,7 @@ const FlightModel = (database) => ({
         flight.departureDate,
         flight.travelTime,
         flight.price,
+        flight.imageUrl,
         flight.originAirportId,
         flight.destinationAirportId
       ]
