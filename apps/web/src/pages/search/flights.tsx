@@ -43,27 +43,27 @@ const Flights: NextPage<FlightsProps> = ({
   const [layout, setLayout] = useState<'grid' | 'list'>('grid');
 
   const flights = useMemo(() => {
-    if (env.NODE_ENV !== 'production') {
-      return shuffle([
-        ...flightsRaw,
-        ...flightsRaw,
-        ...flightsRaw,
-        ...flightsRaw
-      ]);
-    }
+    // if (env.NODE_ENV !== 'production') {
+    //   return shuffle([
+    //     ...flightsRaw,
+    //     ...flightsRaw,
+    //     ...flightsRaw,
+    //     ...flightsRaw
+    //   ]);
+    // }
     return flightsRaw;
   }, []);
 
   const returnFlights = useMemo(() => {
     if (returnFlightsRaw) {
-      if (env.NODE_ENV !== 'production') {
-        return shuffle([
-          ...returnFlightsRaw,
-          ...returnFlightsRaw,
-          ...returnFlightsRaw,
-          ...returnFlightsRaw
-        ]);
-      }
+      // if (env.NODE_ENV !== 'production') {
+      //   return shuffle([
+      //     ...returnFlightsRaw,
+      //     ...returnFlightsRaw,
+      //     ...returnFlightsRaw,
+      //     ...returnFlightsRaw
+      //   ]);
+      // }
       return returnFlightsRaw;
     }
     return [];
@@ -106,7 +106,7 @@ const Flights: NextPage<FlightsProps> = ({
 
       <Flex justifyContent="flex-end" alignItems="center" mt={4} gap={2}>
         <HStack>
-          <Text color="gray.200" fontSize="sm">
+          <Text color="label-color" fontSize="sm">
             Sort By:{' '}
           </Text>
           <Select w="150px" size="sm" borderRadius="3xl" defaultValue="latest">

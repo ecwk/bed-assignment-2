@@ -6,6 +6,7 @@ import {
   FormHelperText,
   HStack,
   Text,
+  useColorModeValue,
   useTheme,
   useToken,
   type StackProps
@@ -64,6 +65,8 @@ export const SelectDate = ({
     }
   }, [isTwoWay]);
 
+  const dayColor = useColorModeValue('brandGold.500', 'brandGold.300');
+
   const renderDay = (flights: Flight[]) => (date: Date) => {
     const day = date.getDate();
     let numberOfFlights = 0;
@@ -86,7 +89,7 @@ export const SelectDate = ({
             <Text
               mt="-20px"
               fontSize="xx-small"
-              color={numberOfFlights === 0 ? 'gray.400' : 'brandGold.300'}
+              color={numberOfFlights === 0 ? 'gray.400' : dayColor}
               fontWeight="bold"
             >
               {numberOfFlights === 0 ? '-' : numberOfFlights}

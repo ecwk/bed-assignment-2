@@ -31,6 +31,7 @@ import {
 import { useAuth } from '@modules/auth';
 import { H2, H3, Link, Main, Profile, Title } from '@common/components';
 import { CreateFlightModal } from '@modules/flights';
+import { CreateUserModal } from '@modules/users';
 import { CreateAirportModal } from '@modules/airports';
 import { useRef, useState } from 'react';
 import { server } from '@config/axios';
@@ -51,6 +52,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
   const { cart } = useCart();
   const createFlightDisclosure = useDisclosure();
   const createAirportDisclosure = useDisclosure();
+  const createUserDisclosure = useDisclosure();
 
   return (
     <Main>
@@ -75,6 +77,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
             <Portal>
               <CreateFlightModal disclosure={createFlightDisclosure} />
               <CreateAirportModal disclosure={createAirportDisclosure} />
+              <CreateUserModal disclosure={createUserDisclosure} />
             </Portal>
             <DashboardItem
               onClick={createFlightDisclosure.onOpen}
@@ -91,6 +94,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
               fontSize="lg"
             />
             <DashboardItem
+              onClick={createUserDisclosure.onOpen}
               icon={<AddIcon fontSize="35px" />}
               stat="Add User"
               h="125px"
