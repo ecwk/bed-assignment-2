@@ -66,7 +66,7 @@ export const Navbar = () => {
         <>
           <Divider orientation="vertical" />
           <Box w="200px">
-            <UserMenu />
+            <UserMenu variant="button" />
           </Box>
         </>
       )}

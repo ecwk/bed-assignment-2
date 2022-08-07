@@ -1,5 +1,6 @@
 import { client } from '@common/config';
-import { type UpdateUserDto } from '../dto';
+import { User } from '@common/types';
+import { type UpdateUserDto, type CreateUserDto } from '../dto';
 
 const updateUserById = async (
   id: string | number | undefined,
@@ -9,4 +10,10 @@ const updateUserById = async (
   return;
 };
 
-export const usersApiClient = { updateUserById };
+const createUser = async (createUserDto: CreateUserDto) => {
+  const response = await client.post('/users', createUserDto);
+  const createdUser: User = response.data?.user;
+  return createdUser;
+};
+
+export const usersApiClient = { updateUserById, createUser };

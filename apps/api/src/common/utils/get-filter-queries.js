@@ -6,6 +6,17 @@ function getFilterQueries(
 ) {
   const { keys: keysDefault, availableKeys } = defaults;
 
+  if (!req) {
+    return {
+      query: '.*',
+      keys: keysDefault || [],
+      limit: 'none',
+      page: 1,
+      exclude: [],
+      include: []
+    };
+  }
+
   const query =
     typeof req.query.q === 'string'
       ? req.query.q !== ''

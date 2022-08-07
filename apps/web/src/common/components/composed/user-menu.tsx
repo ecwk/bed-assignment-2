@@ -112,7 +112,7 @@ export const UserMenu = React.forwardRef<HTMLDivElement, UserMenuProps>(
               zIndex={1000}
               p={3}
               borderRadius="xl"
-              backgroundColor={backgroundColor}
+              backgroundColor="modal-bg"
             >
               <Hide above="md">
                 <Link href="/search?type=flight">

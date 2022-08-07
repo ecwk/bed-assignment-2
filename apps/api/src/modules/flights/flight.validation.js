@@ -3,6 +3,7 @@ const dayjs = require('dayjs');
 
 const { FlightModel } = require('./flight.model');
 const { AirportModel } = require('../airports');
+const { getFilterQueries } = require('../../common/utils');
 
 const FlightValidationSchema = (database) => {
   const flightModel = FlightModel(database);
@@ -13,7 +14,11 @@ const FlightValidationSchema = (database) => {
       .string()
       .min(4, 'At least 4 characters')
       .test('flight-code-is-unique', 'Already taken', async (value) => {
-        const flight = await flightModel.findOne('flight_code', value);
+        const flight = await flightModel.findOne(
+          'flight_code',
+          value,
+          getFilterQueries(null)
+        );
         return !flight;
       })
       .matches(/^[A-Z]{1,}[0-9]{1,}$/, {
@@ -40,14 +45,22 @@ const FlightValidationSchema = (database) => {
     originAirportId: yup
       .number()
       .test('originAirport-exists', 'Does not exist', async (value) => {
-        const airport = await airportModel.findOne('airport_id', value);
+        const airport = await airportModel.findOne(
+          'airport_id',
+          value,
+          getFilterQueries(null)
+        );
         return !!airport;
       })
       .required('Required'),
     destinationAirportId: yup
       .number()
       .test('destinationAirport-exists', 'Does not exist', async (value) => {
-        const airport = await airportModel.findOne('airport_id', value);
+        const airport = await airportModel.findOne(
+          'airport_id',
+          value,
+          getFilterQueries(null)
+        );
         return !!airport;
       })
       .required(),

@@ -1,7 +1,5 @@
 const { isEmpty } = require('lodash');
 
-const { AIRPORT_SELECT } = require('../airports');
-
 const FLIGHT_SELECT = {
   flightId: 'f.flight_id',
   flightCode: 'f.flight_code',
@@ -104,20 +102,26 @@ const FlightModel = (database) => ({
       exclude: []
     }
   ) => {
-    const { exclude } = filters;
+    const { page, limit, query, exclude, include, keys } = filters;
 
     const [flights] = await database.query(
       `
         SELECT
-          ${Object.entries(FLIGHT_SELECT)
-            .map(([key, value]) => {
-              if (exclude.includes(key)) {
-                return '';
-              }
-              return `${value} AS ${key}`;
-            })
-            .filter(Boolean)
-            .join(', ')}
+        ${
+          isEmpty(include)
+            ? Object.entries(FLIGHT_SELECT)
+                .map(([key, value]) => {
+                  if (exclude.includes(key)) {
+                    return '';
+                  }
+                  return `${value} AS ${key}`;
+                })
+                .filter(Boolean)
+                .join(', ')
+            : include
+                .map((key) => `${FLIGHT_SELECT[key]} AS ${key}`)
+                .join(', ')
+        }
         FROM flight AS f
           INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
           INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id

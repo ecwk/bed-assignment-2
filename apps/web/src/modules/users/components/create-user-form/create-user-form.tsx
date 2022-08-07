@@ -9,7 +9,8 @@ import {
   HStack,
   Spacer,
   useColorModeValue,
-  useToast
+  useToast,
+  Select as ChakraSelect
 } from '@chakra-ui/react';
 
 import { sleep } from '@common/utils';
@@ -19,27 +20,35 @@ import {
   H3,
   FormButton,
   SelectMantine,
-  Textarea
+  Textarea,
+  ConfirmPassword,
+  CountrySelect,
+  ContactInput,
+  Select
 } from '@common/components';
-import { CreateAirportDto, airportsApiClient } from '@modules/airports';
+import { CreateUserDto, usersApiClient } from '@modules/users';
 import { COUNTRIES } from '@common/constants';
 
-export type CreateAirportFormData = CreateAirportDto;
+export type CreateUserFormData = CreateUserDto;
 
-export type CreateAirportFormProps = {
-  methods: UseFormReturn<CreateAirportFormData>;
+export type CreateUserFormProps = {
+  methods: UseFormReturn<CreateUserFormData>;
   onClose: () => void;
+  mobileCode: string;
+  setMobileCode: (code: string) => void;
 };
 
-export const CreateAirportForm = ({
+export const CreateUserForm = ({
   methods,
-  onClose
-}: CreateAirportFormProps) => {
+  onClose,
+  mobileCode,
+  setMobileCode
+}: CreateUserFormProps) => {
   const toast = useToast();
 
   const createMutation = useMutation(
-    async (data: CreateAirportFormData) => {
-      return airportsApiClient.createAirport(data);
+    async (data: CreateUserFormData) => {
+      return usersApiClient.createUser(data);
     },
     {
       onMutate: async () => {
@@ -48,7 +57,7 @@ export const CreateAirportForm = ({
       onSuccess: () => {
         toast({
           title: 'Success',
-          description: 'Airport created successfully',
+          description: 'User created successfully',
           status: 'success',
           duration: 5000,
           position: 'bottom-right',
@@ -64,7 +73,7 @@ export const CreateAirportForm = ({
       }
     }
   );
-  const onSubmit = async (data: CreateAirportFormData) => {
+  const onSubmit = async (data: CreateUserFormData) => {
     createMutation.mutate(data);
   };
 
@@ -74,51 +83,62 @@ export const CreateAirportForm = ({
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
-      <H3>Details</H3>
       <Input
         mt={4}
-        name="name"
+        name="email"
         type="text"
-        label="Name"
+        label="Email"
         labelProps={labelProps}
-        placeholder="Name"
+        placeholder="Email"
       />
-
-      <SelectMantine
+      <Input
         mt={4}
-        name="country"
-        label="Country"
+        name="username"
+        type="username"
+        label="Username"
+        placeholder="Username"
         labelProps={labelProps}
-        data={COUNTRIES.map(({ name }) => ({
-          label: name,
-          value: name
-        }))}
-        selectProps={{
-          size: 'md',
-          placeholder: 'Select a country',
-          nothingFound: 'No countries found',
-          searchable: true,
-          clearable: true,
-          autoComplete: 'none'
+      />
+      <ConfirmPassword
+        mt={4}
+        password={{
+          name: 'password',
+          label: 'Password',
+          labelProps: labelProps,
+          placeholder: 'Password'
+        }}
+        confirmPassword={{
+          name: 'confirmPassword',
+          label: 'Confirm Password',
+          labelProps: labelProps,
+          placeholder: 'Confirm Password'
         }}
       />
-      <Input
-        mt={4}
-        name="city"
-        type="text"
-        label="City"
-        labelProps={labelProps}
-        placeholder="City"
+      <Flex mt={4} gap={4}>
+        <CountrySelect
+          label="Country"
+          labelProps={labelProps}
+          value={mobileCode}
+          setValue={setMobileCode}
+          useMobileCode
+        />
+        <ContactInput
+          name="contact"
+          label="Contact"
+          labelProps={labelProps}
+          mobileCode={mobileCode}
+          placeholder="Contact Number"
+        />
+      </Flex>
+      <Select
+        name="role"
+        label="Role"
+        data={[
+          { value: 'admin', label: 'Admin' },
+          { value: 'user', label: 'User' }
+        ]}
       />
 
-      <Textarea
-        mt={4}
-        name="description"
-        type="text"
-        label="Description"
-        labelProps={labelProps}
-        placeholder="Enter a description"
-      />
       <Flex mt={10}>
         <Button variant="ghost" onClick={clear}>
           Clear

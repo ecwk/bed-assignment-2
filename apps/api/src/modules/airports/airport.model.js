@@ -1,3 +1,5 @@
+const { isEmpty } = require('lodash');
+
 const AIRPORT_SELECT = {
   airportId: 'a.airport_id',
   name: 'a.name',
@@ -10,44 +12,67 @@ const AIRPORT_SELECT = {
 
 const AirportModel = (database) => ({
   findAll: async (filters) => {
-    const { page, limit, query, exclude } = filters;
+    const { page, limit, query, exclude, include, keys } = filters;
+    const sqlQuery = `
+        SELECT
+        ${
+          isEmpty(include)
+            ? Object.entries(AIRPORT_SELECT)
+                .map(([key, value]) => {
+                  if (exclude.includes(key)) {
+                    return '';
+                  }
+                  return `${value} AS ${key}`;
+                })
+                .filter(Boolean)
+                .join(', ')
+            : include
+                .map((key) => `${AIRPORT_SELECT[key]} AS ${key}`)
+                .join(', ')
+        }
+        FROM airport AS a
+        WHERE
+        ${Object.entries(AIRPORT_SELECT)
+          .map(([key, value]) => {
+            if (keys.includes(key)) {
+              return `${value} REGEXP ?`;
+            }
+            return '';
+          })
+          .filter(Boolean)
+          .join(' OR ')}
+        LIMIT ?
+        OFFSET ?
+      `;
+    const values = [...Array(keys.length)].map(() => query);
+    values.push(limit);
+    values.push((page - 1) * limit);
+
+    const [airports] = await database.query(sqlQuery, values);
+    return airports;
+  },
+  findOne: async (key, value, filters) => {
+    const { page, limit, query, exclude, include, keys } = filters;
 
     const [airports] = await database.query(
       `
         SELECT
-          ${Object.entries(AIRPORT_SELECT)
-            .map(([key, value]) => {
-              if (exclude.includes(key)) {
-                return '';
-              }
-              return `${value} AS ${key}`;
-            })
-            .filter(Boolean)
-            .join(', ')}
+          ${
+            isEmpty(include)
+              ? Object.entries(AIRPORT_SELECT)
+                  .map(([key, value]) => {
+                    if (exclude.includes(key)) {
+                      return '';
+                    }
+                    return `${value} AS ${key}`;
+                  })
+                  .filter(Boolean)
+                  .join(', ')
+              : include
+                  .map((key) => `${AIRPORT_SELECT[key]} AS ${key}`)
+                  .join(', ')
+          }
         FROM airport AS a
-        WHERE
-          name REGEXP ?
-          OR city REGEXP ?
-          OR country REGEXP ?
-        LIMIT ?
-        OFFSET ?
-      `,
-      [query, query, query, limit, (page - 1) * limit]
-    );
-    return airports;
-  },
-  findOne: async (key, value) => {
-    const [airports] = await database.query(
-      `
-        SELECT
-          airport_id airportId,
-          name,
-          country,
-          city,
-          description,
-          created_on createdOn,
-          last_modified_on lastModifiedOn
-        FROM airport
         WHERE ?? = ?
       `,
       [key, value]

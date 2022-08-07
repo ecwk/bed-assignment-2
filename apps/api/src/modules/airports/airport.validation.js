@@ -1,4 +1,5 @@
 const yup = require('yup');
+const { getFilterQueries } = require('../../common/utils');
 
 const { AirportModel } = require('./airport.model');
 
@@ -12,7 +13,11 @@ const AirportValidationSchema = (database) => {
         'name-is-unique',
         '${value} has already been registered',
         async (value) => {
-          const airport = await airportModel.findOne('name', value);
+          const airport = await airportModel.findOne(
+            'name',
+            value,
+            getFilterQueries(null)
+          );
           return !airport;
         }
       )

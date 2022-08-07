@@ -15,28 +15,42 @@ const USER_SELECT = {
 
 const UserModel = (database) => ({
   findAll: async (filters) => {
-    const { page, limit, query, exclude } = filters;
-    const [users] = await database.query(
-      `
-        SELECT
-          ${Object.entries(USER_SELECT)
-            .map(([key, value]) => {
-              if (exclude.includes(key)) {
-                return '';
-              }
-              return `${value} AS ${key}`;
-            })
-            .filter(Boolean)
-            .join(', ')}
-        FROM users AS u
-        WHERE
-          u.username REGEXP ?
-          OR u.email REGEXP ?
-        LIMIT ?
-        OFFSET ?
-      `,
-      [query, query, limit, (page - 1) * limit]
-    );
+    const { page, limit, query, exclude, include, keys } = filters;
+
+    const sqlQuery = `
+      SELECT
+        ${
+          isEmpty(include)
+            ? Object.entries(USER_SELECT)
+                .map(([key, value]) => {
+                  if (exclude.includes(key)) {
+                    return '';
+                  }
+                  return `${value} AS ${key}`;
+                })
+                .filter(Boolean)
+                .join(', ')
+            : include.map((key) => `${USER_SELECT[key]} AS ${key}`).join(', ')
+        }
+      FROM users AS u
+      WHERE
+        ${Object.entries(USER_SELECT)
+          .map(([key, value]) => {
+            if (keys.includes(key)) {
+              return `${value} REGEXP ?`;
+            }
+            return '';
+          })
+          .filter(Boolean)
+          .join(' OR ')}
+      LIMIT ?
+      OFFSET ?
+    `;
+    const values = [...Array(keys.length)].map(() => query);
+    values.push(limit);
+    values.push((page - 1) * limit);
+
+    const [users] = await database.query(sqlQuery, values);
     return users;
   },
   findOne: async (key, value) => {

@@ -44,7 +44,8 @@ import { useCart } from '@common/hooks';
 const Dashboard: NextPage<ServerSideProps> = ({
   flightsCount,
   airportsCount,
-  usersCount
+  usersCount,
+  bookings
 }) => {
   const { user, isAdmin } = useAuth();
   const { cart } = useCart();
@@ -68,7 +69,7 @@ const Dashboard: NextPage<ServerSideProps> = ({
           <Grid
             mt={4}
             as="section"
-            gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+            gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
             gap={5}
           >
             <Portal>
@@ -95,12 +96,12 @@ const Dashboard: NextPage<ServerSideProps> = ({
               h="125px"
               fontSize="lg"
             />
-            <DashboardItem
+            {/* <DashboardItem
               icon={<AddIcon fontSize="35px" />}
               stat="Add Discount"
               h="125px"
               fontSize="lg"
-            />
+            /> */}
           </Grid>
           <H3 mt={5}>Services</H3>
           <Grid
@@ -205,8 +206,8 @@ const Dashboard: NextPage<ServerSideProps> = ({
         <DashboardItem
           icon={<MdAirplaneTicket fontSize="64px" />}
           stat="Bookings"
-          stat1={{ stat: 'Upcoming Bookings', number: 0 }}
-          stat2={{ stat: 'Previous Bookings', number: 0 }}
+          stat1={{ stat: 'Upcoming Bookings', number: bookings.upcomingCount }}
+          stat2={{ stat: 'Total Bookings', number: bookings.totalCount }}
         />
         <DashboardItem
           href="/cart"
@@ -357,12 +358,19 @@ type ServerSideProps = {
   flightsCount: number;
   airportsCount: number;
   usersCount: number | null;
+  bookings: {
+    upcomingCount: number;
+    totalCount: number;
+  };
 };
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async (
   ctx
 ) => {
   const token = ctx.req.cookies.token || '';
   server.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  const decodedToken = jwt.decode(token, { complete: true });
+  const userId = decodedToken?.payload?.sub;
 
   let usersCount = null;
   try {
@@ -381,12 +389,19 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps> = async (
   const {
     data: { count: airportsCount }
   } = await server.get('/airports/count?limit=none');
+  const {
+    data: { count: bookingsCount }
+  } = await server.get(`/bookings/${userId}/count`);
 
   return {
     props: {
       flightsCount,
       airportsCount,
-      usersCount
+      usersCount,
+      bookings: {
+        upcomingCount: 0,
+        totalCount: bookingsCount
+      }
     }
   };
 };

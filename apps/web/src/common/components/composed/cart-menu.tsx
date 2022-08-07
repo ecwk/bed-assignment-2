@@ -101,6 +101,7 @@ export const CartMenu = React.forwardRef<HTMLDivElement, CartMenuProps>(
           px={6}
           borderRadius="xl"
           minW="300px"
+          backgroundColor="modal-bg"
         >
           <MenuGroup>
             <Box

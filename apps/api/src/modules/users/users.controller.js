@@ -6,6 +6,8 @@ const { UserValidationSchema } = require('./user.validation');
 const { UserModel, USER_SELECT } = require('./user.model');
 const { getFilterQueries } = require('../../common/utils');
 
+const DEFAULT_KEYS = ['username', 'email'];
+
 module.exports = (database) => {
   const router = express.Router();
   const userModel = UserModel(database);
@@ -13,12 +15,17 @@ module.exports = (database) => {
   router.use(protectedRoute);
 
   router.get('/', async (req, res, next) => {
-    const filterQueries = getFilterQueries(req);
+    const filterQueries = getFilterQueries(req, {
+      availableKeys: USER_SELECT,
+      keys: DEFAULT_KEYS
+    });
     filterQueries.exclude = [
       ...filterQueries.exclude,
       ...(req.isAdmin ? [] : ['password'])
     ];
-
+    filterQueries.include = req.isAdmin
+      ? filterQueries.include
+      : filterQueries.include.filter((key) => key !== 'password');
     try {
       const users = await userModel.findAll(filterQueries);
       res.json({ users });
@@ -28,7 +35,10 @@ module.exports = (database) => {
   });
 
   router.get('/count', async (req, res, next) => {
-    const filterQueries = getFilterQueries(req);
+    const filterQueries = getFilterQueries(req, {
+      availableKeys: USER_SELECT,
+      keys: DEFAULT_KEYS
+    });
     filterQueries.exclude = Object.keys(USER_SELECT).slice(0, -1);
 
     try {
@@ -60,7 +70,15 @@ module.exports = (database) => {
       try {
         const user = req.body;
         const userid = await userModel.create(user);
-        res.status(201).json({ userid });
+        const createdUser = await userModel.findOne(
+          'user_id',
+          userid,
+          getFilterQueries(req, {
+            availableKeys: USER_SELECT,
+            keys: DEFAULT_KEYS
+          })
+        );
+        res.status(201).json({ user: createdUser });
       } catch (err) {
         next(err);
       }

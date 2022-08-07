@@ -1,18 +1,21 @@
-import { AddIcon } from '@chakra-ui/icons';
-import { Box, Flex, Grid, Portal, useDisclosure } from '@chakra-ui/react';
-import { H2, H3, Main, Profile, Title } from '@common/components';
-import { CreateAirportModal } from '@modules/airports';
-import { useAuth } from '@modules/auth';
-import { CreateFlightModal } from '@modules/flights';
 import { type NextPage } from 'next';
+import { AddIcon } from '@chakra-ui/icons';
 import { MdAdminPanelSettings } from 'react-icons/md';
+import { Box, Flex, Grid, Portal, useDisclosure } from '@chakra-ui/react';
+
+import { useAuth } from '@modules/auth';
 import { DashboardItem } from '../dashboard';
+import { CreateUserModal } from '@modules/users';
+import { CreateFlightModal } from '@modules/flights';
+import { CreateAirportModal } from '@modules/airports';
+import { H2, H3, Main, Profile, Title } from '@common/components';
 
 const Admin: NextPage = () => {
   const { user } = useAuth();
 
   const createFlightDisclosure = useDisclosure();
   const createAirportDisclosure = useDisclosure();
+  const createUserDisclosure = useDisclosure();
 
   return (
     <Main>
@@ -30,12 +33,13 @@ const Admin: NextPage = () => {
         <Grid
           mt={4}
           as="section"
-          gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+          gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
           gap={5}
         >
           <Portal>
             <CreateFlightModal disclosure={createFlightDisclosure} />
             <CreateAirportModal disclosure={createAirportDisclosure} />
+            <CreateUserModal disclosure={createUserDisclosure} />
           </Portal>
           <DashboardItem
             onClick={createFlightDisclosure.onOpen}
@@ -52,17 +56,18 @@ const Admin: NextPage = () => {
             fontSize="lg"
           />
           <DashboardItem
+            onClick={createUserDisclosure.onOpen}
             icon={<AddIcon fontSize="35px" />}
             stat="Add User"
             h="125px"
             fontSize="lg"
           />
-          <DashboardItem
+          {/* <DashboardItem
             icon={<AddIcon fontSize="35px" />}
             stat="Add Discount"
             h="125px"
             fontSize="lg"
-          />
+          /> */}
         </Grid>
         <H3 mt={5}>Services</H3>
         <Grid

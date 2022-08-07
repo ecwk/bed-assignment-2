@@ -75,6 +75,7 @@ export function Select({
         {...register(name)}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        zIndex={10000}
       >
         {data?.map(({ label, value }, i) => (
           <option value={value} key={`select-option-${label}-${value}-${i}`}>

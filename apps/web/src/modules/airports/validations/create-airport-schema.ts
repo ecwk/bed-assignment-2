@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import * as yup from 'yup';
 
 export const createAirportSchema = yup.object().shape({

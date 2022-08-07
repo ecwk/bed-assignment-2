@@ -128,7 +128,6 @@ module.exports = (database) => {
             keys: DEFAULT_KEYS
           })
         );
-        console.log(flights);
         res.status(200).json({ flights });
       } catch (err) {
         next(err);
@@ -167,7 +166,10 @@ module.exports = (database) => {
         const createdFlight = await flightModel.findOne(
           'flight_id',
           flightId,
-          getFilterQueries(req)
+          getFilterQueries(req, {
+            availableKeys: FLIGHT_SELECT,
+            keys: DEFAULT_KEYS
+          })
         );
         res.status(201).json({ flight: createdFlight });
       } catch (err) {
