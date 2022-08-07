@@ -41,11 +41,25 @@ module.exports = (database) => {
       availableKeys: FLIGHT_SELECT,
       keys: DEFAULT_KEYS
     });
-    filterQueries.exclude = Object.keys(FLIGHT_SELECT).slice(0, -1);
+    filterQueries.include = ['flightId'];
 
     try {
       const flights = await flightModel.findAll(filterQueries);
       res.json({ count: flights.length });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/countAll', async (req, res, next) => {
+    const filterQueries = getFilterQueries(req, {
+      availableKeys: FLIGHT_SELECT,
+      keys: DEFAULT_KEYS
+    });
+
+    try {
+      const count = await flightModel.count(filterQueries);
+      res.json({ count });
     } catch (err) {
       next(err);
     }

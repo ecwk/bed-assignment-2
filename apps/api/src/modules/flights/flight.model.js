@@ -65,6 +65,36 @@ const FlightModel = (database) => ({
 
     return flights;
   },
+  count: async (filters) => {
+    const { page, limit, query, exclude, include, keys } = filters;
+
+    const sqlQuery = `
+      SELECT
+        COUNT(*) AS count
+      FROM flight AS f
+        INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
+        INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id
+      WHERE
+        ${Object.entries(FLIGHT_SELECT)
+          .map(([key, value]) => {
+            if (keys.includes(key)) {
+              return `${value} REGEXP ?`;
+            }
+            return '';
+          })
+          .filter(Boolean)
+          .join(' OR ')}
+      LIMIT ?
+      OFFSET ?
+    `;
+    const values = [...Array(keys.length)].map(() => query);
+    values.push(limit);
+    values.push((page - 1) * limit);
+
+    const [[{ count }]] = await database.query(sqlQuery, values);
+
+    return count;
+  },
   findOne: async (
     key,
     value,
