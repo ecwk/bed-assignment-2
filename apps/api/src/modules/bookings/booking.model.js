@@ -1,3 +1,5 @@
+const { isEmpty } = require('lodash');
+
 const BOOKING_SELECT = {
   bookingId: 'b.booking_id',
   name: 'b.name',
@@ -9,6 +11,70 @@ const BOOKING_SELECT = {
 };
 
 const BookingModel = (database) => ({
+  findAll: async (filters) => {
+    const { page, limit, query, exclude, include, keys } = filters;
+    const sqlQuery = `
+        SELECT
+        ${
+          isEmpty(include)
+            ? Object.entries(BOOKING_SELECT)
+                .map(([key, value]) => {
+                  if (exclude.includes(key)) {
+                    return '';
+                  }
+                  return `${value} AS ${key}`;
+                })
+                .filter(Boolean)
+                .join(', ')
+            : include
+                .map((key) => `${BOOKING_SELECT[key]} AS ${key}`)
+                .join(', ')
+        }
+        FROM booking AS b
+        WHERE
+        ${Object.entries(BOOKING_SELECT)
+          .map(([key, value]) => {
+            if (keys.includes(key)) {
+              return `${value} REGEXP ?`;
+            }
+            return '';
+          })
+          .filter(Boolean)
+          .join(' OR ')}
+        LIMIT ?
+        OFFSET ?
+      `;
+    const values = [...Array(keys.length)].map(() => query);
+    values.push(limit);
+    values.push((page - 1) * limit);
+
+    const [bookings] = await database.query(sqlQuery, values);
+    return bookings;
+  },
+  findUserBookings: async (userId, filters) => {
+    const { page, limit, query, exclude, include, keys } = filters;
+    const sqlQuery = `
+      SELECT
+      ${
+        isEmpty(include)
+          ? Object.entries(BOOKING_SELECT)
+              .map(([key, value]) => {
+                if (exclude.includes(key)) {
+                  return '';
+                }
+                return `${value} AS ${key}`;
+              })
+              .filter(Boolean)
+              .join(', ')
+          : include.map((key) => `${BOOKING_SELECT[key]} AS ${key}`).join(', ')
+      }
+      FROM booking AS b
+      WHERE b.user_id = ?
+    `;
+    const values = [userId];
+    const [bookings] = await database.query(sqlQuery, values);
+    return bookings;
+  },
   findOne: async (key, value, filters) => {
     const { page, limit, query, exclude, include, keys } = filters;
 

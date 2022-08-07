@@ -2,16 +2,47 @@ const express = require('express');
 
 const { BookingValidationSchema } = require('./booking.validation');
 const { validateBody } = require('../../common/middleware');
-const { BookingModel } = require('./booking.model');
+const { BookingModel, BOOKING_SELECT } = require('./booking.model');
 const { FlightModel } = require('../flights');
 const { UserModel } = require('../users');
 const { getFilterQueries } = require('../../common/utils');
+
+const DEFAULT_KEYS = ['name'];
 
 module.exports = (database) => {
   const router = express.Router();
   const bookingModel = BookingModel(database);
   const userModel = UserModel(database);
   const flightModel = FlightModel(database);
+
+  router.get('/', async (req, res, next) => {
+    try {
+      const bookings = await bookingModel.findAll(
+        getFilterQueries(req, {
+          availableKeys: BOOKING_SELECT,
+          keys: DEFAULT_KEYS
+        })
+      );
+      res.json({ bookings });
+    } catch (err) {
+      next(err);
+    }
+  });
+  router.get('/:userId', async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      const bookings = await bookingModel.findUserBookings(
+        userId,
+        getFilterQueries(req, {
+          availableKeys: BOOKING_SELECT,
+          keys: DEFAULT_KEYS
+        })
+      );
+      res.json({ bookings });
+    } catch (err) {
+      next(err);
+    }
+  });
 
   router.get('/:userId/count', async (req, res, next) => {
     try {
