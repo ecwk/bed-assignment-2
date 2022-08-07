@@ -255,7 +255,7 @@ type DashboardItemProps = Stat & {
   fontSize?: string;
 };
 
-const DashboardItem = ({
+export const DashboardItem = ({
   href,
   icon,
   stat,

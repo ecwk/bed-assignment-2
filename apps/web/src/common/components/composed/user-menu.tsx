@@ -97,21 +97,14 @@ export const UserMenu = React.forwardRef<HTMLDivElement, UserMenuProps>(
               </MenuButton>
             ) : (
               <Tooltip label="User" placement="right">
-                <Box
-                  as={motion.div}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  ref={ref}
-                >
-                  <MenuButton>
-                    <ProfileAvatar
-                      user={user}
-                      borderRadius="md"
-                      w="40px"
-                      h="40px"
-                    />
-                  </MenuButton>
-                </Box>
+                <MenuButton>
+                  <ProfileAvatar
+                    user={user}
+                    borderRadius="md"
+                    w="40px"
+                    h="40px"
+                  />
+                </MenuButton>
               </Tooltip>
             )}
 

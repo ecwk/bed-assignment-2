@@ -149,6 +149,7 @@ export const Sidebar = () => {
 
             <VStack as="section" w="100%">
               <CartMenu
+                variant="button"
                 buttonProps={{ w: '100%', variant: 'ghost', iconSpacing: 5 }}
               />
               <ToggleColorButton w="100%" variant="ghost" iconSpacing={5} />
@@ -254,7 +255,7 @@ export const Sidebar = () => {
                 />
               </Box>
             </Tooltip> */}
-            <CartMenu type="icon" />
+            <CartMenu variant="icon" />
             <Tooltip label="Toggle Theme" placement="right">
               <Box as={motion.div}>
                 <ToggleDark variant="ghost" />

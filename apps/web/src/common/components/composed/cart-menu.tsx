@@ -28,20 +28,37 @@ import React from 'react';
 import { useCart } from '@common/hooks';
 import { Link } from '@common/components';
 import { motion } from 'framer-motion';
+import { HIDDEN_SIDEBAR_PATHS } from '@common/constants';
+import { useRouter } from 'next/router';
+import { useAuth } from '@modules/auth';
 
 export type CartMenuProps = BoxProps & {
-  type?: 'button' | 'icon';
+  variant?: 'button' | 'icon';
   buttonProps?: ButtonProps;
 };
 
 export const CartMenu = React.forwardRef<HTMLDivElement, CartMenuProps>(
-  ({ type = 'button', buttonProps }, ref) => {
+  ({ variant = 'button', buttonProps }, ref) => {
+    const { isLoading, user } = useAuth();
     const { cart, increaseQuantity, decreaseQuantity, removeFromCart } =
       useCart();
+    const router = useRouter();
+
+    const isHiddenSidebar =
+      HIDDEN_SIDEBAR_PATHS.some((path) => path.test(router.pathname)) ||
+      (!isLoading && !user);
 
     return (
-      <Menu>
-        {type === 'button' ? (
+      <Menu
+        offset={
+          !isHiddenSidebar && variant === 'button'
+            ? [200, -20]
+            : variant === 'icon'
+            ? [40, -20]
+            : undefined
+        }
+      >
+        {variant === 'button' ? (
           <MenuButton
             as={Button}
             leftIcon={
@@ -62,29 +79,29 @@ export const CartMenu = React.forwardRef<HTMLDivElement, CartMenuProps>(
           </MenuButton>
         ) : (
           <Tooltip label="Cart" placement="right">
-            <Box
-              as={motion.div}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              ref={ref}
+            <Indicator
+              label={cart.length === 0 ? '' : cart.length}
+              size={cart.length === 0 ? 0 : 16}
+              color="red"
             >
-              <Indicator
-                label={cart.length === 0 ? '' : cart.length}
-                size={cart.length === 0 ? 0 : 16}
-                color="red"
-              >
-                <MenuButton
-                  as={IconButton}
-                  variant="ghost"
-                  icon={<AiOutlineShoppingCart size="20px" />}
-                  aria-label="Shopping Cart"
-                />
-              </Indicator>
-            </Box>
+              <MenuButton
+                as={IconButton}
+                variant="ghost"
+                icon={<AiOutlineShoppingCart size="20px" />}
+                aria-label="Shopping Cart"
+              />
+            </Indicator>
           </Tooltip>
         )}
 
-        <MenuList pt={4} pb={6} px={6} borderRadius="xl" minW="300px">
+        <MenuList
+          zIndex={1000}
+          pt={4}
+          pb={6}
+          px={6}
+          borderRadius="xl"
+          minW="300px"
+        >
           <MenuGroup>
             <Box
               display="flex"
