@@ -193,9 +193,6 @@ const AdminManageFlights: NextPage = () => {
     ['flights', { itemsPerPage, page, debouncedSearch }],
     (ctx) => {
       let page_ = page;
-      console.log('count', count);
-      console.log('numberOfPages', numberOfPages);
-      console.log('page_', page_);
       if (page > numberOfPages) {
         page_ = 1;
         setPage(1);
@@ -222,6 +219,8 @@ const AdminManageFlights: NextPage = () => {
   useEffect(() => {
     if (countQuery.data?.data?.count) {
       setCount(countQuery.data?.data?.count);
+    } else if (countQuery.data?.data?.count !== 0) {
+      setCount(0);
     }
   }, [countQuery.data]);
   const numberOfPages = useMemo(() => {
