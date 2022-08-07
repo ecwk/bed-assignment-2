@@ -1,3 +1,5 @@
+const { isEmpty } = require('lodash');
+
 const { AIRPORT_SELECT } = require('../airports');
 
 const FLIGHT_SELECT = {
@@ -22,47 +24,45 @@ const FLIGHT_SELECT = {
 
 const FlightModel = (database) => ({
   findAll: async (filters) => {
-    const { page, limit, query, exclude } = filters;
-    const [flights] = await database.query(
-      `
-        SELECT
-          ${Object.entries(FLIGHT_SELECT)
-            .map(([key, value]) => {
-              if (exclude.includes(key)) {
-                return '';
-              }
-              return `${value} AS ${key}`;
-            })
-            .filter(Boolean)
-            .join(', ')}
-        FROM flight AS f
-          INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
-          INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id
-        WHERE
-          f.flight_id REGEXP ?
-          OR f.flight_code REGEXP ?
-          OR o.name REGEXP ?
-          OR o.city REGEXP ?
-          OR o.country REGEXP ?
-          OR d.name REGEXP ?
-          OR d.city REGEXP ?
-          OR d.country REGEXP ?
-        LIMIT ?
-        OFFSET ?
-      `,
-      [
-        query,
-        query,
-        query,
-        query,
-        query,
-        query,
-        query,
-        query,
-        limit,
-        (page - 1) * limit
-      ]
-    );
+    const { page, limit, query, exclude, include, keys } = filters;
+
+    const sqlQuery = `
+      SELECT
+        ${
+          isEmpty(include)
+            ? Object.entries(FLIGHT_SELECT)
+                .map(([key, value]) => {
+                  if (exclude.includes(key)) {
+                    return '';
+                  }
+                  return `${value} AS ${key}`;
+                })
+                .filter(Boolean)
+                .join(', ')
+            : include.map((key) => `${FLIGHT_SELECT[key]} AS ${key}`).join(', ')
+        }
+      FROM flight AS f
+        INNER JOIN airport AS o ON o.airport_id = f.origin_airport_id
+        INNER JOIN airport AS d ON d.airport_id = f.destination_airport_id
+      WHERE
+        ${Object.entries(FLIGHT_SELECT)
+          .map(([key, value]) => {
+            if (keys.includes(key)) {
+              return `${value} REGEXP ?`;
+            }
+            return '';
+          })
+          .filter(Boolean)
+          .join(' OR ')}
+      LIMIT ?
+      OFFSET ?
+    `;
+    const values = [...Array(keys.length)].map(() => query);
+    values.push(limit);
+    values.push((page - 1) * limit);
+
+    const [flights] = await database.query(sqlQuery, values);
+
     return flights;
   },
   findOne: async (

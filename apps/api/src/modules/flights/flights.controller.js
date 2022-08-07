@@ -8,13 +8,28 @@ const { getFilterQueries } = require('../../common/utils');
 const { FlightValidationSchema } = require('./flight.validation');
 const { DATE_FORMAT } = require('../../common/constants');
 
+const DEFAULT_KEYS = [
+  'flightCode',
+  'originAirportName',
+  'originAirportCountry',
+  'originAirportCity',
+  'destinationAirportName',
+  'destinationAirportCountry',
+  'destinationAirportCity'
+];
+
 module.exports = (database) => {
   const router = express.Router();
   const flightModel = FlightModel(database);
 
   router.get('/', async (req, res, next) => {
     try {
-      const flights = await flightModel.findAll(getFilterQueries(req));
+      const flights = await flightModel.findAll(
+        getFilterQueries(req, {
+          availableKeys: FLIGHT_SELECT,
+          keys: DEFAULT_KEYS
+        })
+      );
       res.json({ flights });
     } catch (err) {
       next(err);

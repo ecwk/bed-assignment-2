@@ -1,10 +1,28 @@
-function getFilterQueries(req) {
+function getFilterQueries(
+  req,
+  defaults = {
+    keys: []
+  }
+) {
+  const { keys: keysDefault, availableKeys } = defaults;
+
   const query =
     typeof req.query.q === 'string'
       ? req.query.q !== ''
         ? req.query.q
         : '.*'
       : '.*';
+
+  const unvalidatedKeys =
+    req.query.k instanceof Array
+      ? req.query.k
+      : typeof req.query.k === 'string'
+      ? [req.query.k]
+      : keysDefault;
+
+  const validatedKeys = unvalidatedKeys.filter((key) => availableKeys[key]);
+  const keys = validatedKeys.length > 0 ? validatedKeys : keysDefault;
+
   const limit =
     typeof req.query.limit === 'string'
       ? req.query.limit === 'none'
@@ -21,20 +39,22 @@ function getFilterQueries(req) {
       : 1;
 
   const exclude =
-    req.query.exclude instanceof Array
-      ? req.query.exclude
-      : typeof req.query.exclude === 'string'
-      ? [req.query.exclude]
+    req.query.e instanceof Array
+      ? req.query.e
+      : typeof req.query.e === 'string'
+      ? [req.query.e]
       : [];
 
-  const include =
-    req.query.include instanceof Array
-      ? req.query.include
-      : typeof req.query.include === 'string'
-      ? [req.query.include]
+  const unvalidatedInclude =
+    req.query.i instanceof Array
+      ? req.query.i
+      : typeof req.query.i === 'string'
+      ? [req.query.i]
       : [];
 
-  return { query, limit, page, exclude };
+  const include = unvalidatedInclude.filter((key) => availableKeys[key]);
+
+  return { query, limit, page, exclude, include, keys };
 }
 
 module.exports = getFilterQueries;
