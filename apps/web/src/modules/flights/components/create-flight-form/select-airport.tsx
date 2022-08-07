@@ -21,7 +21,7 @@ const EXCLUDED_AIRPORT_FIELDS: (keyof Airport)[] = [
   'lastModifiedOn'
 ];
 const EXCLUDED_QUERY = EXCLUDED_AIRPORT_FIELDS.map(
-  (field) => `exclude=${field}`
+  (field) => `e=${field}`
 ).join('&');
 
 export type SelectAirportProps = SelectMantineProps & {

@@ -38,7 +38,7 @@ export const SelectMantine = ({
     useColorModeValue('brandGray.200', 'brandGray.600'),
     useColorModeValue('gray.300', 'whiteAlpha.400'),
     useColorModeValue('brandGold.500', 'brandGold.200'),
-    useColorModeValue('brandGray.50', 'brandGray.700'),
+    useColorModeValue('brandGray.50', 'brandGray.800'),
     useColorModeValue('red.300', 'red.300')
   ]);
   const theme = useTheme();

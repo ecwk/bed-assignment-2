@@ -5,6 +5,7 @@ const { AIRPORT_SELECT } = require('../airports');
 const FLIGHT_SELECT = {
   flightId: 'f.flight_id',
   flightCode: 'f.flight_code',
+  aircraftName: 'f.aircraft_name',
   departureDate: 'f.departure_date',
   travelTime: 'f.travel_time',
   price: 'f.price',

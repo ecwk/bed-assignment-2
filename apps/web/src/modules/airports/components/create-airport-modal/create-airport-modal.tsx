@@ -1,28 +1,24 @@
 import {
-  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
   ModalBody,
+  ModalHeader,
   ModalFooter,
-  type UseDisclosureReturn,
-  useColorModeValue,
-  useDisclosure
+  ModalContent,
+  ModalOverlay,
+  useDisclosure,
+  ModalCloseButton,
+  type UseDisclosureReturn
 } from '@chakra-ui/react';
-import { H2, FormButton, Hide } from '@common/components';
+import { H2 } from '@common/components';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import {
-  createAirportSchema,
   CreateAirportForm,
+  createAirportSchema,
   type CreateAirportFormData
 } from '@modules/airports';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-
-const DEFAULT_FORM_VALUES: Partial<CreateAirportFormData> = {};
 
 export type CreateAirportModalProps = {
   button?: JSX.Element;

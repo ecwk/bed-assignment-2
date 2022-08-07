@@ -58,20 +58,30 @@ import {
   VStack,
   BoxProps,
   Heading,
-  FlexProps
+  FlexProps,
+  InputRightElement,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
+  TagRightIcon,
+  TagCloseButton,
+  Portal,
+  useToken
 } from '@chakra-ui/react';
 import { QueryCache, useQuery, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, type NextPage } from 'next';
 import {
+  AddIcon,
   ArrowForwardIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  MinusIcon,
   SearchIcon
 } from '@chakra-ui/icons';
 import { TbLayoutGrid, TbLayoutList } from 'react-icons/tb';
 import { capitalize, startCase, truncate } from 'lodash';
 import { DatePicker as MantineDatePicker } from '@mantine/dates';
-import { Pagination } from '@mantine/core';
+import { MultiSelect, Pagination, SelectItem } from '@mantine/core';
 
 import {
   Main,
@@ -87,7 +97,11 @@ import { server } from '@config/axios';
 import { useForm, useWatch } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import { useDebouncedValue } from '@mantine/hooks';
-import { CreateFlightModal, CreateFlightForm } from '@modules/flights';
+import {
+  CreateFlightModal,
+  CreateFlightForm,
+  SearchFlightKeySelect
+} from '@modules/flights';
 import { MdRefresh } from 'react-icons/md';
 import { AxiosResponse } from 'axios';
 
@@ -125,6 +139,10 @@ const fields: Field[] = [
     width: '100px'
   },
   {
+    name: 'aircraft',
+    width: '100px'
+  },
+  {
     name: 'origin',
     width: '1fr'
   },
@@ -142,17 +160,18 @@ type FilterOptions = {
   itemsPerPage: number;
   id: boolean;
   code: boolean;
+  aircraft: boolean;
   origin: boolean;
   destination: boolean;
   price: boolean;
 };
 
-// const LIMIT_DEFAULT = 10;
-
 const PAGE_DEFAULT = 1;
+
 const DEFAULT_VALUES: FilterOptions = {
   itemsPerPage: 5,
   id: true,
+  aircraft: true,
   code: true,
   origin: true,
   destination: true,
@@ -189,8 +208,10 @@ const AdminManageFlights: NextPage = () => {
   const [debouncedWatch] = useDebouncedValue(watch, 500);
   const { itemsPerPage } = watch;
 
+  const [searchKeys, setSearchKeys] = useState<(keyof Flight)[]>([]);
+
   const flightsQuery = useQuery(
-    ['flights', { itemsPerPage, page, debouncedSearch }],
+    ['flights', { itemsPerPage, page, debouncedSearch, searchKeys }],
     (ctx) => {
       let page_ = page;
       if (page > numberOfPages) {
@@ -198,8 +219,11 @@ const AdminManageFlights: NextPage = () => {
         setPage(1);
       }
 
+      const searchKeysQuery = searchKeys.map((key) => `k=${key}`).join('&');
       return server.get(
-        `/flights/?page=${page_}&limit=${itemsPerPage}&q=${debouncedSearch}`,
+        `/flights/?page=${page_}&limit=${itemsPerPage}&q=${debouncedSearch}${
+          searchKeysQuery ? '&' + searchKeysQuery : ''
+        }`,
         {
           signal: ctx.signal
         }
@@ -250,14 +274,14 @@ const AdminManageFlights: NextPage = () => {
   };
 
   return (
-    <Main maxW="1200px" w="100%" mx="auto">
+    <Main>
       <Title
         mt={10}
         title="Manage Flights"
         subtitle="Using our built-in administrative functions"
       />
       <Form mt={5} methods={methods}>
-        <Flex alignItems="flex-end" gap={4}>
+        <Flex alignItems="flex-start" gap={4}>
           <FormControl>
             <FormLabel color={labelColor}>Refine Your Search</FormLabel>
             <InputGroup>
@@ -270,6 +294,12 @@ const AdminManageFlights: NextPage = () => {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </InputGroup>
+            <HStack mt={2}>
+              <Text color="label-color" fontSize="sm" mb={1}>
+                Search By:{' '}
+              </Text>
+              <SearchFlightKeySelect onChange={setSearchKeys} />
+            </HStack>
           </FormControl>
 
           <FormControl flexBasis="175px">
@@ -282,8 +312,8 @@ const AdminManageFlights: NextPage = () => {
           </FormControl>
         </Flex>
 
-        <Flex justifyContent="flex-end" alignItems="center" mt={4} gap={2}>
-          <Text color="gray.200" fontSize="sm" mb={1}>
+        <Flex justifyContent="flex-end" alignItems="center" mt={2} gap={2}>
+          <Text color="label-color" fontSize="sm" mb={1}>
             Sort By:{' '}
           </Text>
 
@@ -400,7 +430,9 @@ const AdminManageFlights: NextPage = () => {
               </>
             )}
           </Menu>
-          <CreateFlightModal />
+          <CreateFlightModal
+            button={<Button colorScheme="brandGold">Add Flight</Button>}
+          />
         </Flex>
       </Form>
 
@@ -421,16 +453,9 @@ const AdminManageFlights: NextPage = () => {
         itemsPerPage={itemsPerPage || 2}
       />
 
-      <Divider my={10} />
+      <Divider mt={10} />
 
       <Flex flexDir="column" alignItems="center" mx="auto">
-        <Pagination
-          spacing={10}
-          total={numberOfPages}
-          page={page}
-          onChange={(page) => setPage(page)}
-          boundaries={2}
-        />
         <Flex
           mt={5}
           fontSize="sm"
@@ -445,6 +470,13 @@ const AdminManageFlights: NextPage = () => {
           </Text>
           <GoToPageInput numberOfPages={numberOfPages} setPage={setPage} />
         </Flex>
+        <Pagination
+          spacing={10}
+          total={numberOfPages}
+          page={page}
+          onChange={(page) => setPage(page)}
+          boundaries={2}
+        />
       </Flex>
     </Main>
   );
@@ -542,6 +574,7 @@ const FlightListItem = ({
   const {
     flightId,
     flightCode,
+    aircraftName,
     originAirportId,
     originAirportName,
     originAirportCountry,
@@ -560,7 +593,14 @@ const FlightListItem = ({
   const handleShow1 = () => setShow1((prev) => !prev);
   const handleShow2 = () => setShow2((prev) => !prev);
 
-  const { id, code, origin, destination, price: showPrice } = filterOptions;
+  const {
+    id,
+    code,
+    origin,
+    aircraft,
+    destination,
+    price: showPrice
+  } = filterOptions;
 
   const showColor = useColorModeValue('brandGold.600', 'brandGold.50');
   const showColorHover = useColorModeValue('brandGold.800', 'brandGold.300');
@@ -573,9 +613,10 @@ const FlightListItem = ({
         </Text>
       )}
       {code && <Text>{flightCode}</Text>}
+      {aircraft && <Text>{aircraftName}</Text>}
       {origin && (
         <Box>
-          <Collapse startingHeight={20} in={show1}>
+          <Collapse startingHeight={95} in={show1}>
             <b>Id</b>: {originAirportId}
             {/* {show1 ? '' : '...'} */}
             <br />
@@ -601,9 +642,8 @@ const FlightListItem = ({
       )}
       {destination && (
         <Box>
-          <Collapse startingHeight={20} in={show2}>
+          <Collapse startingHeight={95} in={show2}>
             <b>Id</b>: {destinationAirportId}
-            {/* {show2 ? '' : '...'} */}
             <br />
             <b>Airport</b>: {destinationAirportName}
             <br />

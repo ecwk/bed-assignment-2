@@ -303,7 +303,7 @@ const DashboardItem = ({
           y: -5
         }}
         whileTap={{
-          y: 10
+          y: 5
         }}
       >
         <Flex flexDir="column" justifyContent="space-between">
