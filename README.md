@@ -97,3 +97,14 @@ npm run build
 
 npm run start
 ```
+
+### Admin Credentials
+
+By default the only admin is `root`
+
+- Email: root@admin.com:
+- Password: 1q!Q1q!Q
+
+The root admin password should be changed after the first login.
+
+Then, add more admins with the web interface

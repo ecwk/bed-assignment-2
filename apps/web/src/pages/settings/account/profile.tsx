@@ -7,7 +7,7 @@ type ProfileProps = {};
 
 const Profile: NextPage<ProfileProps> = () => {
   return (
-    <Main maxW="1000px" w="100%">
+    <Main maxW="1000px" w="100%" mx="auto">
       <Title
         mt={10}
         title="Profile"

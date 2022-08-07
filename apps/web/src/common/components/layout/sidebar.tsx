@@ -72,7 +72,7 @@ export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [shouldFocus, setShouldFocus] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { isLoading, user } = useAuth();
   const router = useRouter();
 
   // Focus search input when click on search icon
@@ -85,9 +85,9 @@ export const Sidebar = () => {
 
   const toggleSize = () => setIsOpen((prev) => !prev);
 
-  const isHiddenSidebar = HIDDEN_SIDEBAR_PATHS.some((path) =>
-    path.test(router.pathname)
-  );
+  const isHiddenSidebar =
+    HIDDEN_SIDEBAR_PATHS.some((path) => path.test(router.pathname)) ||
+    (!isLoading && !user);
 
   return (
     <AnimatePresence initial={false} exitBeforeEnter={false}>

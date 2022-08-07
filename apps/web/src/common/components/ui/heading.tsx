@@ -6,9 +6,9 @@ import {
 
 export type HeadingProps = Props;
 
-export const H1 = ({ children }: HeadingProps) => {
+export const H1 = ({ children, ...headingProps }: HeadingProps) => {
   return (
-    <Heading color="" as="h1">
+    <Heading as="h1" {...headingProps}>
       {children}
     </Heading>
   );

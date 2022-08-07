@@ -71,7 +71,7 @@ export const FlightItem = ({
   ...flexProps
 }: FlightItemProps) => {
   const [quantity, setQuantity] = useState(1);
-  const { user } = useAuth();
+  const { user, setGoBack } = useAuth();
   const { addToCart } = useCart();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -94,6 +94,7 @@ export const FlightItem = ({
   const handleClick = () => {
     if (!user) {
       router.push('/login');
+      setGoBack(true);
     } else {
       onClose();
       toast({

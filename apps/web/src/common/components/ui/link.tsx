@@ -34,7 +34,7 @@ export const Link = ({
         sx={{
           ':hover': {
             color: hoverColor ? 'brandGold.300' : 'none',
-            textDecoration: underline ? 'underline' : 'none',
+            textDecoration: underline ? 'underline' : 'none'
           },
           ':hover > svg': {
             color: hoverColor ? 'brandGold.300' : 'none'

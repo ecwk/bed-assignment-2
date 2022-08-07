@@ -118,19 +118,19 @@ const Dashboard: NextPage<ServerSideProps> = ({
             gap={5}
           >
             <DashboardItem
-              href="/admin/add/flights"
+              href="/admin/flights"
               icon={<MdAdminPanelSettings fontSize="60px" />}
               stat="Manage Flights"
               helperText="Easy-to-use booking engine"
             />
             <DashboardItem
-              href="/admin/add/airports"
+              href="/admin/airports"
               icon={<MdAdminPanelSettings fontSize="60px" />}
               stat="Manage Airports"
               helperText="Find out more about airports"
             />
             <DashboardItem
-              href="/admin/add/users"
+              href="/admin/users"
               icon={<MdAdminPanelSettings fontSize="60px" />}
               stat="Manage Users"
               helperText="Find out more about airports"

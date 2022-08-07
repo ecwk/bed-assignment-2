@@ -25,7 +25,7 @@ type LoginFormProps = Partial<FormProps> & {};
 
 export const LoginForm = ({ sx, ...formProps }: LoginFormProps) => {
   const methods = useForm<LoginFormData>();
-  const { login } = useAuth();
+  const { login, goBack, setGoBack } = useAuth();
   const router = useRouter();
 
   const loginMutation = useMutation(
@@ -38,7 +38,12 @@ export const LoginForm = ({ sx, ...formProps }: LoginFormProps) => {
       },
       onSuccess: () => {
         setTimeout(() => {
-          router.push('/dashboard');
+          if (goBack) {
+            setGoBack(false);
+            router.back();
+          } else {
+            router.push('/dashboard');
+          }
         }, 1000);
       }
     }

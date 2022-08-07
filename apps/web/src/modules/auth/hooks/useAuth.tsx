@@ -24,6 +24,8 @@ interface AuthContextInterface {
   signup: (signupDto: SignupDto) => Promise<void>;
   isLoading: boolean;
   isAdmin: boolean;
+  goBack: boolean;
+  setGoBack: (goBack: boolean) => void;
 }
 
 export const AuthContext = createContext<AuthContextInterface>(
@@ -35,6 +37,7 @@ const useAuthProvider = (): AuthContextInterface => {
   const [token, setToken] = useState<Token | null | undefined>(undefined);
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
+  const [goBack, setGoBack] = useState(false); // used to redirect to previous page after login
 
   useEffect(() => {
     // when fetch token from storage or after loginm, and before user is set
@@ -117,7 +120,17 @@ const useAuthProvider = (): AuthContextInterface => {
 
   const isAdmin = user?.role === Role.ADMIN;
 
-  return { user, token, login, logout, signup, isLoading, isAdmin };
+  return {
+    user,
+    token,
+    login,
+    logout,
+    signup,
+    isLoading,
+    isAdmin,
+    goBack,
+    setGoBack
+  };
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

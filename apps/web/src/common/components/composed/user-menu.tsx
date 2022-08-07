@@ -32,6 +32,7 @@ import {
 
 import { Role } from '@common/enum';
 import { ProfileAvatar, Hide, Link } from '@common/components';
+import { useRouter } from 'next/router';
 
 export const UserMenu = () => {
   const { user, logout } = useAuth();
@@ -43,6 +44,8 @@ export const UserMenu = () => {
       return Notification.requestPermission();
     }
   };
+
+  const router = useRouter();
 
   const backgroundColor = useColorModeValue('brandGray.100', 'brandGray.800');
 
@@ -133,7 +136,10 @@ export const UserMenu = () => {
             <MenuDivider />
 
             <MenuItem
-              onClick={logout}
+              onClick={() => {
+                logout();
+                router.push('/login');
+              }}
               borderRadius="xl"
               minH="45px"
               icon={<MdExitToApp size="20px" />}

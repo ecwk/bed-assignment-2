@@ -1,6 +1,9 @@
+import ms from 'ms';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
+import { capitalize, random } from 'lodash';
 import { useMutation } from '@tanstack/react-query';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Flex, VStack, Text, Box } from '@chakra-ui/react';
@@ -19,9 +22,6 @@ import {
 import { sleep } from '@common/utils';
 import { useAuth } from '@modules/auth';
 import { usersApiClient, editProfileSchema } from '@modules/users';
-import { capitalize, random } from 'lodash';
-import ms from 'ms';
-import dayjs from 'dayjs';
 
 type EditProfileFormData = {
   email: string;
@@ -31,7 +31,7 @@ type EditProfileFormData = {
   confirmPassword: string;
 };
 
-export type EditProfileFormProps = Partial<FormProps> & {};
+export type EditProfileFormProps = Partial<FormProps>;
 
 export function EditProfileForm({
   id,
@@ -85,7 +85,11 @@ export function EditProfileForm({
           <Text fontSize="4xl" fontWeight="semibold">
             {capitalize(user?.username)}
           </Text>
-          <Link color="link-color-blue" href={`mailto:${user?.email}`}>
+          <Link
+            color="link-color-blue"
+            href={`mailto:${user?.email}`}
+            underline
+          >
             {user?.email}
           </Link>
           <Text color="label-color">{user?.contact}</Text>

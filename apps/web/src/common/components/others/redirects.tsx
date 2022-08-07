@@ -8,7 +8,7 @@ const adminRoutes = [/\/admin.*/];
 
 export const Redirects = () => {
   const router = useRouter();
-  const { user, isLoading, isAdmin } = useAuth();
+  const { user, isLoading, isAdmin, setGoBack } = useAuth();
 
   useEffect(() => {
     const path = router.pathname;
@@ -22,6 +22,7 @@ export const Redirects = () => {
 
     if (!isLoading) {
       if (!user && protectedRoutes.some((route) => path.match(route))) {
+        setGoBack(true);
         router.push('/login');
       }
     }
